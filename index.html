@@ -25,7 +25,6 @@
             justify-content: center;
         }
 
-        /* Contenedor principal con scroll horizontal en caso de pantallas muy pequeñas */
         .org-wrapper {
             width: 100%;
             max-width: 1400px;
@@ -36,11 +35,29 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
 
+        /* Cabecera para el Logo */
+        .header-logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--grey);
+        }
+        .header-logo img {
+            height: 60px; /* Ajusta este valor según el tamaño de tu logo */
+            margin-right: 20px;
+        }
+        .header-logo h2 {
+            color: var(--dark-blue);
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
         .org-chart {
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: max-content; /* Fuerza a que ocupe lo necesario horizontalmente */
+            width: max-content;
             margin: 0 auto;
         }
 
@@ -63,7 +80,6 @@
             min-height: 35px;
         }
 
-        /* Nodos específicos con tamaños ajustados */
         .node-large { width: 180px; font-size: 12px; }
         .node-medium { width: 140px; font-size: 11px; }
 
@@ -112,21 +128,19 @@
             border-color: #ff9800;
         }
 
-        /* Líneas conectoras más cortas */
+        /* Líneas conectoras */
         .connector-v {
             width: 2px;
-            height: 15px;
+            height: 20px;
             background-color: var(--line-color);
             margin: -4px auto;
             z-index: 1;
         }
-        .connector-h {
+        .connector-h-link {
+            width: 40px;
             height: 2px;
             background-color: var(--line-color);
-            width: 100%;
-            position: absolute;
-            top: 0;
-            z-index: 1;
+            margin-top: 30px;
         }
 
         /* Estilos del Modal */
@@ -173,88 +187,113 @@
         
         .staff-section {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 15px;
+            justify-content: flex-start;
+            gap: 5px;
             padding: 10px;
             border: 1px dashed var(--line-color);
             border-radius: 8px;
+            background-color: #fafafa;
         }
     </style>
 </head>
 <body>
 
 <div class="org-wrapper">
+    
+    <!-- AQUÍ SE CARGA EL LOGO -->
+    <div class="header-logo">
+        <!-- Reemplaza "logo.png" por el nombre exacto de tu archivo de imagen (ej. logo-savia.jpg) -->
+        <img src="logo.png" alt="Logo Savia Salud EPS">
+        <h2>Inventario Analítica y Ciencia del Dato</h2>
+    </div>
+
     <div class="org-chart">
-        <!-- Nivel 1: Gerencia -->
-        <div class="level">
-            <div class="branch" style="flex-direction: row; gap: 15px; align-items: flex-start;">
-                <div class="branch">
-                    <div class="node n-orange" style="font-size: 10px; padding: 4px; width: 100px;">Revisoría Fiscal</div>
-                    <div class="connector-v"></div>
-                    <div class="node n-grey" style="width: 100px;">Contraloría<br>Delegada</div>
-                </div>
-                <div class="branch">
-                    <div class="node n-orange node-large" style="font-size: 14px;">
-                        Asamblea de Accionistas<br>Junta Directiva<br>
-                        <hr style="border:0; border-top:1px dashed #dcae85; margin: 5px 0;">
-                        <strong style="font-size: 16px;">Gerencia General</strong>
+        
+        <!-- Nivel 1: Gerencia (Izquierda) y Staff (Derecha) -->
+        <div class="row" style="width: 100%; justify-content: center; gap: 30px; margin-bottom: 10px;">
+            
+            <!-- BLOQUE IZQUIERDO: Gerencia General -->
+            <div class="branch">
+                <div class="row">
+                    <div class="branch">
+                        <div class="node n-orange" style="font-size: 10px; padding: 4px; width: 100px;">Revisoría Fiscal</div>
+                        <div class="connector-v"></div>
+                        <div class="node n-grey" style="width: 100px;">Contraloría<br>Delegada</div>
                     </div>
-                    <div class="connector-v"></div>
-                    <div class="node n-orange-solid node-medium">Agente Especial<br>Interventor</div>
+                    <div class="branch">
+                        <div class="node n-orange node-large" style="font-size: 14px;">
+                            Asamblea de Accionistas<br>Junta Directiva<br>
+                            <hr style="border:0; border-top:1px dashed #dcae85; margin: 5px 0;">
+                            <strong style="font-size: 16px;">Gerencia General</strong>
+                        </div>
+                        <div class="connector-v"></div>
+                        <div class="node n-orange-solid node-medium">Agente Especial<br>Interventor</div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="connector-v" style="height: 15px;"></div>
+            <!-- LÍNEA CONECTORA HORIZONTAL ENTRE GERENCIA Y STAFF -->
+            <div class="connector-h-link"></div>
 
-        <!-- Nivel 2: Staff -->
-        <div class="level">
-            <div class="staff-section">
+            <!-- BLOQUE DERECHO: Staff de Gerencia -->
+            <div class="branch staff-section">
                 <div class="node n-dark node-medium">Staff de Gerencia</div>
                 <div class="row">
                     <div class="branch">
-                        <div class="node n-dark">Secretaría General</div>
-                        <div class="node n-teal interactive" data-title="Dirección de Auditoría Interna" data-sp="0" data-bi="0">Dirección de<br>Auditoría Interna</div>
-                        <div class="node n-teal interactive" data-title="Dirección de Calidad y Planeación" data-sp="0" data-bi="0">Dirección de<br>Calidad y Planeación</div>
-                        <div class="node n-yellow interactive" data-title="Jefatura de Comunicaciones" data-sp="0" data-bi="0">Jefatura de<br>Comunicaciones</div>
-                        <div class="node n-grey" style="border-style: dashed;">Oficial de<br>Cumplimiento</div>
+                        <div class="node n-dark interactive" data-title="Secretaría General" data-sp="0" data-bi="0">Secretaría<br>General</div>
+                        <div class="node n-teal interactive" data-title="Dirección de Auditoría Interna" data-sp="0" data-bi="0">Dirección<br>Auditoría Interna</div>
+                        <div class="node n-teal interactive" data-title="Dirección de Calidad y Planeación" data-sp="0" data-bi="0">Dirección<br>Calidad y Planeación</div>
+                        <div class="node n-yellow interactive" data-title="Jefatura de Comunicaciones" data-sp="0" data-bi="0">Jefatura<br>Comunicaciones</div>
+                        <div class="node n-grey interactive" data-title="Oficial de Cumplimiento" data-sp="0" data-bi="0" style="border-style: dashed;">Oficial de<br>Cumplimiento</div>
                     </div>
-                    <div class="branch" style="justify-content: center;">
-                        <div class="node n-dark interactive" data-title="Coordinación de Calidad y Planeación" data-sp="0" data-bi="0">Coordinación de<br>Calidad y Planeación</div>
+                    <div class="branch" style="justify-content: flex-start;">
+                        <div class="node n-dark interactive" data-title="Coordinación de Calidad y Planeación" data-sp="0" data-bi="0" style="margin-top: 45px;">Coord. Calidad<br>y Planeación</div>
                     </div>
                     <div class="branch">
-                        <div class="node n-yellow interactive" data-title="Jefatura de Defensa Judicial" data-sp="11" data-bi="1">Jefatura de Defensa<br>Judicial y Prev. Daño</div>
+                        <div class="node n-yellow interactive" data-title="Jefatura de Defensa Judicial" data-sp="11" data-bi="1">Jefatura Defensa<br>Judicial / Prev. Daño</div>
                         <div class="node n-yellow interactive" data-title="Jefatura de Contratación" data-sp="0" data-bi="0">Jefatura de<br>Contratación</div>
-                        <div class="node n-dark interactive" data-title="Coordinación Jurídica" data-sp="0" data-bi="0">Coordinación Jurídica<br>y Gobierno Corp.</div>
+                        <div class="node n-dark interactive" data-title="Coordinación Jurídica" data-sp="0" data-bi="0">Coord. Jurídica<br>y Gobierno Corp.</div>
                     </div>
                 </div>
             </div>
+
         </div>
 
-        <div class="connector-v" style="height: 15px;"></div>
+        <div class="connector-v" style="height: 20px;"></div>
 
         <!-- Nivel 3: Subgerencias (Gran contenedor horizontal) -->
         <div class="level" style="align-items: flex-start; border-top: 2px solid var(--line-color); padding-top: 15px; width: 100%; gap: 15px; justify-content: center;">
             
-            <!-- Subgerencia Salud -->
+            <!-- Subgerencia Salud (CON CUENTAS MEDICAS Y ATENCIÓN AL USUARIO AÑADIDAS DIRECTAMENTE) -->
             <div class="branch">
                 <div class="node n-dark node-medium">Subgerencia de Salud</div>
                 <div class="connector-v"></div>
+                
                 <div class="row">
+                    <!-- 1. Dirección Acceso -->
                     <div class="branch">
                         <div class="node n-teal interactive" data-title="Dirección de Acceso a Servicios" data-sp="0" data-bi="0">Dirección de Acceso<br>a Servicios de Salud</div>
                         <div class="node n-yellow interactive" data-title="Jefatura de Autorizaciones" data-sp="33" data-bi="2">Jefatura de<br>Autorizaciones</div>
                         <div class="node n-yellow interactive" data-title="Jefatura de Centro Regulador" data-sp="0" data-bi="3">Jefatura de<br>Centro Regulador</div>
                         <div class="node n-yellow interactive" data-title="Jefatura de Auditoría Concurrente" data-sp="9" data-bi="5">Jefatura de Auditoría<br>Concurrente</div>
                     </div>
+
+                    <!-- 2. Jefaturas Directas de la Subgerencia (Sin Dirección) -->
+                    <div class="branch" style="justify-content: flex-start; margin-top: 10px;">
+                        <div class="node n-yellow interactive" data-title="Jefatura de Cuentas Médicas" data-sp="92" data-bi="1" style="border: 2px solid #ff9800;"><strong>Jefatura de<br>Cuentas Médicas</strong></div>
+                        <div class="node n-yellow interactive" data-title="Jefatura de Atención al Usuario" data-sp="12" data-bi="3" style="border: 2px solid #ff9800;"><strong>Jefatura de<br>Atención al Usuario</strong></div>
+                    </div>
+
+                    <!-- 3. Dirección Riesgo -->
                     <div class="branch">
                         <div class="node n-teal interactive" data-title="Dirección de Riesgo en Salud" data-sp="19" data-bi="18">Dirección de Riesgo<br>en Salud</div>
                         <div class="node n-yellow interactive" data-title="Jefatura de Adquisiciones" data-sp="0" data-bi="0">Jefatura de<br>Adquisiciones</div>
                         <div class="node n-yellow interactive" data-title="Jefatura de Apoyo a Regiones" data-sp="0" data-bi="0">Jefatura de Apoyo<br>a Regiones</div>
                     </div>
                 </div>
+
                 <div class="connector-v"></div>
                 <div class="row" style="margin-top: 5px;">
                     <div class="node n-dark interactive" style="width: 85px;" data-title="Coord. Programas Especiales" data-sp="0" data-bi="0">Coord.<br>Prog. Especiales</div>
@@ -264,7 +303,7 @@
                 </div>
             </div>
 
-            <!-- Subgerencia Financiera -->
+            <!-- Subgerencia Financiera (MÁS PEQUEÑA AHORA) -->
             <div class="branch">
                 <div class="node n-dark node-medium">Subgerencia Financiera</div>
                 <div class="connector-v"></div>
@@ -275,11 +314,6 @@
                     <div class="branch">
                         <div class="node n-teal interactive" data-title="Dirección de Tesorería y Cartera" data-sp="0" data-bi="0">Dirección Tesorería<br>y Cartera</div>
                     </div>
-                </div>
-                <div class="connector-v"></div>
-                <div class="row">
-                    <div class="node n-yellow interactive" data-title="Jefatura de Cuentas Médicas" data-sp="92" data-bi="1"><strong>Jefatura de<br>Cuentas Médicas</strong></div>
-                    <div class="node n-yellow interactive" data-title="Jefatura de Atención al Usuario" data-sp="12" data-bi="3">Jefatura de<br>Atención al Usuario</div>
                 </div>
             </div>
 
