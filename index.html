@@ -6,11 +6,14 @@
     <title>Organigrama Savia Salud EPS</title>
     <style>
         :root {
-            --orange: #fce0c0;
-            --orange-border: #f0a969;
-            --teal: #1f9e8e;
-            --yellow: #f2f5ae;
-            --dark-blue: #3d5e68;
+            /* Colores solicitados */
+            --dark-blue: rgb(36, 75, 90);    /* #244b5a */
+            --teal: rgb(0, 169, 143);        /* #00a98f */
+            --yellow: rgb(240, 236, 115);    /* #f0ec73 */
+            --orange: rgb(237, 199, 162);    /* #edc7a2 */
+            
+            /* Colores complementarios */
+            --orange-border: #dcae85; 
             --grey: #e9ecef;
             --line-color: #8fa3ad;
         }
@@ -46,12 +49,12 @@
             line-height: 1.3;
         }
 
-        /* Colores según la imagen */
-        .n-orange { background-color: var(--orange); border: 2px dashed var(--orange-border); }
-        .n-orange-solid { background-color: var(--orange); border: 1px solid var(--orange-border); }
-        .n-teal { background-color: var(--teal); color: white; border: 1px solid #14796c; }
-        .n-yellow { background-color: var(--yellow); color: #333; border: 1px solid #d4d875; }
-        .n-dark { background-color: var(--dark-blue); color: white; border: 1px solid #2a434a; }
+        /* Aplicación de la paleta de colores */
+        .n-orange { background-color: var(--orange); color: #333; border: 2px dashed var(--orange-border); }
+        .n-orange-solid { background-color: var(--orange); color: #333; border: 1px solid var(--orange-border); }
+        .n-teal { background-color: var(--teal); color: white; border: 1px solid #008772; }
+        .n-yellow { background-color: var(--yellow); color: #333; border: 1px solid #c9c55b; }
+        .n-dark { background-color: var(--dark-blue); color: white; border: 1px solid #1a3742; }
         .n-grey { background-color: var(--grey); color: #333; border: 1px solid #ccc; border-radius: 4px;}
 
         /* Contenedores Flex */
@@ -80,16 +83,22 @@
             gap: 10px;
         }
 
-        /* Interactividad */
+        /* Interactividad para todos los nodos clicables */
         .interactive {
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
-            border: 2px solid #b5bb22;
         }
         .interactive:hover {
             transform: translateY(-3px) scale(1.02);
             box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-            background-color: #e5e985;
+            filter: brightness(0.95);
+        }
+        .interactive::after {
+            content: "👆";
+            display: block;
+            font-size: 10px;
+            margin-top: 5px;
+            opacity: 0.6;
         }
 
         /* Líneas conectoras simples */
@@ -129,23 +138,24 @@
             to { opacity: 1; transform: translateY(0); }
         }
         .modal-header {
-            background-color: var(--yellow);
+            background-color: var(--teal);
             padding: 15px 20px;
-            border-bottom: 1px solid #d4d875;
+            border-bottom: 1px solid #008772;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            color: #333;
+            color: white;
         }
         .modal-header h3 { margin: 0; font-size: 18px; }
         .close {
             font-size: 24px;
             font-weight: bold;
-            color: #666;
+            color: white;
             cursor: pointer;
             line-height: 1;
+            opacity: 0.8;
         }
-        .close:hover { color: black; }
+        .close:hover { opacity: 1; }
         .modal-body {
             padding: 25px 20px;
             font-size: 15px;
@@ -180,7 +190,7 @@
                 <div class="branch">
                     <div class="node n-orange" style="font-size: 16px;">
                         Asamblea de Accionistas<br>Junta Directiva<br>
-                        <hr style="border:0; border-top:1px dashed #f0a969;">
+                        <hr style="border:0; border-top:1px dashed #dcae85;">
                         <strong style="font-size: 18px;">Gerencia General</strong>
                     </div>
                     <div class="connector-v"></div>
@@ -198,18 +208,18 @@
                 <div class="row">
                     <div class="branch">
                         <div class="node n-dark">Secretaría General</div>
-                        <div class="node n-teal">Dirección de<br>Auditoría Interna</div>
-                        <div class="node n-teal">Dirección de<br>Calidad y Planeación</div>
-                        <div class="node n-yellow">Jefatura de<br>Comunicaciones</div>
+                        <div class="node n-teal interactive" data-title="Dirección de Auditoría Interna" data-sp="0" data-bi="0">Dirección de<br>Auditoría Interna</div>
+                        <div class="node n-teal interactive" data-title="Dirección de Calidad y Planeación" data-sp="0" data-bi="0">Dirección de<br>Calidad y Planeación</div>
+                        <div class="node n-yellow interactive" data-title="Jefatura de Comunicaciones" data-sp="0" data-bi="0">Jefatura de<br>Comunicaciones</div>
                         <div class="node n-grey" style="border-style: dashed;">Oficial de<br>Cumplimiento</div>
                     </div>
                     <div class="branch" style="justify-content: center;">
-                        <div class="node n-dark">Coordinación de<br>Calidad y Planeación</div>
+                        <div class="node n-dark interactive" data-title="Coordinación de Calidad y Planeación" data-sp="0" data-bi="0">Coordinación de<br>Calidad y Planeación</div>
                     </div>
                     <div class="branch">
-                        <div class="node n-yellow">Jefatura de Defensa<br>Judicial y Prev. del Daño</div>
-                        <div class="node n-yellow">Jefatura de<br>Contratación</div>
-                        <div class="node n-dark">Coordinación Jurídica y<br>Gobierno Corporativo</div>
+                        <div class="node n-yellow interactive" data-title="Jefatura de Defensa Judicial y Prev. del Daño" data-sp="11" data-bi="1">Jefatura de Defensa<br>Judicial y Prev. del Daño</div>
+                        <div class="node n-yellow interactive" data-title="Jefatura de Contratación" data-sp="0" data-bi="0">Jefatura de<br>Contratación</div>
+                        <div class="node n-dark interactive" data-title="Coordinación Jurídica y Gobierno Corporativo" data-sp="0" data-bi="0">Coordinación Jurídica y<br>Gobierno Corporativo</div>
                     </div>
                 </div>
             </div>
@@ -226,23 +236,23 @@
                 <div class="connector-v"></div>
                 <div class="row">
                     <div class="branch">
-                        <div class="node n-teal">Dirección de Acceso a<br>Servicios de Salud</div>
-                        <div class="node n-yellow">Jefatura de Autorizaciones</div>
-                        <div class="node n-yellow">Jefatura de Centro Regulador</div>
-                        <div class="node n-yellow">Jefatura de Auditoría<br>Concurrente</div>
+                        <div class="node n-teal interactive" data-title="Dirección de Acceso a Servicios de Salud" data-sp="0" data-bi="0">Dirección de Acceso a<br>Servicios de Salud</div>
+                        <div class="node n-yellow interactive" data-title="Jefatura de Autorizaciones" data-sp="33" data-bi="2">Jefatura de Autorizaciones</div>
+                        <div class="node n-yellow interactive" data-title="Jefatura de Centro Regulador" data-sp="0" data-bi="3">Jefatura de Centro Regulador</div>
+                        <div class="node n-yellow interactive" data-title="Jefatura de Auditoría Concurrente" data-sp="9" data-bi="5">Jefatura de Auditoría<br>Concurrente</div>
                     </div>
                     <div class="branch">
-                        <div class="node n-teal">Dirección de Riesgo<br>en Salud</div>
-                        <div class="node n-yellow">Jefatura de Adquisiciones</div>
-                        <div class="node n-yellow">Jefatura de Apoyo a Regiones</div>
+                        <div class="node n-teal interactive" data-title="Dirección de Riesgo en Salud" data-sp="19" data-bi="18">Dirección de Riesgo<br>en Salud</div>
+                        <div class="node n-yellow interactive" data-title="Jefatura de Adquisiciones" data-sp="0" data-bi="0">Jefatura de Adquisiciones</div>
+                        <div class="node n-yellow interactive" data-title="Jefatura de Apoyo a Regiones" data-sp="0" data-bi="0">Jefatura de Apoyo a Regiones</div>
                     </div>
                 </div>
                 <div class="connector-v"></div>
                 <div class="row" style="margin-top: 10px;">
-                    <div class="node n-dark">Coord. Programas<br>Especiales</div>
-                    <div class="node n-dark">Coord. de<br>Epidemiología</div>
-                    <div class="node n-dark">Coord. de<br>Salud Pública</div>
-                    <div class="node n-dark">Coord. de<br>Alto Costo</div>
+                    <div class="node n-dark interactive" data-title="Coord. Programas Especiales" data-sp="0" data-bi="0">Coord. Programas<br>Especiales</div>
+                    <div class="node n-dark interactive" data-title="Coord. de Epidemiología" data-sp="0" data-bi="0">Coord. de<br>Epidemiología</div>
+                    <div class="node n-dark interactive" data-title="Coord. de Salud Pública" data-sp="0" data-bi="0">Coord. de<br>Salud Pública</div>
+                    <div class="node n-dark interactive" data-title="Coord. de Alto Costo" data-sp="0" data-bi="0">Coord. de<br>Alto Costo</div>
                 </div>
             </div>
 
@@ -252,20 +262,16 @@
                 <div class="connector-v"></div>
                 <div class="row">
                     <div class="branch">
-                        <div class="node n-teal">Dirección de Contabilidad<br>y Presupuesto</div>
+                        <div class="node n-teal interactive" data-title="Dirección de Contabilidad y Presupuesto" data-sp="0" data-bi="4">Dirección de Contabilidad<br>y Presupuesto</div>
                     </div>
                     <div class="branch">
-                        <div class="node n-teal">Dirección de Tesorería<br>y Cartera</div>
+                        <div class="node n-teal interactive" data-title="Dirección de Tesorería y Cartera" data-sp="0" data-bi="0">Dirección de Tesorería<br>y Cartera</div>
                     </div>
                 </div>
                 <div class="connector-v"></div>
                 <div class="row">
-                    <!-- BOTÓN INTERACTIVO AQUÍ -->
-                    <div class="node n-yellow interactive" id="btn-cuentas" title="Haz clic para ver actividades">
-                        <strong>Jefatura de<br>Cuentas Médicas</strong><br>
-                        <span style="font-size: 10px; color: #666;">👆 Clic para ver</span>
-                    </div>
-                    <div class="node n-yellow">Jefatura de<br>Atención al Usuario</div>
+                    <div class="node n-yellow interactive" data-title="Jefatura de Cuentas Médicas" data-sp="92" data-bi="1"><strong>Jefatura de<br>Cuentas Médicas</strong></div>
+                    <div class="node n-yellow interactive" data-title="Jefatura de Atención al Usuario" data-sp="12" data-bi="3">Jefatura de<br>Atención al Usuario</div>
                 </div>
             </div>
 
@@ -273,38 +279,38 @@
             <div class="branch" style="flex: 1;">
                 <div class="node n-dark">Subgerencia Administrativa</div>
                 <div class="connector-v"></div>
-                <div class="node n-teal">Dirección de Tecnología<br>e Información</div>
+                <div class="node n-teal interactive" data-title="Dirección de Tecnología e Información" data-sp="0" data-bi="2">Dirección de Tecnología<br>e Información</div>
                 <div class="connector-v"></div>
                 <div class="row">
-                    <div class="node n-yellow">Jefatura<br>Administrativa</div>
-                    <div class="node n-yellow">Jefatura de<br>Gestión Humana</div>
-                    <div class="node n-yellow">Jefatura Aseg.<br>de Recursos</div>
-                    <div class="node n-yellow">Jefatura Aseg.<br>de Operaciones</div>
+                    <div class="node n-yellow interactive" data-title="Jefatura Administrativa" data-sp="0" data-bi="2">Jefatura<br>Administrativa</div>
+                    <div class="node n-yellow interactive" data-title="Jefatura de Gestión Humana" data-sp="0" data-bi="0">Jefatura de<br>Gestión Humana</div>
+                    <div class="node n-yellow interactive" data-title="Jefatura Aseguramiento de Recursos" data-sp="6" data-bi="1">Jefatura Aseg.<br>de Recursos</div>
+                    <div class="node n-yellow interactive" data-title="Jefatura Aseguramiento de Operaciones" data-sp="6" data-bi="0">Jefatura Aseg.<br>de Operaciones</div>
                 </div>
                 <div class="connector-v"></div>
                 <div class="row">
-                    <div class="node n-dark">Coord. de Software<br>y Arquitectura</div>
-                    <div class="node n-dark">Coord. de Soporte<br>Tecnológico</div>
-                    <div class="node n-dark">Coord. Infraestructura<br>y S.I.</div>
-                    <div class="node n-dark" style="border: 2px solid #fff;">Coord. de Analítica y<br>Ciencia del Dato</div>
+                    <div class="node n-dark interactive" data-title="Coord. de Software y Arquitectura" data-sp="0" data-bi="0">Coord. de Software<br>y Arquitectura</div>
+                    <div class="node n-dark interactive" data-title="Coord. de Soporte Tecnológico" data-sp="0" data-bi="1">Coord. de Soporte<br>Tecnológico</div>
+                    <div class="node n-dark interactive" data-title="Coord. Infraestructura y S.I." data-sp="0" data-bi="3">Coord. Infraestructura<br>y S.I.</div>
+                    <div class="node n-dark interactive" data-title="Coord. de Analítica y Ciencia del Dato" data-sp="0" data-bi="0" style="border: 2px solid #fff;">Coord. de Analítica y<br>Ciencia del Dato</div>
                 </div>
             </div>
 
         </div>
     </div>
 
-    <!-- Modal -->
+    <!-- Modal Dinámico -->
     <div id="infoModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Jefatura de Cuentas Médicas</h3>
+                <h3 id="modalTitle">Área</h3>
                 <span class="close" id="closeModal">&times;</span>
             </div>
             <div class="modal-body">
-                <p><strong>Actividades en el área de Analítica y Ciencia del Dato:</strong></p>
+                <p><strong>Actividades y reportes del área:</strong></p>
                 <ul>
-                    <li>Tiene <strong>92</strong> informes de Store procedure (SP).</li>
-                    <li>Tiene <strong>1</strong> tablero de BI llamado <code>PRODUCTIVIDAD_CUENTAS_MEDICAS</code>.</li>
+                    <li>Tiene <strong id="modalSP">0</strong> informes de Store Procedure (SP).</li>
+                    <li>Tiene <strong id="modalBI">0</strong> tableros de Power BI.</li>
                 </ul>
             </div>
         </div>
@@ -312,13 +318,27 @@
 
     <script>
         const modal = document.getElementById("infoModal");
-        const btn = document.getElementById("btn-cuentas");
         const span = document.getElementById("closeModal");
+        
+        // Asignar el evento click a todos los nodos interactivos
+        document.querySelectorAll('.interactive').forEach(node => {
+            node.onclick = function() {
+                // Obtener datos del nodo
+                const title = this.getAttribute('data-title');
+                const spCount = this.getAttribute('data-sp');
+                const biCount = this.getAttribute('data-bi');
+                
+                // Actualizar el modal
+                document.getElementById('modalTitle').innerText = title;
+                document.getElementById('modalSP').innerText = spCount;
+                document.getElementById('modalBI').innerText = biCount;
+                
+                // Mostrar modal
+                modal.style.display = "block";
+            }
+        });
 
-        btn.onclick = function() {
-            modal.style.display = "block";
-        }
-
+        // Cerrar modal
         span.onclick = function() {
             modal.style.display = "none";
         }
