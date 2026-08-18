@@ -6,13 +6,10 @@
     <title>Organigrama Savia Salud EPS</title>
     <style>
         :root {
-            /* Colores solicitados */
-            --dark-blue: rgb(36, 75, 90);    /* #244b5a */
-            --teal: rgb(0, 169, 143);        /* #00a98f */
-            --yellow: rgb(240, 236, 115);    /* #f0ec73 */
-            --orange: rgb(237, 199, 162);    /* #edc7a2 */
-            
-            /* Colores complementarios */
+            --dark-blue: rgb(36, 75, 90);    
+            --teal: rgb(0, 169, 143);        
+            --yellow: rgb(240, 236, 115);    
+            --orange: rgb(237, 199, 162);    
             --orange-border: #dcae85; 
             --grey: #e9ecef;
             --line-color: #8fa3ad;
@@ -20,36 +17,56 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #ffffff;
+            background-color: #f8f9fa;
             margin: 0;
-            padding: 40px;
-            font-size: 13px;
+            padding: 20px;
             color: #333;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Contenedor principal con scroll horizontal en caso de pantallas muy pequeñas */
+        .org-wrapper {
+            width: 100%;
+            max-width: 1400px;
+            overflow-x: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
 
         .org-chart {
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 100%;
-            overflow-x: auto;
+            width: max-content; /* Fuerza a que ocupe lo necesario horizontalmente */
+            margin: 0 auto;
         }
 
-        /* Nodos generales */
+        /* Nodos más compactos */
         .node {
-            padding: 12px 20px;
-            border-radius: 8px;
+            padding: 6px 10px;
+            border-radius: 6px;
             text-align: center;
             font-weight: 600;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-            margin: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 4px;
             position: relative;
             z-index: 2;
-            max-width: 180px;
-            line-height: 1.3;
+            width: 120px;
+            font-size: 10px;
+            line-height: 1.2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 35px;
         }
 
-        /* Aplicación de la paleta de colores */
+        /* Nodos específicos con tamaños ajustados */
+        .node-large { width: 180px; font-size: 12px; }
+        .node-medium { width: 140px; font-size: 11px; }
+
         .n-orange { background-color: var(--orange); color: #333; border: 2px dashed var(--orange-border); }
         .n-orange-solid { background-color: var(--orange); color: #333; border: 1px solid var(--orange-border); }
         .n-teal { background-color: var(--teal); color: white; border: 1px solid #008772; }
@@ -63,8 +80,8 @@
             justify-content: center;
             align-items: flex-start;
             position: relative;
+            margin-bottom: 10px;
             width: 100%;
-            margin-bottom: 20px;
         }
 
         .branch {
@@ -72,41 +89,43 @@
             flex-direction: column;
             align-items: center;
             position: relative;
-            margin: 0 15px;
+            margin: 0 8px;
         }
 
         .row {
             display: flex;
             flex-direction: row;
             justify-content: center;
-            flex-wrap: wrap;
-            gap: 10px;
+            align-items: flex-start;
+            gap: 5px;
         }
 
-        /* Interactividad para todos los nodos clicables */
+        /* Interactividad */
         .interactive {
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.15s, box-shadow 0.15s;
         }
         .interactive:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
             filter: brightness(0.95);
-        }
-        .interactive::after {
-            content: "👆";
-            display: block;
-            font-size: 10px;
-            margin-top: 5px;
-            opacity: 0.6;
+            border-color: #ff9800;
         }
 
-        /* Líneas conectoras simples */
+        /* Líneas conectoras más cortas */
         .connector-v {
             width: 2px;
-            height: 20px;
+            height: 15px;
             background-color: var(--line-color);
-            margin: -10px auto;
+            margin: -4px auto;
+            z-index: 1;
+        }
+        .connector-h {
+            height: 2px;
+            background-color: var(--line-color);
+            width: 100%;
+            position: absolute;
+            top: 0;
             z-index: 1;
         }
 
@@ -119,92 +138,81 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.4);
-            backdrop-filter: blur(3px);
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(2px);
         }
         .modal-content {
             background-color: white;
             margin: 10% auto;
-            padding: 0;
-            border-radius: 12px;
+            border-radius: 10px;
             width: 90%;
-            max-width: 450px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            animation: slideDown 0.3s ease-out;
+            max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: slideDown 0.2s ease-out;
             overflow: hidden;
         }
         @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-30px); }
+            from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
         }
         .modal-header {
             background-color: var(--teal);
-            padding: 15px 20px;
+            padding: 12px 15px;
             border-bottom: 1px solid #008772;
             display: flex;
             justify-content: space-between;
             align-items: center;
             color: white;
         }
-        .modal-header h3 { margin: 0; font-size: 18px; }
-        .close {
-            font-size: 24px;
-            font-weight: bold;
-            color: white;
-            cursor: pointer;
-            line-height: 1;
-            opacity: 0.8;
-        }
+        .modal-header h3 { margin: 0; font-size: 15px; }
+        .close { font-size: 20px; font-weight: bold; color: white; cursor: pointer; opacity: 0.8; }
         .close:hover { opacity: 1; }
-        .modal-body {
-            padding: 25px 20px;
-            font-size: 15px;
-            color: #444;
-        }
+        .modal-body { padding: 15px; font-size: 13px; color: #444; }
         .modal-body ul { padding-left: 20px; margin: 0; }
-        .modal-body li { margin-bottom: 12px; }
+        .modal-body li { margin-bottom: 8px; }
         
         .staff-section {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 20px;
-            margin-bottom: 30px;
-            padding: 15px;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 10px;
             border: 1px dashed var(--line-color);
-            border-radius: 10px;
+            border-radius: 8px;
         }
     </style>
 </head>
 <body>
 
+<div class="org-wrapper">
     <div class="org-chart">
         <!-- Nivel 1: Gerencia -->
         <div class="level">
-            <div class="branch" style="flex-direction: row; gap: 20px;">
+            <div class="branch" style="flex-direction: row; gap: 15px; align-items: flex-start;">
                 <div class="branch">
-                    <div class="node n-orange" style="font-size: 11px; padding: 5px;">Revisoría Fiscal</div>
+                    <div class="node n-orange" style="font-size: 10px; padding: 4px; width: 100px;">Revisoría Fiscal</div>
                     <div class="connector-v"></div>
-                    <div class="node n-grey">Contraloría<br>Delegada</div>
+                    <div class="node n-grey" style="width: 100px;">Contraloría<br>Delegada</div>
                 </div>
                 <div class="branch">
-                    <div class="node n-orange" style="font-size: 16px;">
+                    <div class="node n-orange node-large" style="font-size: 14px;">
                         Asamblea de Accionistas<br>Junta Directiva<br>
-                        <hr style="border:0; border-top:1px dashed #dcae85;">
-                        <strong style="font-size: 18px;">Gerencia General</strong>
+                        <hr style="border:0; border-top:1px dashed #dcae85; margin: 5px 0;">
+                        <strong style="font-size: 16px;">Gerencia General</strong>
                     </div>
                     <div class="connector-v"></div>
-                    <div class="node n-orange-solid">Agente Especial<br>Interventor</div>
+                    <div class="node n-orange-solid node-medium">Agente Especial<br>Interventor</div>
                 </div>
             </div>
         </div>
 
-        <div class="connector-v" style="height: 30px;"></div>
+        <div class="connector-v" style="height: 15px;"></div>
 
         <!-- Nivel 2: Staff -->
         <div class="level">
             <div class="staff-section">
-                <div class="node n-dark">Staff de Gerencia</div>
+                <div class="node n-dark node-medium">Staff de Gerencia</div>
                 <div class="row">
                     <div class="branch">
                         <div class="node n-dark">Secretaría General</div>
@@ -217,55 +225,55 @@
                         <div class="node n-dark interactive" data-title="Coordinación de Calidad y Planeación" data-sp="0" data-bi="0">Coordinación de<br>Calidad y Planeación</div>
                     </div>
                     <div class="branch">
-                        <div class="node n-yellow interactive" data-title="Jefatura de Defensa Judicial y Prev. del Daño" data-sp="11" data-bi="1">Jefatura de Defensa<br>Judicial y Prev. del Daño</div>
+                        <div class="node n-yellow interactive" data-title="Jefatura de Defensa Judicial" data-sp="11" data-bi="1">Jefatura de Defensa<br>Judicial y Prev. Daño</div>
                         <div class="node n-yellow interactive" data-title="Jefatura de Contratación" data-sp="0" data-bi="0">Jefatura de<br>Contratación</div>
-                        <div class="node n-dark interactive" data-title="Coordinación Jurídica y Gobierno Corporativo" data-sp="0" data-bi="0">Coordinación Jurídica y<br>Gobierno Corporativo</div>
+                        <div class="node n-dark interactive" data-title="Coordinación Jurídica" data-sp="0" data-bi="0">Coordinación Jurídica<br>y Gobierno Corp.</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="connector-v" style="height: 30px;"></div>
+        <div class="connector-v" style="height: 15px;"></div>
 
-        <!-- Nivel 3: Subgerencias -->
-        <div class="level" style="align-items: flex-start; border-top: 2px solid var(--line-color); padding-top: 20px; width: 90%; gap: 30px;">
+        <!-- Nivel 3: Subgerencias (Gran contenedor horizontal) -->
+        <div class="level" style="align-items: flex-start; border-top: 2px solid var(--line-color); padding-top: 15px; width: 100%; gap: 15px; justify-content: center;">
             
             <!-- Subgerencia Salud -->
-            <div class="branch" style="flex: 1;">
-                <div class="node n-dark">Subgerencia de Salud</div>
+            <div class="branch">
+                <div class="node n-dark node-medium">Subgerencia de Salud</div>
                 <div class="connector-v"></div>
                 <div class="row">
                     <div class="branch">
-                        <div class="node n-teal interactive" data-title="Dirección de Acceso a Servicios de Salud" data-sp="0" data-bi="0">Dirección de Acceso a<br>Servicios de Salud</div>
-                        <div class="node n-yellow interactive" data-title="Jefatura de Autorizaciones" data-sp="33" data-bi="2">Jefatura de Autorizaciones</div>
-                        <div class="node n-yellow interactive" data-title="Jefatura de Centro Regulador" data-sp="0" data-bi="3">Jefatura de Centro Regulador</div>
+                        <div class="node n-teal interactive" data-title="Dirección de Acceso a Servicios" data-sp="0" data-bi="0">Dirección de Acceso<br>a Servicios de Salud</div>
+                        <div class="node n-yellow interactive" data-title="Jefatura de Autorizaciones" data-sp="33" data-bi="2">Jefatura de<br>Autorizaciones</div>
+                        <div class="node n-yellow interactive" data-title="Jefatura de Centro Regulador" data-sp="0" data-bi="3">Jefatura de<br>Centro Regulador</div>
                         <div class="node n-yellow interactive" data-title="Jefatura de Auditoría Concurrente" data-sp="9" data-bi="5">Jefatura de Auditoría<br>Concurrente</div>
                     </div>
                     <div class="branch">
                         <div class="node n-teal interactive" data-title="Dirección de Riesgo en Salud" data-sp="19" data-bi="18">Dirección de Riesgo<br>en Salud</div>
-                        <div class="node n-yellow interactive" data-title="Jefatura de Adquisiciones" data-sp="0" data-bi="0">Jefatura de Adquisiciones</div>
-                        <div class="node n-yellow interactive" data-title="Jefatura de Apoyo a Regiones" data-sp="0" data-bi="0">Jefatura de Apoyo a Regiones</div>
+                        <div class="node n-yellow interactive" data-title="Jefatura de Adquisiciones" data-sp="0" data-bi="0">Jefatura de<br>Adquisiciones</div>
+                        <div class="node n-yellow interactive" data-title="Jefatura de Apoyo a Regiones" data-sp="0" data-bi="0">Jefatura de Apoyo<br>a Regiones</div>
                     </div>
                 </div>
                 <div class="connector-v"></div>
-                <div class="row" style="margin-top: 10px;">
-                    <div class="node n-dark interactive" data-title="Coord. Programas Especiales" data-sp="0" data-bi="0">Coord. Programas<br>Especiales</div>
-                    <div class="node n-dark interactive" data-title="Coord. de Epidemiología" data-sp="0" data-bi="0">Coord. de<br>Epidemiología</div>
-                    <div class="node n-dark interactive" data-title="Coord. de Salud Pública" data-sp="0" data-bi="0">Coord. de<br>Salud Pública</div>
-                    <div class="node n-dark interactive" data-title="Coord. de Alto Costo" data-sp="0" data-bi="0">Coord. de<br>Alto Costo</div>
+                <div class="row" style="margin-top: 5px;">
+                    <div class="node n-dark interactive" style="width: 85px;" data-title="Coord. Programas Especiales" data-sp="0" data-bi="0">Coord.<br>Prog. Especiales</div>
+                    <div class="node n-dark interactive" style="width: 85px;" data-title="Coord. de Epidemiología" data-sp="0" data-bi="0">Coord. de<br>Epidemiología</div>
+                    <div class="node n-dark interactive" style="width: 85px;" data-title="Coord. de Salud Pública" data-sp="0" data-bi="0">Coord. de<br>Salud Pública</div>
+                    <div class="node n-dark interactive" style="width: 85px;" data-title="Coord. de Alto Costo" data-sp="0" data-bi="0">Coord. de<br>Alto Costo</div>
                 </div>
             </div>
 
             <!-- Subgerencia Financiera -->
-            <div class="branch" style="flex: 1;">
-                <div class="node n-dark">Subgerencia Financiera</div>
+            <div class="branch">
+                <div class="node n-dark node-medium">Subgerencia Financiera</div>
                 <div class="connector-v"></div>
                 <div class="row">
                     <div class="branch">
-                        <div class="node n-teal interactive" data-title="Dirección de Contabilidad y Presupuesto" data-sp="0" data-bi="4">Dirección de Contabilidad<br>y Presupuesto</div>
+                        <div class="node n-teal interactive" data-title="Dirección de Contabilidad y Presupuesto" data-sp="0" data-bi="4">Dirección Contabilidad<br>y Presupuesto</div>
                     </div>
                     <div class="branch">
-                        <div class="node n-teal interactive" data-title="Dirección de Tesorería y Cartera" data-sp="0" data-bi="0">Dirección de Tesorería<br>y Cartera</div>
+                        <div class="node n-teal interactive" data-title="Dirección de Tesorería y Cartera" data-sp="0" data-bi="0">Dirección Tesorería<br>y Cartera</div>
                     </div>
                 </div>
                 <div class="connector-v"></div>
@@ -276,28 +284,29 @@
             </div>
 
             <!-- Subgerencia Administrativa -->
-            <div class="branch" style="flex: 1;">
-                <div class="node n-dark">Subgerencia Administrativa</div>
+            <div class="branch">
+                <div class="node n-dark node-medium">Subgerencia Administrativa</div>
                 <div class="connector-v"></div>
                 <div class="node n-teal interactive" data-title="Dirección de Tecnología e Información" data-sp="0" data-bi="2">Dirección de Tecnología<br>e Información</div>
                 <div class="connector-v"></div>
                 <div class="row">
-                    <div class="node n-yellow interactive" data-title="Jefatura Administrativa" data-sp="0" data-bi="2">Jefatura<br>Administrativa</div>
-                    <div class="node n-yellow interactive" data-title="Jefatura de Gestión Humana" data-sp="0" data-bi="0">Jefatura de<br>Gestión Humana</div>
-                    <div class="node n-yellow interactive" data-title="Jefatura Aseguramiento de Recursos" data-sp="6" data-bi="1">Jefatura Aseg.<br>de Recursos</div>
-                    <div class="node n-yellow interactive" data-title="Jefatura Aseguramiento de Operaciones" data-sp="6" data-bi="0">Jefatura Aseg.<br>de Operaciones</div>
+                    <div class="node n-yellow interactive" style="width: 90px;" data-title="Jefatura Administrativa" data-sp="0" data-bi="2">Jefatura<br>Administrativa</div>
+                    <div class="node n-yellow interactive" style="width: 90px;" data-title="Jefatura de Gestión Humana" data-sp="0" data-bi="0">Jefatura de<br>Gestión Humana</div>
+                    <div class="node n-yellow interactive" style="width: 90px;" data-title="Jefatura Aseguramiento de Recursos" data-sp="6" data-bi="1">Jefatura Aseg.<br>de Recursos</div>
+                    <div class="node n-yellow interactive" style="width: 90px;" data-title="Jefatura Aseguramiento de Operaciones" data-sp="6" data-bi="0">Jefatura Aseg.<br>de Operaciones</div>
                 </div>
                 <div class="connector-v"></div>
                 <div class="row">
-                    <div class="node n-dark interactive" data-title="Coord. de Software y Arquitectura" data-sp="0" data-bi="0">Coord. de Software<br>y Arquitectura</div>
-                    <div class="node n-dark interactive" data-title="Coord. de Soporte Tecnológico" data-sp="0" data-bi="1">Coord. de Soporte<br>Tecnológico</div>
-                    <div class="node n-dark interactive" data-title="Coord. Infraestructura y S.I." data-sp="0" data-bi="3">Coord. Infraestructura<br>y S.I.</div>
-                    <div class="node n-dark interactive" data-title="Coord. de Analítica y Ciencia del Dato" data-sp="0" data-bi="0" style="border: 2px solid #fff;">Coord. de Analítica y<br>Ciencia del Dato</div>
+                    <div class="node n-dark interactive" style="width: 90px;" data-title="Coord. de Software y Arquitectura" data-sp="0" data-bi="0">Coord. Software<br>y Arquitectura</div>
+                    <div class="node n-dark interactive" style="width: 90px;" data-title="Coord. de Soporte Tecnológico" data-sp="0" data-bi="1">Coord. Soporte<br>Tecnológico</div>
+                    <div class="node n-dark interactive" style="width: 90px;" data-title="Coord. Infraestructura y S.I." data-sp="0" data-bi="3">Coord. Infraest.<br>y S.I.</div>
+                    <div class="node n-dark interactive" style="width: 90px; border: 1px solid #fff;" data-title="Coord. de Analítica y Ciencia del Dato" data-sp="0" data-bi="0">Coord. Analítica<br>y Ciencia Dato</div>
                 </div>
             </div>
 
         </div>
     </div>
+</div>
 
     <!-- Modal Dinámico -->
     <div id="infoModal" class="modal">
@@ -320,34 +329,17 @@
         const modal = document.getElementById("infoModal");
         const span = document.getElementById("closeModal");
         
-        // Asignar el evento click a todos los nodos interactivos
         document.querySelectorAll('.interactive').forEach(node => {
             node.onclick = function() {
-                // Obtener datos del nodo
-                const title = this.getAttribute('data-title');
-                const spCount = this.getAttribute('data-sp');
-                const biCount = this.getAttribute('data-bi');
-                
-                // Actualizar el modal
-                document.getElementById('modalTitle').innerText = title;
-                document.getElementById('modalSP').innerText = spCount;
-                document.getElementById('modalBI').innerText = biCount;
-                
-                // Mostrar modal
+                document.getElementById('modalTitle').innerText = this.getAttribute('data-title');
+                document.getElementById('modalSP').innerText = this.getAttribute('data-sp');
+                document.getElementById('modalBI').innerText = this.getAttribute('data-bi');
                 modal.style.display = "block";
             }
         });
 
-        // Cerrar modal
-        span.onclick = function() {
-            modal.style.display = "none";
-        }
-
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
+        span.onclick = function() { modal.style.display = "none"; }
+        window.onclick = function(event) { if (event.target == modal) { modal.style.display = "none"; } }
     </script>
 
 </body>
