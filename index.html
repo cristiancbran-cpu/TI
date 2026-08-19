@@ -10,11 +10,15 @@
 
     <style>
         :root {
-            --dark-blue: rgb(36, 75, 90);
-            --teal: rgb(0, 169, 143);
-            --yellow: rgb(240, 236, 115);
-            --orange: rgb(237, 199, 162);
+            /* Colores solicitados */
+            --dark-blue: rgb(36, 75, 90);      /* Staff y Subgerencias */
+            --teal: rgb(0, 169, 143);          /* Direcciones */
+            --yellow: rgb(240, 236, 115);      /* Jefaturas */
+            --orange: rgb(237, 199, 162);      /* Gerencia */
+            
+            /* Coordinaciones: un azul oscuro más clarito (mezcla o ajuste visual) */
             --coord-blue: rgb(75, 115, 130);   
+            
             --orange-border: #dcae85;
             --grey: #e9ecef;
             --line-color: #8fa3ad;
@@ -51,6 +55,7 @@
         .header-logo img { height: 44px; margin-right: 14px; }
         .header-logo h2 { color: var(--dark-blue); margin: 0; font-size: 1.2rem; }
 
+        /* ---- Controles de zoom ---- */
         .zoom-controls {
             position: absolute;
             top: 14px;
@@ -74,6 +79,7 @@
         }
         .zoom-controls button:hover { background: var(--teal); color: #fff; }
 
+        /* ---- Área con scroll / pan ---- */
         .chart-viewport {
             width: 100%;
             height: 78vh;
@@ -95,6 +101,7 @@
             padding-bottom: 60px;
         }
 
+        /* Nodos compactos y legibles */
         .node {
             padding: 8px 10px;
             border-radius: 6px;
@@ -116,16 +123,31 @@
         .node-large { width: 180px; font-size: 13px; }
         .node-medium { width: 155px; font-size: 12px; }
 
+        /* Colores Aplicados según solicitud */
         .n-orange { background-color: var(--orange); color: #333; border: 2px solid var(--orange-border); }
         .n-dark { background-color: var(--dark-blue); color: white; border: 1px solid #1a3742; }
         .n-teal { background-color: var(--teal); color: white; border: 1px solid #008772; }
         .n-yellow { background-color: var(--yellow); color: #333; border: 1px solid #c9c55b; }
         .n-coord { background-color: var(--coord-blue); color: white; border: 1px solid #365b6b; } 
+        /* Oficial de cumplimiento lo dejamos en dark blue o coord para que no desencaje, pongamosle staff (dark) */
         .n-staff { background-color: var(--dark-blue); color: white; border: 1px dashed #fff; }
 
-        .branch { display: flex; flex-direction: column; align-items: center; position: relative; }
-        .row { display: flex; flex-direction: row; justify-content: center; align-items: flex-start; gap: 15px; }
+        .branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
 
+        .row {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        /* Agrupaciones de dependencias */
         .sub-group {
             display: flex;
             flex-direction: column;
@@ -148,6 +170,7 @@
 
         .connector-v { width: 2px; height: 16px; background-color: var(--line-color); z-index: 1; }
         
+        /* Línea horizontal que divide los 4 pilares */
         .level-split {
             position: relative;
             display: flex;
@@ -166,6 +189,7 @@
             background-color: var(--line-color);
         }
         
+        /* Puntos de colores para la leyenda y el modal */
         .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
         .d-inf { background-color: #4CAF50; }
         .d-nor { background-color: #F44336; }
@@ -195,7 +219,11 @@
             padding-bottom: 6px;
             text-align: center;
         }
-        .legend-box ul { list-style: none; padding: 0; margin: 0; }
+        .legend-box ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
         .legend-box li {
             margin-bottom: 8px;
             display: flex;
@@ -205,7 +233,12 @@
             color: #444;
         }
         .legend-box li:last-child { margin-bottom: 0; }
-        .legend-box .legend-label { display: flex; align-items: center; gap: 8px; font-weight: 500; }
+        .legend-box .legend-label { 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            font-weight: 500;
+        }
         .legend-box strong {
             background-color: #f0f2f5;
             padding: 2px 8px;
@@ -216,7 +249,7 @@
             text-align: center;
         }
 
-        /* ---- Modal Details ---- */
+        /* ---- Modal Details List ---- */
         .report-list {
             max-height: 350px;
             overflow-y: auto;
@@ -258,7 +291,7 @@
         .report-link:hover { text-decoration: underline; color: #0369a1; }
         .no-link { color: #94a3b8; font-style: italic; font-size: 11px; display: inline-block; margin-top: 4px;}
 
-        /* ---- Modal Structure ---- */
+        /* ---- Modal ---- */
         .modal {
             display: none;
             position: fixed;
@@ -314,7 +347,7 @@
     </div>
 
     <!-- Indicador de carga de Excel -->
-    <div id="loading-indicator">Leyendo Excel...</div>
+    <div id="loading-indicator">Cargando inventario desde Excel...</div>
 
     <div class="zoom-controls">
         <button id="zoomIn" title="Acercar">+</button>
@@ -429,8 +462,8 @@
                             </div>
 
                             <div class="branch" style="gap: 8px;">
-                                <div class="node n-yellow interactive" data-title="Cuentas Médicas">Jefatura<br>Cuentas Médicas</div>
-                                <div class="node n-yellow interactive" data-title="Atención Al Usuario">Jefatura<br>Atención al Usuario</div>
+                                <div class="node n-yellow interactive" data-title="Cuentas médicas">Jefatura<br>Cuentas Médicas</div>
+                                <div class="node n-yellow interactive" data-title="Atención al usuario">Jefatura<br>Atención al Usuario</div>
                             </div>
                         </div>
                     </div>
@@ -439,7 +472,7 @@
                 <!-- ================== 1.3 SUBGERENCIA FINANCIERA ================== -->
                 <div class="branch">
                     <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
-                    <div class="node n-dark node-medium interactive" data-title="Subgerencia Financiera">Subgerencia<br>Financiera</div>
+                    <div class="node n-dark node-medium interactive" data-title="Subgerencia financiera">Subgerencia<br>Financiera</div>
                     <div class="connector-v" style="height: 15px;"></div>
 
                     <div class="branch" style="gap: 15px;">
@@ -456,7 +489,7 @@
 
                     <div class="row" style="gap: 15px;">
                         <div class="branch">
-                            <div class="node n-teal interactive" data-title="Direccion De Tecnologia">Dirección<br>Tecnología</div>
+                            <div class="node n-teal interactive" data-title="Direccion de tecnologia">Dirección<br>Tecnología</div>
                             <div class="connector-v" style="height: 10px;"></div>
                             <div class="sub-group">
                                 <div class="node n-coord interactive" data-title="Coordinación de Software">Coord. Software</div>
@@ -467,8 +500,9 @@
                         </div>
 
                         <div class="branch" style="gap: 8px;">
-                            <div class="node n-yellow interactive" data-title="Jefatura de Gestión Humana">Jefatura<br>Gestión Humana</div>
-                            <div class="node n-yellow interactive" data-title="Administrativa">Jefatura<br>Administrativa</div>
+                            <!-- MODIFICADO DE ACUERDO A TU IMAGEN DEL EXCEL -->
+                            <div class="node n-yellow interactive" data-title="Gestion humana">Jefatura<br>Gestión Humana</div>
+                            <div class="node n-yellow interactive" data-title="Jefatura Administrativa">Jefatura<br>Administrativa</div>
                             <div class="node n-yellow interactive" data-title="Aseguramiento">Jef. Aseguramiento<br>Recursos y Op.</div>
                         </div>
 
@@ -592,7 +626,7 @@
 
         } catch (error) {
             console.error("Error cargando Excel:", error);
-            loading.innerText = "Error cargando datos. (Falta archivo)";
+            loading.innerText = "Error cargando datos. (Falta archivo INVENTARIO_TABLEROS.xlsx)";
             setTimeout(() => loading.style.display = "none", 3000);
         }
     }
