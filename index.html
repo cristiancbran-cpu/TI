@@ -6,10 +6,15 @@
     <title>Organigrama Savia Salud EPS</title>
     <style>
         :root {
-            --dark-blue: rgb(36, 75, 90);
-            --teal: rgb(0, 169, 143);
-            --yellow: rgb(240, 236, 115);
-            --orange: rgb(237, 199, 162);
+            /* Colores solicitados */
+            --dark-blue: rgb(36, 75, 90);      /* Staff y Subgerencias */
+            --teal: rgb(0, 169, 143);          /* Direcciones */
+            --yellow: rgb(240, 236, 115);      /* Jefaturas */
+            --orange: rgb(237, 199, 162);      /* Gerencia */
+            
+            /* Coordinaciones: un azul oscuro más clarito (mezcla o ajuste visual) */
+            --coord-blue: rgb(75, 115, 130);   
+            
             --orange-border: #dcae85;
             --grey: #e9ecef;
             --line-color: #8fa3ad;
@@ -114,12 +119,14 @@
         .node-large { width: 180px; font-size: 13px; }
         .node-medium { width: 155px; font-size: 12px; }
 
-        /* Colores */
-        .n-orange { background-color: var(--orange); color: #333; border: 2px dashed var(--orange-border); }
+        /* Colores Aplicados según solicitud */
+        .n-orange { background-color: var(--orange); color: #333; border: 2px solid var(--orange-border); }
+        .n-dark { background-color: var(--dark-blue); color: white; border: 1px solid #1a3742; }
         .n-teal { background-color: var(--teal); color: white; border: 1px solid #008772; }
         .n-yellow { background-color: var(--yellow); color: #333; border: 1px solid #c9c55b; }
-        .n-dark { background-color: var(--dark-blue); color: white; border: 1px solid #1a3742; }
-        .n-grey { background-color: var(--grey); color: #333; border: 1px solid #ccc; }
+        .n-coord { background-color: var(--coord-blue); color: white; border: 1px solid #365b6b; } 
+        /* Oficial de cumplimiento lo dejamos en dark blue o coord para que no desencaje, pongamosle staff (dark) */
+        .n-staff { background-color: var(--dark-blue); color: white; border: 1px dashed #fff; }
 
         .branch {
             display: flex;
@@ -136,7 +143,7 @@
             gap: 15px;
         }
 
-        /* Agrupaciones de dependencias (para que no se expanda horizontalmente) */
+        /* Agrupaciones de dependencias */
         .sub-group {
             display: flex;
             flex-direction: column;
@@ -232,7 +239,7 @@
             
             <!-- RAIZ: 1.0 GERENCIA GENERAL -->
             <div class="branch">
-                <div class="node n-orange node-large interactive" data-title="Gerencia General" style="font-weight: 700;">Gerencia General</div>
+                <div class="node n-orange node-large interactive" data-title="Gerencia General" style="font-weight: 700;">1.0 Gerencia General</div>
                 <div class="connector-v" style="height: 25px;"></div>
             </div>
 
@@ -242,14 +249,17 @@
                 <!-- ================== 1.1 STAFF GERENCIA ================== -->
                 <div class="branch">
                     <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
-                    <div class="node n-dark node-medium interactive" data-title="Staff Gerencia">Staff Gerencia</div>
+                    <!-- Staff es dark-blue -->
+                    <div class="node n-dark node-medium interactive" data-title="Staff Gerencia">1.1 Staff Gerencia</div>
                     <div class="connector-v" style="height: 15px;"></div>
                     
                     <div class="row" style="gap: 15px;">
                         <!-- Bloque 1: Dependencias directas sueltas -->
                         <div class="branch" style="gap: 8px;">
-                            <div class="node n-grey interactive" data-title="Oficial de Cumplimiento">Oficial Cumplimiento</div>
+                            <div class="node n-staff interactive" data-title="Oficial de Cumplimiento">Oficial Cumplimiento</div>
+                            <!-- Jefaturas yellow -->
                             <div class="node n-yellow interactive" data-title="Jefatura de Comunicaciones">Jefatura<br>Comunicaciones</div>
+                            <!-- Direcciones teal -->
                             <div class="node n-teal interactive" data-title="Dirección Auditoría Interna" data-bi="3">Dirección<br>Auditoría Interna</div>
                         </div>
 
@@ -259,7 +269,8 @@
                                 <div class="node n-teal interactive" data-title="Dirección Calidad y Planeación">Dirección Calidad<br>y Planeación</div>
                                 <div class="connector-v" style="height: 10px;"></div>
                                 <div class="sub-group">
-                                    <div class="node n-dark interactive" data-title="Coordinación Calidad y Planeación">Coord. Calidad<br>y Planeación</div>
+                                    <!-- Coordinaciones coord-blue -->
+                                    <div class="node n-coord interactive" data-title="Coordinación Calidad y Planeación">Coord. Calidad<br>y Planeación</div>
                                 </div>
                             </div>
 
@@ -267,9 +278,9 @@
                                 <div class="node n-teal interactive" data-title="Secretaría General" data-informes="11" data-normativos="4" data-bi="1">Secretaría General</div>
                                 <div class="connector-v" style="height: 10px;"></div>
                                 <div class="sub-group">
-                                    <div class="node n-yellow interactive" data-title="Jefatura Defensa Judicial">Jefatura Judicial</div>
-                                    <div class="node n-yellow interactive" data-title="Jefatura de Contratación" data-informes="9" data-normativos="1" data-bi="1">Jefatura<br>Contratación</div>
-                                    <div class="node n-dark interactive" data-title="Coordinación Jurídica">Coord. Jurídica</div>
+                                    <div class="node n-yellow interactive" data-title="Jefatura Judicial">Jefatura Judicial</div>
+                                    <div class="node n-yellow interactive" data-title="Jefatura de Contratación" data-informes="9" data-normativos="0" data-bi="1">Jefatura<br>Contratación</div>
+                                    <div class="node n-coord interactive" data-title="Coordinación Jurídica">Coord. Jurídica</div>
                                 </div>
                             </div>
                         </div>
@@ -279,22 +290,22 @@
                 <!-- ================== 1.2 SUBGERENCIA DE SALUD ================== -->
                 <div class="branch">
                     <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
-                    <div class="node n-dark node-medium interactive" data-title="Subgerencia de Salud">Subgerencia de Salud</div>
+                    <div class="node n-dark node-medium interactive" data-title="Subgerencia de Salud">1.2 Subgerencia de Salud</div>
                     <div class="connector-v" style="height: 15px;"></div>
 
                     <div class="row" style="gap: 15px;">
                         
                         <!-- Columna Izq: Dir. Acceso a Servicios -->
                         <div class="branch">
-                            <div class="node n-teal interactive" data-title="Dirección de Acceso a Servicios" data-informes="12" data-bi="6">Dirección Acceso<br>a Servicios</div>
+                            <div class="node n-teal interactive" data-title="Dirección de Acceso a Servicios" data-informes="12" data-bi="6" data-tablero="4">Dirección Acceso<br>a Servicios</div>
                             <div class="connector-v" style="height: 10px;"></div>
                             <div class="sub-group">
                                 <div class="node n-yellow interactive" data-title="Jefatura de Autorizaciones" data-informes="33" data-bi="2">Jef. Autorizaciones</div>
-                                <div class="node n-yellow interactive" data-title="Jefatura de Centro Regulador" data-informes="7" data-normativos="2" data-bi="4">Centro Regulador</div>
-                                <div class="node n-yellow interactive" data-title="Jefatura de Auditoría Concurrente" data-informes="9" data-bi="5">Auditoría<br>Concurrente</div>
-                                <div class="node n-yellow interactive" data-title="Jefatura de Apoyo a Regiones">Apoyo a Regiones</div>
-                                <div class="node n-yellow interactive" data-title="Jefatura de Adquisiciones">Adquisiciones</div>
-                                <div class="node n-dark interactive" data-title="Coordinación de Programas Especiales" data-bi="6">Prog. Especiales</div>
+                                <div class="node n-yellow interactive" data-title="Centro Regulador" data-informes="7" data-normativos="2" data-bi="4">Centro Regulador</div>
+                                <div class="node n-yellow interactive" data-title="Auditoría Concurrente" data-informes="9" data-bi="5" data-tablero="1">Auditoría<br>Concurrente</div>
+                                <div class="node n-yellow interactive" data-title="Apoyo a Regiones">Apoyo a Regiones</div>
+                                <div class="node n-yellow interactive" data-title="Adquisiciones" data-normativos="1" data-bi="4">Adquisiciones</div>
+                                <div class="node n-coord interactive" data-title="Programas Especiales" data-tablero="1">Prog. Especiales</div>
                             </div>
                         </div>
 
@@ -303,12 +314,12 @@
                             
                             <!-- Riesgo en Salud -->
                             <div class="branch">
-                                <div class="node n-teal interactive" data-title="Dirección de Riesgo en Salud" data-informes="20" data-normativos="5" data-bi="19">Dirección Riesgo<br>en Salud</div>
+                                <div class="node n-teal interactive" data-title="Dirección de Riesgo en Salud" data-informes="20" data-normativos="5" data-bi="20" data-tablero="2">Dirección Riesgo<br>en Salud</div>
                                 <div class="connector-v" style="height: 10px;"></div>
                                 <div class="sub-group">
-                                    <div class="node n-dark interactive" data-title="Coordinación de Epidemiología">Epidemiología</div>
-                                    <div class="node n-dark interactive" data-title="Coordinación de Salud Pública">Salud Pública</div>
-                                    <div class="node n-dark interactive" data-title="Coordinación de Alto Costo" data-bi="11">Alto Costo</div>
+                                    <div class="node n-coord interactive" data-title="Epidemiología">Epidemiología</div>
+                                    <div class="node n-coord interactive" data-title="Salud Pública">Salud Pública</div>
+                                    <div class="node n-coord interactive" data-title="Alto Costo" data-tablero="14">Alto Costo</div>
                                 </div>
                             </div>
 
@@ -325,7 +336,7 @@
                 <!-- ================== 1.3 SUBGERENCIA FINANCIERA ================== -->
                 <div class="branch">
                     <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
-                    <div class="node n-dark node-medium interactive" data-title="Subgerencia Financiera">Subgerencia<br>Financiera</div>
+                    <div class="node n-dark node-medium interactive" data-title="Subgerencia Financiera" data-normativos="1">1.3 Subgerencia<br>Financiera</div>
                     <div class="connector-v" style="height: 15px;"></div>
 
                     <div class="branch" style="gap: 15px;">
@@ -337,7 +348,7 @@
                 <!-- ================== 1.4 SUBGERENCIA ADMINISTRATIVA ================== -->
                 <div class="branch">
                     <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
-                    <div class="node n-dark node-medium interactive" data-title="Subgerencia Administrativa">Subgerencia<br>Administrativa</div>
+                    <div class="node n-dark node-medium interactive" data-title="Subgerencia Administrativa">1.4 Subgerencia<br>Administrativa</div>
                     <div class="connector-v" style="height: 15px;"></div>
 
                     <div class="row" style="gap: 15px;">
@@ -347,10 +358,9 @@
                             <div class="node n-teal interactive" data-title="Dirección de Tecnología" data-bi="1">Dirección<br>Tecnología</div>
                             <div class="connector-v" style="height: 10px;"></div>
                             <div class="sub-group">
-                                <div class="node n-dark interactive" data-title="Coordinación de Software">Coord. Software</div>
-                                <div class="node n-dark interactive" data-title="Coordinación de Infraestructura" data-bi="3">Coord. Infraestructura</div>
-                                <div class="node n-dark interactive" data-title="Coordinación Analítica" data-bi="11">Coord. Analítica</div>
-                                <div class="node n-dark interactive" data-title="Coordinación Soporte Tecnológico" data-bi="2">Coord. Soporte<br>Tecnológico</div>
+                                <div class="node n-coord interactive" data-title="Coordinación de Software">Coord. Software</div>
+                                <div class="node n-coord interactive" data-title="Coordinación Analítica" data-bi="11" data-tablero="9">Coord. Analítica</div>
+                                <div class="node n-coord interactive" data-title="Coordinación Soporte Tecnológico" data-bi="2" data-tablero="2">Coord. Soporte<br>Tecnológico</div>
                             </div>
                         </div>
 
@@ -358,6 +368,7 @@
                         <div class="branch" style="gap: 8px;">
                             <div class="node n-yellow interactive" data-title="Jefatura de Gestión Humana">Jefatura<br>Gestión Humana</div>
                             <div class="node n-yellow interactive" data-title="Jefatura Administrativa" data-bi="2">Jefatura<br>Administrativa</div>
+                            <!-- 'Aseguramiento' from excel -> 12 informes, 1 BI -->
                             <div class="node n-yellow interactive" data-title="Jefatura Aseguramiento de Recursos y Operaciones" data-informes="12" data-bi="1">Jef. Aseguramiento<br>Recursos y Op.</div>
                         </div>
 
@@ -383,6 +394,7 @@
                 <li>Tiene <strong id="modalInformes">0</strong> Informes de Conexiones.</li>
                 <li>Tiene <strong id="modalNormativos">0</strong> Informes de Normatividad.</li>
                 <li>Tiene <strong id="modalBI">0</strong> Tableros de Power BI.</li>
+                <li>Tiene <strong id="modalTableros">0</strong> Tableros Internos.</li>
             </ul>
             <p class="modal-sync-note" id="modalSync">Datos cargados por la Coordinación de Analitica.</p>
         </div>
@@ -401,6 +413,8 @@
             document.getElementById("modalInformes").innerText = node.getAttribute("data-informes") || "0";
             document.getElementById("modalNormativos").innerText = node.getAttribute("data-normativos") || "0";
             document.getElementById("modalBI").innerText = node.getAttribute("data-bi") || "0";
+            document.getElementById("modalTableros").innerText = node.getAttribute("data-tablero") || "0";
+            
             document.getElementById("modalSync").innerText = node.getAttribute("data-source")
                 ? "Fuente: " + node.getAttribute("data-source") + "."
                 : "Sin registros en el inventario todavía.";
