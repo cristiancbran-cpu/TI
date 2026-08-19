@@ -121,6 +121,7 @@
         .node-large { width: 180px; font-size: 13px; }
         .node-medium { width: 155px; font-size: 12px; }
 
+        /* Colores de las clases */
         .n-orange { background-color: var(--orange); color: #333; border: 2px solid var(--orange-border); }
         .n-dark { background-color: var(--dark-blue); color: white; border: 1px solid #1a3742; }
         .n-teal { background-color: var(--teal); color: white; border: 1px solid #008772; }
@@ -153,6 +154,7 @@
 
         .connector-v { width: 2px; height: 16px; background-color: var(--line-color); z-index: 1; }
         
+        /* Línea horizontal principal que divide las gerencias */
         .level-split {
             position: relative;
             display: flex;
@@ -171,7 +173,8 @@
             background-color: var(--line-color);
         }
         
-        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+        /* Semáforo de colores para la leyenda y el modal */
+        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0;}
         .d-inf { background-color: #4CAF50; }
         .d-nor { background-color: #F44336; }
         .d-tbi { background-color: #2196F3; }
@@ -221,49 +224,79 @@
             text-align: center;
         }
 
-        /* ---- Lista Modal ---- */
+        /* ---- Estilos de la lista dentro del Modal ---- */
         .report-list {
-            max-height: 350px;
+            max-height: 380px;
             overflow-y: auto;
             margin-top: 15px;
-            border-top: 1px solid var(--grey);
-            padding-top: 10px;
             padding-right: 5px;
         }
         .report-list::-webkit-scrollbar { width: 6px; }
         .report-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         .report-item {
-            padding: 10px 0;
+            padding: 14px 0;
             border-bottom: 1px dashed #cbd5e1;
-            font-size: 12px;
+            font-size: 13px;
             display: flex;
             flex-direction: column;
             align-items: flex-start;
         }
         .report-item:last-child { border-bottom: none; }
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            align-items: center;
+        }
         .report-badge {
             display: inline-block;
-            padding: 3px 6px;
+            padding: 4px 8px;
             border-radius: 4px;
             font-size: 10px;
             font-weight: bold;
             color: white;
-            margin-bottom: 4px;
+            text-transform: uppercase;
         }
-        .report-title { font-weight: 600; color: var(--dark-blue); margin: 4px 0; }
-        .report-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            margin-top: 4px;
-            color: #0284c7;
+        .btn-enlace {
+            background-color: #f1f5f9;
+            color: #0369a1;
+            border: 1px solid #cbd5e1;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
             text-decoration: none;
-            font-weight: 600;
+            transition: all 0.2s;
         }
-        .report-link:hover { text-decoration: underline; color: #0369a1; }
-        .no-link { color: #94a3b8; font-style: italic; font-size: 11px; display: inline-block; margin-top: 4px;}
+        .btn-enlace:hover { background-color: #e2e8f0; color: #0284c7; }
+        .no-link { color: #94a3b8; font-style: italic; font-size: 11px; }
+        
+        .report-title { 
+            font-weight: 700; 
+            color: var(--dark-blue); 
+            margin: 8px 0 4px 0; 
+            font-size: 14px; 
+            line-height: 1.3; 
+        }
+        
+        /* Detalles condicionales (Programado, Fechas) */
+        .report-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 11px;
+            color: #475569;
+            background: #f8fafc;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-top: 6px;
+            border: 1px solid #e2e8f0;
+            width: 100%;
+        }
+        .report-meta span { display: inline-flex; align-items: center; }
+        .report-meta strong { margin-right: 5px; color: #1e293b; }
 
-        /* ---- Modal ---- */
+        /* ---- Modal Global ---- */
         .modal {
             display: none;
             position: fixed;
@@ -277,22 +310,53 @@
             margin: 5% auto;
             border-radius: 10px;
             width: 95%;
-            max-width: 550px;
+            max-width: 650px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
         .modal-header {
             background-color: var(--teal);
-            padding: 12px 15px;
+            padding: 14px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             color: white;
         }
-        .modal-header h3 { margin: 0; font-size: 15px; }
-        .close { font-size: 20px; font-weight: bold; color: white; cursor: pointer; opacity: 0.8; }
+        .modal-header h3 { margin: 0; font-size: 16px; font-weight: 700;}
+        .close { font-size: 24px; font-weight: bold; color: white; cursor: pointer; opacity: 0.8; line-height: 1;}
         .close:hover { opacity: 1; }
-        .modal-body { padding: 15px; font-size: 13px; color: #444; }
+        .modal-body { padding: 20px; }
+        
+        /* Grid de Resumen Profesional en Modal */
+        .modal-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 10px;
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--grey);
+            margin-bottom: 15px;
+        }
+        .summary-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .summary-item .s-text {
+            display: flex;
+            flex-direction: column;
+            font-size: 11px;
+            color: #555;
+            line-height: 1.2;
+        }
+        .summary-item strong {
+            font-size: 15px;
+            color: var(--dark-blue);
+            font-weight: 700;
+        }
         
         /* Indicador de carga */
         #loading-indicator {
@@ -355,7 +419,6 @@
     </div>
 
     <div class="chart-viewport" id="chartViewport">
-
         <div class="org-chart" id="orgChart">
             
             <!-- RAIZ: 1.0 GERENCIA GENERAL -->
@@ -375,9 +438,9 @@
                     
                     <div class="row" style="gap: 15px;">
                         <div class="branch" style="gap: 8px;">
-                            <div class="node n-staff interactive" data-title="Oficial de Cumplimiento">Oficial Cumplimiento</div>
-                            <div class="node n-yellow interactive" data-title="Jefatura de Comunicaciones">Jefatura<br>Comunicaciones</div>
-                            <div class="node n-teal interactive" data-title="Dirección Auditoría Interna">Dirección<br>Auditoría Interna</div>
+                            <div class="node n-staff interactive" data-title="Oficial Cumplimiento">Oficial Cumplimiento</div>
+                            <div class="node n-yellow interactive" data-title="Comunicaciones">Jefatura<br>Comunicaciones</div>
+                            <div class="node n-teal interactive" data-title="Auditoria Interna">Dirección<br>Auditoría Interna</div>
                         </div>
 
                         <div class="branch" style="gap: 15px;">
@@ -385,7 +448,7 @@
                                 <div class="node n-teal interactive" data-title="Dirección Calidad y Planeación">Dirección Calidad<br>y Planeación</div>
                                 <div class="connector-v" style="height: 10px;"></div>
                                 <div class="sub-group">
-                                    <div class="node n-coord interactive" data-title="Coordinación Calidad y Planeación">Coord. Calidad<br>y Planeación</div>
+                                    <div class="node n-coord interactive" data-title="Dirección Calidad y Planeación">Coord. Calidad<br>y Planeación</div>
                                 </div>
                             </div>
 
@@ -394,8 +457,8 @@
                                 <div class="connector-v" style="height: 10px;"></div>
                                 <div class="sub-group">
                                     <div class="node n-yellow interactive" data-title="Jefatura Judicial">Jefatura Judicial</div>
-                                    <div class="node n-yellow interactive" data-title="Jefatura Contratación">Jefatura<br>Contratación</div>
-                                    <div class="node n-coord interactive" data-title="Coordinación Jurídica">Coord. Jurídica</div>
+                                    <div class="node n-yellow interactive" data-title="Contratacion">Jefatura<br>Contratación</div>
+                                    <div class="node n-coord interactive" data-title="Coord. Juridica">Coord. Jurídica</div>
                                 </div>
                             </div>
                         </div>
@@ -411,32 +474,32 @@
                     <div class="row" style="gap: 15px;">
                         
                         <div class="branch">
-                            <div class="node n-teal interactive" data-title="Dirección Acceso a Servicios">Dirección Acceso<br>a Servicios</div>
+                            <div class="node n-teal interactive" data-title="Direccion de accesos">Dirección Acceso<br>a Servicios</div>
                             <div class="connector-v" style="height: 10px;"></div>
                             <div class="sub-group">
-                                <div class="node n-yellow interactive" data-title="Jefatura Autorizaciones">Jef. Autorizaciones</div>
-                                <div class="node n-yellow interactive" data-title="Jefatura Centro Regulador">Centro Regulador</div>
-                                <div class="node n-yellow interactive" data-title="Jefatura Auditoría Concurrente">Auditoría<br>Concurrente</div>
+                                <div class="node n-yellow interactive" data-title="Autorizaciones">Jef. Autorizaciones</div>
+                                <div class="node n-yellow interactive" data-title="Centro Regulador">Centro Regulador</div>
+                                <div class="node n-yellow interactive" data-title="Auditoria Concurrente">Auditoría<br>Concurrente</div>
                                 <div class="node n-yellow interactive" data-title="Apoyo a Regiones">Apoyo a Regiones</div>
-                                <div class="node n-yellow interactive" data-title="Jefatura Adquisiciones">Adquisiciones</div>
-                                <div class="node n-coord interactive" data-title="Programas Especiales">Prog. Especiales</div>
+                                <div class="node n-yellow interactive" data-title="Adquisiciones">Adquisiciones</div>
+                                <div class="node n-coord interactive" data-title="Programas especiales">Prog. Especiales</div>
                             </div>
                         </div>
 
                         <div class="branch" style="gap: 15px;">
                             <div class="branch">
-                                <div class="node n-teal interactive" data-title="Dirección Riesgo en Salud">Dirección Riesgo<br>en Salud</div>
+                                <div class="node n-teal interactive" data-title="Gestión del riesgo">Dirección Riesgo<br>en Salud</div>
                                 <div class="connector-v" style="height: 10px;"></div>
                                 <div class="sub-group">
-                                    <div class="node n-coord interactive" data-title="Epidemiología">Epidemiología</div>
-                                    <div class="node n-coord interactive" data-title="Salud Pública">Salud Pública</div>
+                                    <div class="node n-coord interactive" data-title="Epidemiologia">Epidemiología</div>
+                                    <div class="node n-coord interactive" data-title="Salud Publica">Salud Pública</div>
                                     <div class="node n-coord interactive" data-title="Alto Costo">Alto Costo</div>
                                 </div>
                             </div>
 
                             <div class="branch" style="gap: 8px;">
-                                <div class="node n-yellow interactive" data-title="Jefatura Cuentas médicas">Jefatura<br>Cuentas Médicas</div>
-                                <div class="node n-yellow interactive" data-title="Jefatura Atención al usuario">Jefatura<br>Atención al Usuario</div>
+                                <div class="node n-yellow interactive" data-title="Cuentas médicas">Jefatura<br>Cuentas Médicas</div>
+                                <div class="node n-yellow interactive" data-title="Atención al usuario">Jefatura<br>Atención al Usuario</div>
                             </div>
                         </div>
                     </div>
@@ -445,37 +508,37 @@
                 <!-- ================== 1.3 SUBGERENCIA FINANCIERA ================== -->
                 <div class="branch">
                     <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
-                    <div class="node n-dark node-medium interactive" data-title="Subgerencia Financiera">Subgerencia<br>Financiera</div>
+                    <div class="node n-dark node-medium interactive" data-title="Subgerencia financiera">Subgerencia<br>Financiera</div>
                     <div class="connector-v" style="height: 15px;"></div>
 
                     <div class="branch" style="gap: 15px;">
-                        <div class="node n-teal interactive" data-title="Direccion Contabilidad y Presupuesto">Dirección<br>Contabilidad</div>
-                        <div class="node n-teal interactive" data-title="Dirección Tesorería y cartera">Dirección<br>Tesorería y Cartera</div>
+                        <div class="node n-teal interactive" data-title="Contabilidad">Dirección<br>Contabilidad</div>
+                        <div class="node n-teal interactive" data-title="Tesoreria y cartera">Dirección<br>Tesorería y Cartera</div>
                     </div>
                 </div>
 
                 <!-- ================== 1.4 SUBGERENCIA ADMINISTRATIVA ================== -->
                 <div class="branch">
                     <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
-                    <div class="node n-dark node-medium interactive" data-title="Subgerencia Administrativa">Subgerencia<br>Administrativa</div>
+                    <div class="node n-dark node-medium interactive" data-title="Administrativa">Subgerencia<br>Administrativa</div>
                     <div class="connector-v" style="height: 15px;"></div>
 
                     <div class="row" style="gap: 15px;">
                         <div class="branch">
-                            <div class="node n-teal interactive" data-title="Dirección de tecnología y seguridad informática">Dirección<br>Tecnología</div>
+                            <div class="node n-teal interactive" data-title="Direccion de tecnologia">Dirección<br>Tecnología</div>
                             <div class="connector-v" style="height: 10px;"></div>
                             <div class="sub-group">
                                 <div class="node n-coord interactive" data-title="Coord. Software">Coord. Software</div>
-                                <div class="node n-coord interactive" data-title="Coordinación de Infraestructura">Coord. Infraestructura</div>
-                                <div class="node n-coord interactive" data-title="Coordinación Analítica y ciencia del dato">Coord. Analítica</div>
-                                <div class="node n-coord interactive" data-title="Coordinación Soporte Tecnológico">Coord. Soporte<br>Tecnológico</div>
+                                <div class="node n-coord interactive" data-title="Infraestructura">Coord. Infraestructura</div>
+                                <div class="node n-coord interactive" data-title="Analitica y ciencia del dato">Coord. Analítica</div>
+                                <div class="node n-coord interactive" data-title="Soporte tecnologico">Coord. Soporte<br>Tecnológico</div>
                             </div>
                         </div>
 
                         <div class="branch" style="gap: 8px;">
-                            <div class="node n-yellow interactive" data-title="Jefatura Gestión humana">Jefatura<br>Gestión Humana</div>
-                            <div class="node n-yellow interactive" data-title="Jefatura Administrativa">Jefatura<br>Administrativa</div>
-                            <div class="node n-yellow interactive" data-title="Jefatura Aseguramiento">Jef. Aseguramiento<br>Recursos y Op.</div>
+                            <div class="node n-yellow interactive" data-title="Gestion humana">Jefatura<br>Gestión Humana</div>
+                            <div class="node n-yellow interactive" data-title="Administrativa">Jefatura<br>Administrativa</div>
+                            <div class="node n-yellow interactive" data-title="Aseguramiento">Jef. Aseguramiento<br>Recursos y Op.</div>
                         </div>
 
                     </div>
@@ -487,7 +550,7 @@
     </div>
 </div>
 
-<!-- Modal Dinámico -->
+<!-- Modal Dinámico Rediseñado -->
 <div id="infoModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -495,21 +558,21 @@
             <span class="close" id="closeModal">&times;</span>
         </div>
         <div class="modal-body">
-            <div style="display: flex; gap: 15px; font-size: 12px; flex-wrap: wrap; background: #f8f9fa; padding: 10px; border-radius: 6px; border: 1px solid var(--grey);">
-                <div><span class="dot d-inf"></span> Conexiones: <strong id="modalInformes">0</strong></div>
-                <div><span class="dot d-nor"></span> Normativos: <strong id="modalNormativos">0</strong></div>
-                <div><span class="dot d-tbi"></span> Power BI: <strong id="modalBI">0</strong></div>
-                <div><span class="dot d-tin"></span> Tab. Internos: <strong id="modalTableros">0</strong></div>
-                <div><span class="dot d-iin"></span> Inf. Internos: <strong id="modalInternos">0</strong></div>
+            
+            <!-- Resumen Profesional en Grilla -->
+            <div class="modal-summary">
+                <div class="summary-item"><span class="dot d-inf"></span><div class="s-text">Inf. Conexiones<strong id="modalInformes">0</strong></div></div>
+                <div class="summary-item"><span class="dot d-nor"></span><div class="s-text">Inf. Normativos<strong id="modalNormativos">0</strong></div></div>
+                <div class="summary-item"><span class="dot d-iin"></span><div class="s-text">Inf. Internos<strong id="modalInternos">0</strong></div></div>
+                <div class="summary-item"><span class="dot d-tbi"></span><div class="s-text">Tableros BI<strong id="modalBI">0</strong></div></div>
+                <div class="summary-item"><span class="dot d-tin"></span><div class="s-text">Tab. Internos<strong id="modalTableros">0</strong></div></div>
             </div>
             
+            <!-- Lista de Reportes -->
             <div class="report-list" id="modalReportList">
-                <!-- Se inyecta con JS -->
+                <!-- Se inyecta con JS tras leer el Excel -->
             </div>
             
-            <p style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; font-size: 11px; color: #888;">
-                Datos extraídos automáticamente de <b>INVENTARIO_TABLEROS.xlsx</b>
-            </p>
         </div>
     </div>
 </div>
@@ -517,9 +580,6 @@
 <script>
     // Variables globales
     let reportesPorArea = {};
-    
-    // IMPORTANTE: Este es el archivo que va a leer tu proyecto.
-    // Agregar un timestamp evita que GitHub/Vercel usen la caché vieja.
     const EXCEL_FILE_URL = "INVENTARIO_TABLEROS.xlsx?t=" + new Date().getTime();
 
     async function cargarExcel() {
@@ -529,14 +589,12 @@
         try {
             const response = await fetch(EXCEL_FILE_URL);
             
-            if (!response.ok) {
-                throw new Error("No se pudo cargar el archivo Excel.");
-            }
+            if (!response.ok) throw new Error("No se pudo cargar el archivo Excel.");
             
             const arrayBuffer = await response.arrayBuffer();
             const workbook = XLSX.read(arrayBuffer, { type: "array" });
 
-            // 1. Extraer enlaces de la hoja BI si existe
+            // 1. Extraer enlaces de BI
             const biLinks = {};
             if (workbook.Sheets["BI"]) {
                 const dataBI = XLSX.utils.sheet_to_json(workbook.Sheets["BI"]);
@@ -547,12 +605,9 @@
                 });
             }
 
-            // 2. Procesar hoja SP principal
-            if (!workbook.Sheets["SP"]) {
-                throw new Error("La hoja 'SP' no existe en el Excel.");
-            }
-            
-            const dataSP = XLSX.utils.sheet_to_json(workbook.Sheets["SP"]);
+            // 2. Procesar hoja SP principal (Forzamos raw: false para leer fechas formateadas)
+            if (!workbook.Sheets["SP"]) throw new Error("La hoja 'SP' no existe en el Excel.");
+            const dataSP = XLSX.utils.sheet_to_json(workbook.Sheets["SP"], { raw: false });
             
             let tInf = 0, tNor = 0, tBi = 0, tTin = 0, tIin = 0;
 
@@ -560,47 +615,47 @@
                 let areaRaw = row["area"] ? row["area"].toString().trim() : "";
                 if (!areaRaw || areaRaw.toLowerCase() === "nan" || areaRaw.toLowerCase() === "na") return;
                 
-                // Mantenemos el string original de area (ej: "Dirección Riesgo en Salud")
-                let area = areaRaw;
+                let area = areaRaw.toLowerCase().replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase());
                 let tipo = row["Tipo"] ? row["Tipo"].toString().trim() : "Desconocido";
                 let nombre = row["nombre_informe"] ? row["nombre_informe"].toString().trim() : "Sin Nombre";
                 
-                // Búsqueda inteligente de Enlace URL
+                // Nuevas variables (Programado, Periodicidad, Fecha)
+                let programado = row["programado"] || row["Programado"] || "No";
+                let periodicidad = row["periodicidad"] || row["Periodicidad"] || "N/D";
+                let fechaGen = row["fecha_ultma_generacion"] || row["fecha_ultima_generacion"] || row["Fecha de última generación"] || "N/D";
+                
+                // Enlaces URL
                 let enlace = "#";
                 for (let key in row) {
                     let val = row[key];
                     if (typeof val === 'string' && val.trim().toLowerCase().startsWith("http")) {
-                        enlace = val.trim();
-                        break;
+                        enlace = val.trim(); break;
                     }
                 }
-                
                 if (enlace === "#") {
                     for (let key in row) {
                         let k = key.toLowerCase();
                         if (k.includes("ruta") || k.includes("link") || k.includes("url") || k.includes("enlace") || k.includes("acceso")) {
                             if (row[key] && String(row[key]).trim() !== '') {
-                                enlace = String(row[key]).trim();
-                                break;
+                                enlace = String(row[key]).trim(); break;
                             }
                         }
                     }
                 }
-                
-                // Fallback a hoja BI
-                if (enlace === "#" && biLinks[nombre]) {
-                    enlace = biLinks[nombre];
-                }
+                if (enlace === "#" && biLinks[nombre]) enlace = biLinks[nombre];
 
                 if (!reportesPorArea[area]) reportesPorArea[area] = [];
 
                 reportesPorArea[area].push({
                     actividad: tipo,
                     reporte: nombre,
-                    enlace: enlace
+                    enlace: enlace,
+                    programado: programado.toString().trim(),
+                    periodicidad: periodicidad.toString().trim(),
+                    fecha_generacion: fechaGen.toString().trim()
                 });
 
-                // Contadores Globales
+                // Contadores
                 let tipoL = tipo.toLowerCase();
                 if (tipoL.includes("conexiones")) tInf++;
                 else if (tipoL.includes("normativo")) tNor++;
@@ -609,7 +664,7 @@
                 else if (tipoL.includes("informe interno")) tIin++;
             });
 
-            // Imprimir totales en Leyenda
+            // Imprimir totales 
             document.getElementById("total-inf").innerText = tInf;
             document.getElementById("total-iin").innerText = tIin;
             document.getElementById("total-tbi").innerText = tBi;
@@ -617,16 +672,15 @@
             document.getElementById("total-nor").innerText = tNor;
 
             loading.style.display = "none";
-            console.log("Datos de Excel indexados exitosamente.");
+            console.log("Excel cargado y mapeado.");
 
         } catch (error) {
-            console.error("Error leyendo Excel:", error);
-            loading.innerText = "No se encontró INVENTARIO_TABLEROS.xlsx";
+            console.error(error);
+            loading.innerText = "Error leyendo INVENTARIO_TABLEROS.xlsx";
             setTimeout(() => loading.style.display = "none", 4000);
         }
     }
 
-    // Al abrir la página lee el Excel
     window.addEventListener("DOMContentLoaded", cargarExcel);
 
 
@@ -636,7 +690,6 @@
     window.addEventListener("click", e => { if (e.target === modal) modal.style.display = "none"; });
 
     function normalizarTexto(texto) {
-        // Convierte a minusculas, quita acentos y limpia espacios para que siempre haga match perfecto
         return texto ? texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim() : "";
     }
 
@@ -655,17 +708,21 @@
             let cInf = 0, cNor = 0, cBi = 0, cTin = 0, cIin = 0;
             
             if (areaKey && reportesPorArea[areaKey].length > 0) {
+                // ORDENAR ALFABÉTICAMENTE POR NOMBRE DE REPORTE
+                let reportesOrdenados = reportesPorArea[areaKey].sort((a, b) => a.reporte.localeCompare(b.reporte));
+                
                 let htmlList = "";
-                reportesPorArea[areaKey].forEach(rep => {
+                reportesOrdenados.forEach(rep => {
                     
-                    let linkHtml = `<span class="no-link">Sin enlace web disponible</span>`;
-                    
+                    // Link Logic
+                    let linkHtml = `<span class="no-link">Sin enlace</span>`;
                     if (rep.enlace && rep.enlace !== "#" && rep.enlace !== "nan" && rep.enlace !== "undefined" && rep.enlace.trim() !== "") {
                         let href = rep.enlace.trim();
                         if (!href.toLowerCase().startsWith("http")) href = "https://" + href;
-                        linkHtml = `<a href="${href}" class="report-link" target="_blank" rel="noopener noreferrer">Abrir Enlace ↗</a>`;
+                        linkHtml = `<a href="${href}" class="btn-enlace" target="_blank" rel="noopener noreferrer">Abrir ↗</a>`;
                     }
                     
+                    // Colores y Contadores
                     let badgeColor = "var(--teal)";
                     let act = rep.actividad.toLowerCase();
                     
@@ -675,19 +732,51 @@
                     else if(act.includes("tablero interno")) { badgeColor = "#9C27B0"; cTin++; }
                     else if(act.includes("informe interno")) { badgeColor = "#FF9800"; cIin++; }
 
+                    // LÓGICA CONDICIONAL: Programado, Periodicidad y Fecha Gen
+                    let metaHtml = "";
+                    let isTargetType = act.includes("conexiones") || act.includes("informe interno") || act.includes("normativo");
+                    
+                    if (isTargetType) {
+                        let isProgramado = normalizarTexto(rep.programado) === "si";
+                        let fechaLabel = rep.fecha_generacion && rep.fecha_generacion !== "N/D" ? rep.fecha_generacion : "N/D";
+                        
+                        if (isProgramado) {
+                            let per = rep.periodicidad && rep.periodicidad !== "N/D" ? rep.periodicidad : "N/D";
+                            metaHtml = `
+                                <div class="report-meta">
+                                    <span><strong>Programado:</strong> Sí</span>
+                                    <span><strong>Periodicidad:</strong> ${per}</span>
+                                    <span><strong>Última Generación:</strong> ${fechaLabel}</span>
+                                </div>
+                            `;
+                        } else {
+                            metaHtml = `
+                                <div class="report-meta">
+                                    <span><strong>Programado:</strong> No</span>
+                                    <span><strong>Última Generación:</strong> ${fechaLabel}</span>
+                                </div>
+                            `;
+                        }
+                    }
+
+                    // Construcción Final del Item
                     htmlList += `
                         <div class="report-item">
-                            <span class="report-badge" style="background-color: ${badgeColor}">${rep.actividad}</span>
+                            <div class="report-header">
+                                <span class="report-badge" style="background-color: ${badgeColor}">${rep.actividad}</span>
+                                ${linkHtml}
+                            </div>
                             <div class="report-title">${rep.reporte}</div>
-                            ${linkHtml}
+                            ${metaHtml}
                         </div>
                     `;
                 });
                 listContainer.innerHTML = htmlList;
             } else {
-                listContainer.innerHTML = "<p style='color: #666; font-size: 12px; font-style: italic;'>No hay detalles registrados para esta área en la matriz de Excel.</p>";
+                listContainer.innerHTML = "<p style='color: #666; font-size: 12px; font-style: italic; margin-top: 15px;'>No hay detalles registrados para esta área.</p>";
             }
             
+            // Inyectar contadores en el Header
             document.getElementById("modalInformes").innerText = cInf;
             document.getElementById("modalNormativos").innerText = cNor;
             document.getElementById("modalBI").innerText = cBi;
