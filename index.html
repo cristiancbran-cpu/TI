@@ -10,14 +10,12 @@
 
     <style>
         :root {
-            /* Colores solicitados */
+            /* Colores según solicitud */
             --dark-blue: rgb(36, 75, 90);      /* Staff y Subgerencias */
             --teal: rgb(0, 169, 143);          /* Direcciones */
             --yellow: rgb(240, 236, 115);      /* Jefaturas */
             --orange: rgb(237, 199, 162);      /* Gerencia */
-            
-            /* Coordinaciones: un azul oscuro más clarito (mezcla o ajuste visual) */
-            --coord-blue: rgb(75, 115, 130);   
+            --coord-blue: rgb(75, 115, 130);   /* Coordinaciones (Azul más claro) */
             
             --orange-border: #dcae85;
             --grey: #e9ecef;
@@ -123,13 +121,12 @@
         .node-large { width: 180px; font-size: 13px; }
         .node-medium { width: 155px; font-size: 12px; }
 
-        /* Colores Aplicados según solicitud */
+        /* Colores de las clases */
         .n-orange { background-color: var(--orange); color: #333; border: 2px solid var(--orange-border); }
         .n-dark { background-color: var(--dark-blue); color: white; border: 1px solid #1a3742; }
         .n-teal { background-color: var(--teal); color: white; border: 1px solid #008772; }
         .n-yellow { background-color: var(--yellow); color: #333; border: 1px solid #c9c55b; }
         .n-coord { background-color: var(--coord-blue); color: white; border: 1px solid #365b6b; } 
-        /* Oficial de cumplimiento lo dejamos en dark blue o coord para que no desencaje, pongamosle staff (dark) */
         .n-staff { background-color: var(--dark-blue); color: white; border: 1px dashed #fff; }
 
         .branch {
@@ -147,7 +144,7 @@
             gap: 15px;
         }
 
-        /* Agrupaciones de dependencias */
+        /* Agrupaciones de dependencias (línea punteada gris) */
         .sub-group {
             display: flex;
             flex-direction: column;
@@ -170,7 +167,7 @@
 
         .connector-v { width: 2px; height: 16px; background-color: var(--line-color); z-index: 1; }
         
-        /* Línea horizontal que divide los 4 pilares */
+        /* Línea horizontal principal que divide las gerencias */
         .level-split {
             position: relative;
             display: flex;
@@ -189,7 +186,7 @@
             background-color: var(--line-color);
         }
         
-        /* Puntos de colores para la leyenda y el modal */
+        /* Semáforo de colores para la leyenda y el modal */
         .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
         .d-inf { background-color: #4CAF50; }
         .d-nor { background-color: #F44336; }
@@ -249,7 +246,7 @@
             text-align: center;
         }
 
-        /* ---- Modal Details List ---- */
+        /* ---- Estilos de la lista dentro del Modal ---- */
         .report-list {
             max-height: 350px;
             overflow-y: auto;
@@ -291,7 +288,7 @@
         .report-link:hover { text-decoration: underline; color: #0369a1; }
         .no-link { color: #94a3b8; font-style: italic; font-size: 11px; display: inline-block; margin-top: 4px;}
 
-        /* ---- Modal ---- */
+        /* ---- Modal Global ---- */
         .modal {
             display: none;
             position: fixed;
@@ -347,7 +344,7 @@
     </div>
 
     <!-- Indicador de carga de Excel -->
-    <div id="loading-indicator">Cargando inventario ...</div>
+    <div id="loading-indicator">Leyendo Excel e indexando rutas...</div>
 
     <div class="zoom-controls">
         <button id="zoomIn" title="Acercar">+</button>
@@ -355,7 +352,7 @@
         <button id="zoomReset" title="Restablecer">⟳</button>
     </div>
 
-    <!-- Leyenda de Totales (Flotante Derecha) -->
+    <!-- Leyenda de Totales (Flotante a la DERECHA) -->
     <div class="legend-box">
         <h4>Resumen Total de Activos</h4>
         <ul>
@@ -402,27 +399,28 @@
                     
                     <div class="row" style="gap: 15px;">
                         <div class="branch" style="gap: 8px;">
-                            <div class="node n-staff interactive" data-title="Oficial de Cumplimiento">Oficial Cumplimiento</div>
-                            <div class="node n-yellow interactive" data-title="Jefatura de Comunicaciones">Jefatura<br>Comunicaciones</div>
+                            <div class="node n-staff interactive" data-title="Oficial Cumplimiento">Oficial Cumplimiento</div>
+                            <div class="node n-yellow interactive" data-title="Comunicaciones">Jefatura<br>Comunicaciones</div>
                             <div class="node n-teal interactive" data-title="Auditoria Interna">Dirección<br>Auditoría Interna</div>
                         </div>
 
                         <div class="branch" style="gap: 15px;">
                             <div class="branch">
-                                <div class="node n-teal interactive" data-title="Dirección Calidad y Planeación">Dirección Calidad<br>y Planeación</div>
+                                <div class="node n-teal interactive" data-title="Direccion de calidad">Dirección Calidad<br>y Planeación</div>
                                 <div class="connector-v" style="height: 10px;"></div>
                                 <div class="sub-group">
-                                    <div class="node n-coord interactive" data-title="Coordinación Calidad y Planeación">Coord. Calidad<br>y Planeación</div>
+                                    <!-- A veces las coordinaciones reportan a la misma área de Excel -->
+                                    <div class="node n-coord interactive" data-title="Direccion de calidad">Coord. Calidad<br>y Planeación</div>
                                 </div>
                             </div>
 
                             <div class="branch">
-                                <div class="node n-teal interactive" data-title="Secretaria General">Secretaría General</div>
+                                <div class="node n-teal interactive" data-title="Secretaria general">Secretaría General</div>
                                 <div class="connector-v" style="height: 10px;"></div>
                                 <div class="sub-group">
                                     <div class="node n-yellow interactive" data-title="Jefatura Judicial">Jefatura Judicial</div>
                                     <div class="node n-yellow interactive" data-title="Contratacion">Jefatura<br>Contratación</div>
-                                    <div class="node n-coord interactive" data-title="Coordinación Jurídica">Coord. Jurídica</div>
+                                    <div class="node n-coord interactive" data-title="Coord. Juridica">Coord. Jurídica</div>
                                 </div>
                             </div>
                         </div>
@@ -438,25 +436,26 @@
                     <div class="row" style="gap: 15px;">
                         
                         <div class="branch">
-                            <div class="node n-teal interactive" data-title="Direccion De Accesos">Dirección Acceso<br>a Servicios</div>
+                            <!-- Se ajustaron los data-title para que crucen con tu Excel -->
+                            <div class="node n-teal interactive" data-title="Direccion de accesos">Dirección Acceso<br>a Servicios</div>
                             <div class="connector-v" style="height: 10px;"></div>
                             <div class="sub-group">
                                 <div class="node n-yellow interactive" data-title="Autorizaciones">Jef. Autorizaciones</div>
                                 <div class="node n-yellow interactive" data-title="Centro Regulador">Centro Regulador</div>
                                 <div class="node n-yellow interactive" data-title="Auditoria Concurrente">Auditoría<br>Concurrente</div>
-                                <div class="node n-yellow interactive" data-title="Jefatura de Apoyo a Regiones">Apoyo a Regiones</div>
+                                <div class="node n-yellow interactive" data-title="Apoyo a Regiones">Apoyo a Regiones</div>
                                 <div class="node n-yellow interactive" data-title="Adquisiciones">Adquisiciones</div>
-                                <div class="node n-coord interactive" data-title="Programas Especiales">Prog. Especiales</div>
+                                <div class="node n-coord interactive" data-title="Programas especiales">Prog. Especiales</div>
                             </div>
                         </div>
 
                         <div class="branch" style="gap: 15px;">
                             <div class="branch">
-                                <div class="node n-teal interactive" data-title="Gestión Del Riesgo">Dirección Riesgo<br>en Salud</div>
+                                <div class="node n-teal interactive" data-title="Gestión del riesgo">Dirección Riesgo<br>en Salud</div>
                                 <div class="connector-v" style="height: 10px;"></div>
                                 <div class="sub-group">
-                                    <div class="node n-coord interactive" data-title="Epidemiología">Epidemiología</div>
-                                    <div class="node n-coord interactive" data-title="Salud Pública">Salud Pública</div>
+                                    <div class="node n-coord interactive" data-title="Epidemiologia">Epidemiología</div>
+                                    <div class="node n-coord interactive" data-title="Salud Publica">Salud Pública</div>
                                     <div class="node n-coord interactive" data-title="Alto Costo">Alto Costo</div>
                                 </div>
                             </div>
@@ -477,7 +476,7 @@
 
                     <div class="branch" style="gap: 15px;">
                         <div class="node n-teal interactive" data-title="Contabilidad">Dirección<br>Contabilidad</div>
-                        <div class="node n-teal interactive" data-title="Tesoreria Y Cartera">Dirección<br>Tesorería y Cartera</div>
+                        <div class="node n-teal interactive" data-title="Tesoreria y cartera">Dirección<br>Tesorería y Cartera</div>
                     </div>
                 </div>
 
@@ -492,17 +491,16 @@
                             <div class="node n-teal interactive" data-title="Direccion de tecnologia">Dirección<br>Tecnología</div>
                             <div class="connector-v" style="height: 10px;"></div>
                             <div class="sub-group">
-                                <div class="node n-coord interactive" data-title="Coordinación de Software">Coord. Software</div>
+                                <div class="node n-coord interactive" data-title="Coord. Software">Coord. Software</div>
                                 <div class="node n-coord interactive" data-title="Infraestructura">Coord. Infraestructura</div>
-                                <div class="node n-coord interactive" data-title="Analitica Y Ciencia Del Dato">Coord. Analítica</div>
-                                <div class="node n-coord interactive" data-title="Soporte Tecnologico">Coord. Soporte<br>Tecnológico</div>
+                                <div class="node n-coord interactive" data-title="Analitica y ciencia del dato">Coord. Analítica</div>
+                                <div class="node n-coord interactive" data-title="Soporte tecnologico">Coord. Soporte<br>Tecnológico</div>
                             </div>
                         </div>
 
                         <div class="branch" style="gap: 8px;">
-                            <!-- MODIFICADO DE ACUERDO A TU IMAGEN DEL EXCEL -->
                             <div class="node n-yellow interactive" data-title="Gestion humana">Jefatura<br>Gestión Humana</div>
-                            <div class="node n-yellow interactive" data-title="Jefatura Administrativa">Jefatura<br>Administrativa</div>
+                            <div class="node n-yellow interactive" data-title="Administrativa">Jefatura<br>Administrativa</div>
                             <div class="node n-yellow interactive" data-title="Aseguramiento">Jef. Aseguramiento<br>Recursos y Op.</div>
                         </div>
 
@@ -524,8 +522,8 @@
         </div>
         <div class="modal-body">
             <div style="display: flex; gap: 15px; font-size: 12px; flex-wrap: wrap; background: #f8f9fa; padding: 10px; border-radius: 6px; border: 1px solid var(--grey);">
-                <div><span class="dot d-inf"></span> Inf. Conexiones: <strong id="modalInformes">0</strong></div>
-                <div><span class="dot d-nor"></span> Inf. Normativos: <strong id="modalNormativos">0</strong></div>
+                <div><span class="dot d-inf"></span> Conexiones: <strong id="modalInformes">0</strong></div>
+                <div><span class="dot d-nor"></span> Normativos: <strong id="modalNormativos">0</strong></div>
                 <div><span class="dot d-tbi"></span> Power BI: <strong id="modalBI">0</strong></div>
                 <div><span class="dot d-tin"></span> Tab. Internos: <strong id="modalTableros">0</strong></div>
                 <div><span class="dot d-iin"></span> Inf. Internos: <strong id="modalInternos">0</strong></div>
@@ -543,11 +541,9 @@
 </div>
 
 <script>
-    // Variables globales para almacenar los datos leídos del Excel
+    // Variables globales
     let reportesPorArea = {};
-
-    // Nombre EXACTO del archivo de Excel en tu repositorio GitHub
-    // ¡IMPORTANTE! Asegúrate de subirlo a GitHub con este nombre
+    // EXCEL A LEER DESDE GITHUB (Debe llamarse exactamente así)
     const EXCEL_FILE_URL = "INVENTARIO_TABLEROS.xlsx";
 
     async function cargarExcel() {
@@ -558,19 +554,19 @@
             const response = await fetch(EXCEL_FILE_URL);
             
             if (!response.ok) {
-                throw new Error("No se pudo cargar el archivo Excel. Verifica el nombre del archivo.");
+                throw new Error("No se pudo cargar el archivo Excel.");
             }
             
             const arrayBuffer = await response.arrayBuffer();
             const workbook = XLSX.read(arrayBuffer, { type: "array" });
 
-            // 1. Extraer enlaces de la hoja BI si existe
+            // 1. Extraer enlaces de la hoja BI si existe (como fallback)
             const biLinks = {};
             if (workbook.Sheets["BI"]) {
                 const dataBI = XLSX.utils.sheet_to_json(workbook.Sheets["BI"]);
                 dataBI.forEach(row => {
                     const nombre = row["Nombre del informe"];
-                    const url = row["URL para insertar"] || row["URL"];
+                    const url = row["URL para insertar"] || row["URL"] || row["Link"];
                     if (nombre && url) biLinks[nombre.toString().trim()] = url;
                 });
             }
@@ -582,21 +578,47 @@
             
             const dataSP = XLSX.utils.sheet_to_json(workbook.Sheets["SP"]);
             
-            // Contadores Totales Generales
             let tInf = 0, tNor = 0, tBi = 0, tTin = 0, tIin = 0;
 
             dataSP.forEach(row => {
                 let areaRaw = row["area"] ? row["area"].toString().trim() : "";
                 if (!areaRaw || areaRaw.toLowerCase() === "nan") return;
                 
-                // Normalizar Area a Título (Capitalizar primera letra de cada palabra)
+                // Normalizar Area
                 let area = areaRaw.toLowerCase().replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase());
 
                 let tipo = row["Tipo"] ? row["Tipo"].toString().trim() : "Desconocido";
                 let nombre = row["nombre_informe"] ? row["nombre_informe"].toString().trim() : "Sin Nombre";
                 
-                // Buscar enlace: Puede estar en la hoja SP (si la creaste) o cruzarlo con la hoja BI
-                let enlace = row["enlace"] || row["ruta"] || row["url"] || biLinks[nombre] || "#";
+                // LOGICA MEJORADA DE RUTAS Y ENLACES "HTTPS://"
+                let enlace = "#";
+                
+                // Búsqueda inteligente: si cualquier celda en la fila empieza por http, se asume que es el link
+                for (let key in row) {
+                    let val = row[key];
+                    if (typeof val === 'string' && val.trim().toLowerCase().startsWith("http")) {
+                        enlace = val.trim();
+                        break;
+                    }
+                }
+                
+                // Si no encontró por "http", busca columnas cuyo nombre sugiera que contiene la ruta
+                if (enlace === "#") {
+                    for (let key in row) {
+                        let k = key.toLowerCase();
+                        if (k.includes("ruta") || k.includes("link") || k.includes("url") || k.includes("enlace") || k.includes("acceso")) {
+                            if (row[key] && String(row[key]).trim() !== '') {
+                                enlace = String(row[key]).trim();
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                // Si aun no encuentra, hace fallback a lo que se encontró en la hoja BI
+                if (enlace === "#" && biLinks[nombre]) {
+                    enlace = biLinks[nombre];
+                }
 
                 if (!reportesPorArea[area]) reportesPorArea[area] = [];
 
@@ -606,15 +628,16 @@
                     enlace: enlace
                 });
 
-                // Sumar totales globales según el tipo
-                if (tipo.includes("Conexiones")) tInf++;
-                else if (tipo.includes("Normativo")) tNor++;
-                else if (tipo.includes("Tableros BI")) tBi++;
-                else if (tipo.includes("Tablero Interno")) tTin++;
-                else if (tipo.includes("Informe Interno")) tIin++;
+                // Sumar globales
+                let tipoL = tipo.toLowerCase();
+                if (tipoL.includes("conexiones")) tInf++;
+                else if (tipoL.includes("normativo")) tNor++;
+                else if (tipoL.includes("bi")) tBi++;
+                else if (tipoL.includes("tablero interno")) tTin++;
+                else if (tipoL.includes("informe interno")) tIin++;
             });
 
-            // Imprimir totales en la Leyenda en pantalla
+            // Imprimir totales en Leyenda
             document.getElementById("total-inf").innerText = tInf;
             document.getElementById("total-iin").innerText = tIin;
             document.getElementById("total-tbi").innerText = tBi;
@@ -622,26 +645,25 @@
             document.getElementById("total-nor").innerText = tNor;
 
             loading.style.display = "none";
-            console.log("Excel cargado correctamente:", reportesPorArea);
+            console.log("Excel cargado correctamente y áreas mapeadas.");
 
         } catch (error) {
             console.error("Error cargando Excel:", error);
-            loading.innerText = "Error cargando datos. (Falta archivo INVENTARIO_TABLEROS.xlsx)";
-            setTimeout(() => loading.style.display = "none", 3000);
+            loading.innerText = "Error cargando Excel. (Verifica que exista INVENTARIO_TABLEROS.xlsx en el repo)";
+            setTimeout(() => loading.style.display = "none", 4000);
         }
     }
 
-    // Ejecutar carga al abrir la página
     window.addEventListener("DOMContentLoaded", cargarExcel);
 
 
-    /* --- LÓGICA DEL MODAL INTERACTIVO --- */
+    /* --- MODAL --- */
     const modal = document.getElementById("infoModal");
     document.getElementById("closeModal").onclick = () => modal.style.display = "none";
     window.addEventListener("click", e => { if (e.target === modal) modal.style.display = "none"; });
 
     function normalizarTexto(texto) {
-        return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+        return texto ? texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim() : "";
     }
 
     document.querySelectorAll(".interactive").forEach(node => {
@@ -650,12 +672,12 @@
             const displayTitle = node.innerText.replace("\n", " ");
             
             document.getElementById("modalTitle").innerText = displayTitle;
-            
             const listContainer = document.getElementById("modalReportList");
             listContainer.innerHTML = ""; 
             
-            // Buscar datos en el JSON dinámico generado desde el Excel
-            const areaKey = Object.keys(reportesPorArea).find(k => normalizarTexto(k) === normalizarTexto(searchTitle));
+            // Buscar datos: Se busca la clave que coincida ignorando tildes y espacios
+            const searchNorm = normalizarTexto(searchTitle);
+            const areaKey = Object.keys(reportesPorArea).find(k => normalizarTexto(k) === searchNorm);
             
             let cInf = 0, cNor = 0, cBi = 0, cTin = 0, cIin = 0;
             
@@ -663,18 +685,24 @@
                 let htmlList = "";
                 reportesPorArea[areaKey].forEach(rep => {
                     
-                    let linkHtml = rep.enlace !== "#" && rep.enlace.trim() !== "" && rep.enlace !== "nan" 
-                        ? `<a href="${rep.enlace}" class="report-link" target="_blank" rel="noopener noreferrer">Abrir Enlace ↗</a>`
-                        : `<span class="no-link">Sin enlace web disponible</span>`;
+                    let linkHtml = `<span class="no-link">Sin enlace web disponible</span>`;
+                    
+                    if (rep.enlace && rep.enlace !== "#" && rep.enlace !== "nan" && rep.enlace !== "undefined" && rep.enlace.trim() !== "") {
+                        let href = rep.enlace.trim();
+                        // Prevenir que falte el https://
+                        if (!href.toLowerCase().startsWith("http")) href = "https://" + href;
+                        
+                        linkHtml = `<a href="${href}" class="report-link" target="_blank" rel="noopener noreferrer">Abrir Enlace ↗</a>`;
+                    }
                     
                     let badgeColor = "var(--teal)";
-                    let act = rep.actividad;
+                    let act = rep.actividad.toLowerCase();
                     
-                    if(act.includes("Conexiones")) { badgeColor = "#4CAF50"; cInf++; }
-                    else if(act.includes("Normativo")) { badgeColor = "#F44336"; cNor++; }
-                    else if(act.includes("Tableros BI")) { badgeColor = "#2196F3"; cBi++; }
-                    else if(act.includes("Tablero Interno")) { badgeColor = "#9C27B0"; cTin++; }
-                    else if(act.includes("Informe Interno")) { badgeColor = "#FF9800"; cIin++; }
+                    if(act.includes("conexiones")) { badgeColor = "#4CAF50"; cInf++; }
+                    else if(act.includes("normativo")) { badgeColor = "#F44336"; cNor++; }
+                    else if(act.includes("bi")) { badgeColor = "#2196F3"; cBi++; }
+                    else if(act.includes("tablero interno")) { badgeColor = "#9C27B0"; cTin++; }
+                    else if(act.includes("informe interno")) { badgeColor = "#FF9800"; cIin++; }
 
                     htmlList += `
                         <div class="report-item">
@@ -686,10 +714,10 @@
                 });
                 listContainer.innerHTML = htmlList;
             } else {
-                listContainer.innerHTML = "<p style='color: #666; font-size: 12px; font-style: italic;'>No hay detalles de reportes para mostrar en esta área o no coinciden.</p>";
+                listContainer.innerHTML = "<p style='color: #666; font-size: 12px; font-style: italic;'>No hay detalles registrados para esta área en la matriz de Excel.</p>";
             }
             
-            // Actualizar conteos del área específica en el Modal
+            // Actualizar modal metrics
             document.getElementById("modalInformes").innerText = cInf;
             document.getElementById("modalNormativos").innerText = cNor;
             document.getElementById("modalBI").innerText = cBi;
