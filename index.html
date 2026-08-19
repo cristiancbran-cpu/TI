@@ -116,6 +116,14 @@
             align-items: center;
             justify-content: center;
             min-height: 40px;
+            transition: transform 0.15s, box-shadow 0.15s, opacity 0.3s, filter 0.3s;
+        }
+
+        /* Nodos atenuados para el FILTRO */
+        .node.dimmed {
+            opacity: 0.25;
+            filter: grayscale(100%);
+            box-shadow: none;
         }
 
         .node-large { width: 180px; font-size: 13px; }
@@ -144,8 +152,8 @@
             margin-top: 5px;
         }
 
-        .interactive { cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; }
-        .interactive:hover {
+        .interactive { cursor: pointer; }
+        .interactive:hover:not(.dimmed) {
             transform: translateY(-2px) scale(1.04);
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
             filter: brightness(0.95);
@@ -154,7 +162,6 @@
 
         .connector-v { width: 2px; height: 16px; background-color: var(--line-color); z-index: 1; }
         
-        /* Línea horizontal principal que divide las gerencias */
         .level-split {
             position: relative;
             display: flex;
@@ -173,7 +180,6 @@
             background-color: var(--line-color);
         }
         
-        /* Semáforo de colores para la leyenda y el modal */
         .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0;}
         .d-inf { background-color: #4CAF50; }
         .d-nor { background-color: #F44336; }
@@ -204,17 +210,30 @@
             text-align: center;
         }
         .legend-box ul { list-style: none; padding: 0; margin: 0; }
-        .legend-box li {
-            margin-bottom: 8px;
+        
+        /* Modificación para Filtros Interactivos */
+        .legend-filter {
+            margin-bottom: 6px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 15px;
             color: #444;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
         }
-        .legend-box li:last-child { margin-bottom: 0; }
-        .legend-box .legend-label { display: flex; align-items: center; gap: 8px; font-weight: 500; }
-        .legend-box strong {
+        .legend-filter:hover { background-color: #f1f5f9; }
+        .legend-filter.active-filter {
+            background-color: #e0f2fe;
+            border: 1px solid #7dd3fc;
+        }
+        .legend-filter:last-child { margin-bottom: 0; }
+        
+        .legend-label { display: flex; align-items: center; gap: 8px; font-weight: 500; }
+        .legend-filter strong {
             background-color: #f0f2f5;
             padding: 2px 8px;
             border-radius: 12px;
@@ -224,79 +243,7 @@
             text-align: center;
         }
 
-        /* ---- Estilos de la lista dentro del Modal ---- */
-        .report-list {
-            max-height: 380px;
-            overflow-y: auto;
-            margin-top: 15px;
-            padding-right: 5px;
-        }
-        .report-list::-webkit-scrollbar { width: 6px; }
-        .report-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .report-item {
-            padding: 14px 0;
-            border-bottom: 1px dashed #cbd5e1;
-            font-size: 13px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-        .report-item:last-child { border-bottom: none; }
-        .report-header {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            align-items: center;
-        }
-        .report-badge {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 10px;
-            font-weight: bold;
-            color: white;
-            text-transform: uppercase;
-        }
-        .btn-enlace {
-            background-color: #f1f5f9;
-            color: #0369a1;
-            border: 1px solid #cbd5e1;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: bold;
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-        .btn-enlace:hover { background-color: #e2e8f0; color: #0284c7; }
-        .no-link { color: #94a3b8; font-style: italic; font-size: 11px; }
-        
-        .report-title { 
-            font-weight: 700; 
-            color: var(--dark-blue); 
-            margin: 8px 0 4px 0; 
-            font-size: 14px; 
-            line-height: 1.3; 
-        }
-        
-        /* Detalles condicionales (Programado, Fechas) */
-        .report-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            font-size: 11px;
-            color: #475569;
-            background: #f8fafc;
-            padding: 8px 12px;
-            border-radius: 6px;
-            margin-top: 6px;
-            border: 1px solid #e2e8f0;
-            width: 100%;
-        }
-        .report-meta span { display: inline-flex; align-items: center; }
-        .report-meta strong { margin-right: 5px; color: #1e293b; }
-
-        /* ---- Modal Global ---- */
+        /* ---- Modal Structure ---- */
         .modal {
             display: none;
             position: fixed;
@@ -340,24 +287,70 @@
             border: 1px solid var(--grey);
             margin-bottom: 15px;
         }
-        .summary-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .summary-item { display: flex; align-items: center; gap: 8px; }
+        .summary-item .s-text { display: flex; flex-direction: column; font-size: 11px; color: #555; line-height: 1.2; }
+        .summary-item strong { font-size: 15px; color: var(--dark-blue); font-weight: 700; }
+
+        /* Lista de Detalles Modal */
+        .report-list {
+            max-height: 380px;
+            overflow-y: auto;
+            padding-right: 5px;
         }
-        .summary-item .s-text {
+        .report-list::-webkit-scrollbar { width: 6px; }
+        .report-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .report-item {
+            padding: 14px 0;
+            border-bottom: 1px dashed #cbd5e1;
+            font-size: 13px;
             display: flex;
             flex-direction: column;
+            align-items: flex-start;
+        }
+        .report-item:last-child { border-bottom: none; }
+        .report-header { display: flex; justify-content: space-between; width: 100%; align-items: center; }
+        .report-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            color: white;
+            text-transform: uppercase;
+        }
+        .btn-enlace {
+            background-color: #f1f5f9;
+            color: #0369a1;
+            border: 1px solid #cbd5e1;
+            padding: 4px 10px;
+            border-radius: 4px;
             font-size: 11px;
-            color: #555;
-            line-height: 1.2;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.2s;
         }
-        .summary-item strong {
-            font-size: 15px;
-            color: var(--dark-blue);
-            font-weight: 700;
-        }
+        .btn-enlace:hover { background-color: #e2e8f0; color: #0284c7; }
+        .no-link { color: #94a3b8; font-style: italic; font-size: 11px; }
         
+        .report-title { font-weight: 700; color: var(--dark-blue); margin: 8px 0 4px 0; font-size: 14px; line-height: 1.3; }
+        
+        /* Detalles condicionales (Programado, Fechas) */
+        .report-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 11px;
+            color: #475569;
+            background: #f8fafc;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-top: 6px;
+            border: 1px solid #e2e8f0;
+            width: 100%;
+        }
+        .report-meta span { display: inline-flex; align-items: center; }
+        .report-meta strong { margin-right: 5px; color: #1e293b; }
+
         /* Indicador de carga */
         #loading-indicator {
             position: absolute;
@@ -382,8 +375,7 @@
         <h2>Inventario Coordinación de Analítica y Ciencia del Dato</h2>
     </div>
 
-    <!-- Indicador de carga -->
-    <div id="loading-indicator">Leyendo Excel en vivo...</div>
+    <div id="loading-indicator">Leyendo Excel y Normalizando datos...</div>
 
     <div class="zoom-controls">
         <button id="zoomIn" title="Acercar">+</button>
@@ -391,27 +383,27 @@
         <button id="zoomReset" title="Restablecer">⟳</button>
     </div>
 
-    <!-- Leyenda de Totales (Flotante DERECHA) -->
+    <!-- Leyenda de Totales (Filtros Activos) -->
     <div class="legend-box">
-        <h4>Resumen Total de Activos</h4>
-        <ul>
-            <li>
+        <h4>Resumen (Clic para filtrar)</h4>
+        <ul id="legend-list">
+            <li class="legend-filter" data-filter="conexiones">
                 <div class="legend-label"><span class="dot d-inf"></span> Inf. Conexiones</div>
                 <strong id="total-inf">0</strong>
             </li>
-            <li>
+            <li class="legend-filter" data-filter="informe interno">
                 <div class="legend-label"><span class="dot d-iin"></span> Inf. Internos</div>
                 <strong id="total-iin">0</strong>
             </li>
-            <li>
+            <li class="legend-filter" data-filter="tableros bi">
                 <div class="legend-label"><span class="dot d-tbi"></span> Tableros BI</div>
                 <strong id="total-tbi">0</strong>
             </li>
-            <li>
+            <li class="legend-filter" data-filter="tablero interno">
                 <div class="legend-label"><span class="dot d-tin"></span> Tableros Internos</div>
                 <strong id="total-tin">0</strong>
             </li>
-            <li>
+            <li class="legend-filter" data-filter="normativo">
                 <div class="legend-label"><span class="dot d-nor"></span> Inf. Normativos</div>
                 <strong id="total-nor">0</strong>
             </li>
@@ -423,7 +415,7 @@
             
             <!-- RAIZ: 1.0 GERENCIA GENERAL -->
             <div class="branch">
-                <div class="node n-orange node-large interactive" data-title="Gerencia General" style="font-weight: 700;">Gerencia General</div>
+                <div class="node n-orange node-large interactive" data-title="Gerencia General" style="font-weight: 700;">1.0 Gerencia General</div>
                 <div class="connector-v" style="height: 25px;"></div>
             </div>
 
@@ -433,14 +425,14 @@
                 <!-- ================== 1.1 STAFF GERENCIA ================== -->
                 <div class="branch">
                     <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
-                    <div class="node n-dark node-medium interactive" data-title="Staff Gerencia">Staff Gerencia</div>
+                    <div class="node n-dark node-medium interactive" data-title="Staff Gerencia">1.1 Staff Gerencia</div>
                     <div class="connector-v" style="height: 15px;"></div>
                     
                     <div class="row" style="gap: 15px;">
                         <div class="branch" style="gap: 8px;">
-                            <div class="node n-staff interactive" data-title="Oficial Cumplimiento">Oficial Cumplimiento</div>
-                            <div class="node n-yellow interactive" data-title="Comunicaciones">Jefatura<br>Comunicaciones</div>
-                            <div class="node n-teal interactive" data-title="Auditoria Interna">Dirección<br>Auditoría Interna</div>
+                            <div class="node n-staff interactive" data-title="Oficial de Cumplimiento">Oficial Cumplimiento</div>
+                            <div class="node n-yellow interactive" data-title="Jefatura de Comunicaciones">Jefatura<br>Comunicaciones</div>
+                            <div class="node n-teal interactive" data-title="Dirección Auditoría Interna">Dirección<br>Auditoría Interna</div>
                         </div>
 
                         <div class="branch" style="gap: 15px;">
@@ -453,12 +445,12 @@
                             </div>
 
                             <div class="branch">
-                                <div class="node n-teal interactive" data-title="Secretaria general">Secretaría General</div>
+                                <div class="node n-teal interactive" data-title="Secretaría General">Secretaría General</div>
                                 <div class="connector-v" style="height: 10px;"></div>
                                 <div class="sub-group">
                                     <div class="node n-yellow interactive" data-title="Jefatura Judicial">Jefatura Judicial</div>
-                                    <div class="node n-yellow interactive" data-title="Contratacion">Jefatura<br>Contratación</div>
-                                    <div class="node n-coord interactive" data-title="Coord. Juridica">Coord. Jurídica</div>
+                                    <div class="node n-yellow interactive" data-title="Jefatura Contratación">Jefatura<br>Contratación</div>
+                                    <div class="node n-coord interactive" data-title="Coord. Jurídica">Coord. Jurídica</div>
                                 </div>
                             </div>
                         </div>
@@ -468,38 +460,37 @@
                 <!-- ================== 1.2 SUBGERENCIA DE SALUD ================== -->
                 <div class="branch">
                     <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
-                    <div class="node n-dark node-medium interactive" data-title="Subgerencia de Salud">Subgerencia de Salud</div>
+                    <div class="node n-dark node-medium interactive" data-title="Subgerencia de Salud">1.2 Subgerencia de Salud</div>
                     <div class="connector-v" style="height: 15px;"></div>
 
                     <div class="row" style="gap: 15px;">
-                        
                         <div class="branch">
-                            <div class="node n-teal interactive" data-title="Direccion de accesos">Dirección Acceso<br>a Servicios</div>
+                            <div class="node n-teal interactive" data-title="Dirección Acceso a Servicios">Dirección Acceso<br>a Servicios</div>
                             <div class="connector-v" style="height: 10px;"></div>
                             <div class="sub-group">
-                                <div class="node n-yellow interactive" data-title="Autorizaciones">Jef. Autorizaciones</div>
-                                <div class="node n-yellow interactive" data-title="Centro Regulador">Centro Regulador</div>
-                                <div class="node n-yellow interactive" data-title="Auditoria Concurrente">Auditoría<br>Concurrente</div>
+                                <div class="node n-yellow interactive" data-title="Jefatura Autorizaciones">Jef. Autorizaciones</div>
+                                <div class="node n-yellow interactive" data-title="Jefatura Centro Regulador">Centro Regulador</div>
+                                <div class="node n-yellow interactive" data-title="Jefatura Auditoría Concurrente">Auditoría<br>Concurrente</div>
                                 <div class="node n-yellow interactive" data-title="Apoyo a Regiones">Apoyo a Regiones</div>
-                                <div class="node n-yellow interactive" data-title="Adquisiciones">Adquisiciones</div>
-                                <div class="node n-coord interactive" data-title="Programas especiales">Prog. Especiales</div>
+                                <div class="node n-yellow interactive" data-title="Jefatura Adquisiciones">Adquisiciones</div>
+                                <div class="node n-coord interactive" data-title="Programas Especiales">Prog. Especiales</div>
                             </div>
                         </div>
 
                         <div class="branch" style="gap: 15px;">
                             <div class="branch">
-                                <div class="node n-teal interactive" data-title="Gestión del riesgo">Dirección Riesgo<br>en Salud</div>
+                                <div class="node n-teal interactive" data-title="Dirección Riesgo en Salud">Dirección Riesgo<br>en Salud</div>
                                 <div class="connector-v" style="height: 10px;"></div>
                                 <div class="sub-group">
-                                    <div class="node n-coord interactive" data-title="Epidemiologia">Epidemiología</div>
-                                    <div class="node n-coord interactive" data-title="Salud Publica">Salud Pública</div>
+                                    <div class="node n-coord interactive" data-title="Epidemiología">Epidemiología</div>
+                                    <div class="node n-coord interactive" data-title="Salud Pública">Salud Pública</div>
                                     <div class="node n-coord interactive" data-title="Alto Costo">Alto Costo</div>
                                 </div>
                             </div>
 
                             <div class="branch" style="gap: 8px;">
-                                <div class="node n-yellow interactive" data-title="Cuentas médicas">Jefatura<br>Cuentas Médicas</div>
-                                <div class="node n-yellow interactive" data-title="Atención al usuario">Jefatura<br>Atención al Usuario</div>
+                                <div class="node n-yellow interactive" data-title="Jefatura Cuentas médicas">Jefatura<br>Cuentas Médicas</div>
+                                <div class="node n-yellow interactive" data-title="Jefatura Atención al usuario">Jefatura<br>Atención al Usuario</div>
                             </div>
                         </div>
                     </div>
@@ -508,44 +499,41 @@
                 <!-- ================== 1.3 SUBGERENCIA FINANCIERA ================== -->
                 <div class="branch">
                     <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
-                    <div class="node n-dark node-medium interactive" data-title="Subgerencia financiera">Subgerencia<br>Financiera</div>
+                    <div class="node n-dark node-medium interactive" data-title="Subgerencia Financiera">1.3 Subgerencia<br>Financiera</div>
                     <div class="connector-v" style="height: 15px;"></div>
 
                     <div class="branch" style="gap: 15px;">
-                        <div class="node n-teal interactive" data-title="Contabilidad">Dirección<br>Contabilidad</div>
-                        <div class="node n-teal interactive" data-title="Tesoreria y cartera">Dirección<br>Tesorería y Cartera</div>
+                        <div class="node n-teal interactive" data-title="Direccion Contabilidad y Presupuesto">Dirección<br>Contabilidad</div>
+                        <div class="node n-teal interactive" data-title="Dirección Tesorería y cartera">Dirección<br>Tesorería y Cartera</div>
                     </div>
                 </div>
 
                 <!-- ================== 1.4 SUBGERENCIA ADMINISTRATIVA ================== -->
                 <div class="branch">
                     <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
-                    <div class="node n-dark node-medium interactive" data-title="Administrativa">Subgerencia<br>Administrativa</div>
+                    <div class="node n-dark node-medium interactive" data-title="Subgerencia Administrativa">1.4 Subgerencia<br>Administrativa</div>
                     <div class="connector-v" style="height: 15px;"></div>
 
                     <div class="row" style="gap: 15px;">
                         <div class="branch">
-                            <div class="node n-teal interactive" data-title="Direccion de tecnologia">Dirección<br>Tecnología</div>
+                            <div class="node n-teal interactive" data-title="Dirección de tecnología y seguridad informática">Dirección<br>Tecnología</div>
                             <div class="connector-v" style="height: 10px;"></div>
                             <div class="sub-group">
                                 <div class="node n-coord interactive" data-title="Coord. Software">Coord. Software</div>
-                                <div class="node n-coord interactive" data-title="Infraestructura">Coord. Infraestructura</div>
-                                <div class="node n-coord interactive" data-title="Analitica y ciencia del dato">Coord. Analítica</div>
-                                <div class="node n-coord interactive" data-title="Soporte tecnologico">Coord. Soporte<br>Tecnológico</div>
+                                <div class="node n-coord interactive" data-title="Coordinación de Infraestructura">Coord. Infraestructura</div>
+                                <div class="node n-coord interactive" data-title="Coordinación Analítica y ciencia del dato">Coord. Analítica</div>
+                                <div class="node n-coord interactive" data-title="Coordinación Soporte Tecnológico">Coord. Soporte<br>Tecnológico</div>
                             </div>
                         </div>
 
                         <div class="branch" style="gap: 8px;">
-                            <div class="node n-yellow interactive" data-title="Gestion humana">Jefatura<br>Gestión Humana</div>
-                            <div class="node n-yellow interactive" data-title="Administrativa">Jefatura<br>Administrativa</div>
-                            <div class="node n-yellow interactive" data-title="Aseguramiento">Jef. Aseguramiento<br>Recursos y Op.</div>
+                            <div class="node n-yellow interactive" data-title="Jefatura Gestión humana">Jefatura<br>Gestión Humana</div>
+                            <div class="node n-yellow interactive" data-title="Jefatura Administrativa">Jefatura<br>Administrativa</div>
+                            <div class="node n-yellow interactive" data-title="Jefatura Aseguramiento">Jef. Aseguramiento<br>Recursos y Op.</div>
                         </div>
-
                     </div>
                 </div>
-
             </div> 
-
         </div>
     </div>
 </div>
@@ -582,49 +570,69 @@
     let reportesPorArea = {};
     const EXCEL_FILE_URL = "INVENTARIO_TABLEROS.xlsx?t=" + new Date().getTime();
 
+    // ----------------------------------------------------
+    // FUNCIÓN 1: NORMALIZACIÓN Y LECTURA A PRUEBA DE FALLOS
+    // ----------------------------------------------------
+    function normalizarTexto(texto) {
+        if (!texto) return "";
+        return texto.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+    }
+
     async function cargarExcel() {
         const loading = document.getElementById("loading-indicator");
         loading.style.display = "block";
 
         try {
             const response = await fetch(EXCEL_FILE_URL);
-            
             if (!response.ok) throw new Error("No se pudo cargar el archivo Excel.");
             
             const arrayBuffer = await response.arrayBuffer();
-            const workbook = XLSX.read(arrayBuffer, { type: "array" });
+            const workbook = XLSX.read(arrayBuffer, { type: "array", cellDates: true });
 
-            // 1. Extraer enlaces de BI
+            // Extraer enlaces de BI
             const biLinks = {};
             if (workbook.Sheets["BI"]) {
+                // Función auxiliar para normalizar llaves de objetos
                 const dataBI = XLSX.utils.sheet_to_json(workbook.Sheets["BI"]);
                 dataBI.forEach(row => {
-                    const nombre = row["Nombre del informe"];
-                    const url = row["URL para insertar"] || row["URL"] || row["Link"];
+                    // Normalizar keys de la fila para encontrarlos sin importar Mayusculas/Minusculas
+                    let normRow = {};
+                    for(let key in row) normRow[normalizarTexto(key)] = row[key];
+                    
+                    let nombre = normRow["nombre del informe"] || normRow["nombre"];
+                    let url = normRow["url para insertar"] || normRow["url"] || normRow["link"];
                     if (nombre && url) biLinks[nombre.toString().trim()] = url;
                 });
             }
 
-            // 2. Procesar hoja SP principal (Forzamos raw: false para leer fechas formateadas)
-            if (!workbook.Sheets["SP"]) throw new Error("La hoja 'SP' no existe en el Excel.");
-            const dataSP = XLSX.utils.sheet_to_json(workbook.Sheets["SP"], { raw: false });
+            if (!workbook.Sheets["SP"]) throw new Error("La hoja 'SP' no existe.");
+            
+            // Forzamos raw: false para leer fechas de Excel formateadas correctamente
+            const dataSP_raw = XLSX.utils.sheet_to_json(workbook.Sheets["SP"], { raw: false, dateNF: "yyyy-mm-dd" });
             
             let tInf = 0, tNor = 0, tBi = 0, tTin = 0, tIin = 0;
 
-            dataSP.forEach(row => {
-                let areaRaw = row["area"] ? row["area"].toString().trim() : "";
-                if (!areaRaw || areaRaw.toLowerCase() === "nan" || areaRaw.toLowerCase() === "na") return;
+            dataSP_raw.forEach(row => {
+                // NORMALIZAR KEYS para evitar errores por "Area", "AREA", "Tipo", "tipo", etc.
+                let nRow = {};
+                for (let key in row) {
+                    nRow[normalizarTexto(key)] = row[key];
+                }
+
+                let areaRaw = nRow["area"];
+                if (!areaRaw || areaRaw.toString().trim().toLowerCase() === "nan" || areaRaw.toString().trim().toLowerCase() === "na") return;
                 
-                let area = areaRaw.toLowerCase().replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase());
-                let tipo = row["Tipo"] ? row["Tipo"].toString().trim() : "Desconocido";
-                let nombre = row["nombre_informe"] ? row["nombre_informe"].toString().trim() : "Sin Nombre";
+                let area = areaRaw.toString().trim();
+                let tipo = nRow["tipo"] ? nRow["tipo"].toString().trim() : "Desconocido";
+                let nombre = nRow["nombre_informe"] || nRow["nombre"] || "Sin Nombre";
                 
-                // Nuevas variables (Programado, Periodicidad, Fecha)
-                let programado = row["programado"] || row["Programado"] || "No";
-                let periodicidad = row["periodicidad"] || row["Periodicidad"] || "N/D";
-                let fechaGen = row["fecha_ultma_generacion"] || row["fecha_ultima_generacion"] || row["Fecha de última generación"] || "N/D";
+                let programado = nRow["programado"] || "No";
+                let periodicidad = nRow["periodicidad"] || "N/D";
                 
-                // Enlaces URL
+                // Buscar fecha en varias posibles columnas
+                let fechaGen = nRow["fecha_ultma_generacion"] || nRow["fecha_ultima_generacion"] || nRow["fecha de ultima generacion"] || "N/D";
+                
+                // Extraer Enlace
                 let enlace = "#";
                 for (let key in row) {
                     let val = row[key];
@@ -633,29 +641,28 @@
                     }
                 }
                 if (enlace === "#") {
-                    for (let key in row) {
-                        let k = key.toLowerCase();
-                        if (k.includes("ruta") || k.includes("link") || k.includes("url") || k.includes("enlace") || k.includes("acceso")) {
-                            if (row[key] && String(row[key]).trim() !== '') {
-                                enlace = String(row[key]).trim(); break;
+                    for (let key in nRow) {
+                        if (key.includes("ruta") || key.includes("link") || key.includes("url") || key.includes("enlace")) {
+                            if (nRow[key] && String(nRow[key]).trim() !== '') {
+                                enlace = String(nRow[key]).trim(); break;
                             }
                         }
                     }
                 }
-                if (enlace === "#" && biLinks[nombre]) enlace = biLinks[nombre];
+                if (enlace === "#" && biLinks[nombre.toString().trim()]) enlace = biLinks[nombre.toString().trim()];
 
                 if (!reportesPorArea[area]) reportesPorArea[area] = [];
 
                 reportesPorArea[area].push({
                     actividad: tipo,
-                    reporte: nombre,
+                    reporte: nombre.toString().trim(),
                     enlace: enlace,
                     programado: programado.toString().trim(),
                     periodicidad: periodicidad.toString().trim(),
                     fecha_generacion: fechaGen.toString().trim()
                 });
 
-                // Contadores
+                // Contadores Globales
                 let tipoL = tipo.toLowerCase();
                 if (tipoL.includes("conexiones")) tInf++;
                 else if (tipoL.includes("normativo")) tNor++;
@@ -664,7 +671,6 @@
                 else if (tipoL.includes("informe interno")) tIin++;
             });
 
-            // Imprimir totales 
             document.getElementById("total-inf").innerText = tInf;
             document.getElementById("total-iin").innerText = tIin;
             document.getElementById("total-tbi").innerText = tBi;
@@ -672,26 +678,62 @@
             document.getElementById("total-nor").innerText = tNor;
 
             loading.style.display = "none";
-            console.log("Excel cargado y mapeado.");
+            console.log("Excel procesado sin errores de Key.");
 
         } catch (error) {
-            console.error(error);
-            loading.innerText = "Error leyendo INVENTARIO_TABLEROS.xlsx";
-            setTimeout(() => loading.style.display = "none", 4000);
+            console.error("Error:", error);
+            loading.innerText = "Error leyendo INVENTARIO_TABLEROS.xlsx (Comprueba que esté subido y se llame así)";
+            setTimeout(() => loading.style.display = "none", 5000);
         }
     }
 
     window.addEventListener("DOMContentLoaded", cargarExcel);
 
+    // ----------------------------------------------------
+    // FUNCIÓN 2: FILTRO INTERACTIVO EN LEYENDA
+    // ----------------------------------------------------
+    let activeFilter = null;
+    document.querySelectorAll('.legend-filter').forEach(item => {
+        item.addEventListener('click', function() {
+            const filterValue = this.getAttribute('data-filter');
+            
+            // Si hace clic en el que ya está activo, se desactiva (se muestran todos)
+            if (activeFilter === filterValue) {
+                activeFilter = null;
+                document.querySelectorAll('.legend-filter').forEach(el => el.classList.remove('active-filter'));
+                document.querySelectorAll('.node.interactive').forEach(el => el.classList.remove('dimmed'));
+            } else {
+                // Activar el nuevo filtro
+                activeFilter = filterValue;
+                document.querySelectorAll('.legend-filter').forEach(el => el.classList.toggle('active-filter', el === this));
+                
+                // Recorrer los nodos del organigrama
+                document.querySelectorAll('.node.interactive').forEach(node => {
+                    const searchTitle = node.getAttribute("data-title");
+                    const searchNorm = normalizarTexto(searchTitle);
+                    const areaKey = Object.keys(reportesPorArea).find(k => normalizarTexto(k) === searchNorm);
+                    
+                    let tieneElReporte = false;
+                    if (areaKey && reportesPorArea[areaKey]) {
+                        tieneElReporte = reportesPorArea[areaKey].some(rep => normalizarTexto(rep.actividad).includes(activeFilter));
+                    }
+                    
+                    if (tieneElReporte) {
+                        node.classList.remove('dimmed');
+                    } else {
+                        node.classList.add('dimmed');
+                    }
+                });
+            }
+        });
+    });
 
-    /* --- MODAL E INTERACCIÓN --- */
+    // ----------------------------------------------------
+    // FUNCIÓN 3: MODAL DINÁMICO Y ORDEN ALFABÉTICO
+    // ----------------------------------------------------
     const modal = document.getElementById("infoModal");
     document.getElementById("closeModal").onclick = () => modal.style.display = "none";
     window.addEventListener("click", e => { if (e.target === modal) modal.style.display = "none"; });
-
-    function normalizarTexto(texto) {
-        return texto ? texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim() : "";
-    }
 
     document.querySelectorAll(".interactive").forEach(node => {
         node.addEventListener("click", () => {
@@ -708,23 +750,22 @@
             let cInf = 0, cNor = 0, cBi = 0, cTin = 0, cIin = 0;
             
             if (areaKey && reportesPorArea[areaKey].length > 0) {
-                // ORDENAR ALFABÉTICAMENTE POR NOMBRE DE REPORTE
+                
+                // ORDENAR ALFABÉTICAMENTE
                 let reportesOrdenados = reportesPorArea[areaKey].sort((a, b) => a.reporte.localeCompare(b.reporte));
                 
                 let htmlList = "";
                 reportesOrdenados.forEach(rep => {
                     
-                    // Link Logic
-                    let linkHtml = `<span class="no-link">Sin enlace</span>`;
-                    if (rep.enlace && rep.enlace !== "#" && rep.enlace !== "nan" && rep.enlace !== "undefined" && rep.enlace.trim() !== "") {
+                    let linkHtml = `<span class="no-link">Sin enlace web</span>`;
+                    if (rep.enlace && rep.enlace !== "#" && rep.enlace !== "nan" && rep.enlace.trim() !== "") {
                         let href = rep.enlace.trim();
                         if (!href.toLowerCase().startsWith("http")) href = "https://" + href;
                         linkHtml = `<a href="${href}" class="btn-enlace" target="_blank" rel="noopener noreferrer">Abrir ↗</a>`;
                     }
                     
-                    // Colores y Contadores
                     let badgeColor = "var(--teal)";
-                    let act = rep.actividad.toLowerCase();
+                    let act = normalizarTexto(rep.actividad);
                     
                     if(act.includes("conexiones")) { badgeColor = "#4CAF50"; cInf++; }
                     else if(act.includes("normativo")) { badgeColor = "#F44336"; cNor++; }
@@ -732,11 +773,9 @@
                     else if(act.includes("tablero interno")) { badgeColor = "#9C27B0"; cTin++; }
                     else if(act.includes("informe interno")) { badgeColor = "#FF9800"; cIin++; }
 
-                    // LÓGICA CONDICIONAL: Programado, Periodicidad y Fecha Gen
+                    // Lógica Condicional (Programado, Periodicidad, Fechas)
                     let metaHtml = "";
-                    let isTargetType = act.includes("conexiones") || act.includes("informe interno") || act.includes("normativo");
-                    
-                    if (isTargetType) {
+                    if (act.includes("conexiones") || act.includes("informe interno") || act.includes("normativo")) {
                         let isProgramado = normalizarTexto(rep.programado) === "si";
                         let fechaLabel = rep.fecha_generacion && rep.fecha_generacion !== "N/D" ? rep.fecha_generacion : "N/D";
                         
@@ -747,19 +786,16 @@
                                     <span><strong>Programado:</strong> Sí</span>
                                     <span><strong>Periodicidad:</strong> ${per}</span>
                                     <span><strong>Última Generación:</strong> ${fechaLabel}</span>
-                                </div>
-                            `;
+                                </div>`;
                         } else {
                             metaHtml = `
                                 <div class="report-meta">
                                     <span><strong>Programado:</strong> No</span>
                                     <span><strong>Última Generación:</strong> ${fechaLabel}</span>
-                                </div>
-                            `;
+                                </div>`;
                         }
                     }
 
-                    // Construcción Final del Item
                     htmlList += `
                         <div class="report-item">
                             <div class="report-header">
@@ -773,10 +809,10 @@
                 });
                 listContainer.innerHTML = htmlList;
             } else {
-                listContainer.innerHTML = "<p style='color: #666; font-size: 12px; font-style: italic; margin-top: 15px;'>No hay detalles registrados para esta área.</p>";
+                listContainer.innerHTML = "<p style='color: #666; font-size: 13px; font-style: italic; margin-top: 15px;'>No hay activos registrados para esta área.</p>";
             }
             
-            // Inyectar contadores en el Header
+            // Actualizar Grid de Contadores del Modal
             document.getElementById("modalInformes").innerText = cInf;
             document.getElementById("modalNormativos").innerText = cNor;
             document.getElementById("modalBI").innerText = cBi;
