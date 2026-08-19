@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Organigrama Savia Salud EPS - Vertical</title>
+    <title>Organigrama Savia Salud EPS - Optimizado</title>
     <style>
         :root {
             --dark-blue: rgb(36, 75, 90);
@@ -29,13 +29,12 @@
         .org-wrapper {
             position: relative;
             width: 100%;
-            max-width: 1000px;
+            max-width: 1600px;
             margin: 0 auto;
             background-color: #fff;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.06);
             overflow: hidden;
-            padding-bottom: 40px;
         }
 
         .header-logo {
@@ -47,101 +46,136 @@
         .header-logo img { height: 44px; margin-right: 14px; }
         .header-logo h2 { color: var(--dark-blue); margin: 0; font-size: 1.2rem; }
 
-        .chart-viewport {
-            width: 100%;
-            padding: 40px 20px;
-            overflow-x: auto;
-        }
-
-        /* ----- ESTRUCTURA TIPO ÁRBOL VERTICAL ----- */
-        .tree {
+        /* ---- Controles de zoom ---- */
+        .zoom-controls {
+            position: absolute;
+            top: 14px;
+            right: 14px;
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
-            padding-left: 20px;
+            gap: 6px;
+            z-index: 50;
         }
-
-        .tree ul {
-            padding-left: 40px;
-            list-style: none;
-            margin: 0;
-            position: relative;
-        }
-
-        /* Línea vertical principal para los hijos */
-        .tree ul::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 20px;
-            bottom: 20px;
-            width: 2px;
-            background-color: var(--line-color);
-        }
-
-        .tree li {
-            position: relative;
-            margin: 15px 0;
-            padding-left: 20px;
-        }
-
-        /* Línea horizontal hacia el nodo */
-        .tree li::before {
-            content: "";
-            position: absolute;
-            top: 20px; /* Mitad de la altura del nodo aprox */
-            left: -20px;
-            width: 20px;
-            height: 2px;
-            background-color: var(--line-color);
-        }
-
-        /* Ocultar la línea vertical extra al final */
-        .tree ul li:last-child::before {
-            background-color: var(--line-color);
-        }
-        .tree ul li:last-child::after {
-            content: "";
-            position: absolute;
-            top: 22px;
-            left: -20px;
-            bottom: -15px;
-            width: 4px;
-            background-color: #fff; /* Oculta la línea vertical hacia abajo */
-        }
-
-        /* ----- NODOS ----- */
-        .node {
-            display: inline-flex;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 10px 16px;
+        .zoom-controls button {
+            width: 32px;
+            height: 32px;
             border-radius: 8px;
-            font-weight: 600;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            font-size: 13px;
-            min-height: 40px;
-            min-width: 200px;
-            max-width: 320px;
-            z-index: 2;
-            position: relative;
+            border: 1px solid #d5dade;
+            background: #fff;
+            color: var(--dark-blue);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .zoom-controls button:hover { background: var(--teal); color: #fff; }
+
+        /* ---- Área con scroll / pan ---- */
+        .chart-viewport {
+            width: 100%;
+            height: 78vh;
+            min-height: 550px;
+            overflow: auto;
+            cursor: grab;
+            padding: 40px 20px;
+        }
+        .chart-viewport.dragging { cursor: grabbing; }
+
+        .org-chart {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            width: max-content;
+            margin: 0 auto;
+            transform-origin: top center;
+            transition: transform 0.12s ease-out;
+            padding-bottom: 60px;
         }
 
-        .node-large { font-size: 15px; min-width: 250px; font-weight: 700; }
-        .node-medium { font-size: 14px; min-width: 230px; }
+        /* Nodos compactos y legibles */
+        .node {
+            padding: 8px 10px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 3px;
+            position: relative;
+            z-index: 2;
+            width: 135px;
+            font-size: 11px;
+            line-height: 1.3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 40px;
+        }
 
+        .node-large { width: 180px; font-size: 13px; }
+        .node-medium { width: 155px; font-size: 12px; }
+
+        /* Colores */
         .n-orange { background-color: var(--orange); color: #333; border: 2px dashed var(--orange-border); }
         .n-teal { background-color: var(--teal); color: white; border: 1px solid #008772; }
         .n-yellow { background-color: var(--yellow); color: #333; border: 1px solid #c9c55b; }
         .n-dark { background-color: var(--dark-blue); color: white; border: 1px solid #1a3742; }
         .n-grey { background-color: var(--grey); color: #333; border: 1px solid #ccc; }
 
+        .branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .row {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        /* Agrupaciones de dependencias (para que no se expanda horizontalmente) */
+        .sub-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 12px;
+            border: 1px dashed var(--line-color);
+            border-radius: 8px;
+            background-color: #fdfdfd;
+            margin-top: 5px;
+        }
+
         .interactive { cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; }
         .interactive:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
             filter: brightness(0.95);
-            border: 2px solid var(--highlight);
+            border-color: var(--highlight);
+        }
+
+        .connector-v { width: 2px; height: 16px; background-color: var(--line-color); z-index: 1; }
+        
+        /* Línea horizontal que divide los 4 pilares */
+        .level-split {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding-top: 25px;
+            gap: 30px;
+        }
+        .level-split::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background-color: var(--line-color);
         }
 
         /* ---- Modal ---- */
@@ -177,100 +211,160 @@
         .modal-body ul { padding-left: 20px; margin: 0 0 8px 0; }
         .modal-body li { margin-bottom: 8px; }
         .modal-sync-note { font-size: 11px; color: #888; margin: 0; }
-
-        @media (max-width: 768px) {
-            .tree ul { padding-left: 20px; }
-            .tree ul::before { left: 10px; }
-            .tree li::before { left: -10px; width: 10px; }
-            .tree ul li:last-child::after { left: -10px; }
-        }
     </style>
 </head>
 <body>
 
 <div class="org-wrapper">
-
     <div class="header-logo">
-        <!-- Reemplaza con la ruta correcta de tu logo -->
-        <img src="Logo.png" alt="Logo Savia Salud EPS">
-        <h2>Inventario Coordinacción de Analítica y Ciencia del Dato</h2>
+        <img src="Logo.png" alt="Logo Savia Salud EPS" onerror="this.style.display='none'">
+        <h2>Inventario Coordinación de Analítica y Ciencia del Dato</h2>
     </div>
 
-    <div class="chart-viewport">
-        <div class="tree">
-            <!-- Raíz: Gerencia General -->
-            <div class="node n-orange node-large" style="margin-bottom: 10px;">Gerencia General</div>
+    <div class="zoom-controls">
+        <button id="zoomIn" title="Acercar">+</button>
+        <button id="zoomOut" title="Alejar">−</button>
+        <button id="zoomReset" title="Restablecer">⟳</button>
+    </div>
+
+    <div class="chart-viewport" id="chartViewport">
+        <div class="org-chart" id="orgChart">
             
-            <ul>
-                <!-- 1. STAFF GERENCIA -->
-                <li>
-                    <div class="node n-dark node-medium">Staff de Gerencia</div>
-                    <ul>
-                        <li><div class="node n-dark interactive" data-title="Secretaría General" data-informes="11" data-normativos="4" data-bi="1" data-source="Inventario Excel (Hoja SP)">Secretaría General</div></li>
-                        <li><div class="node n-teal interactive" data-title="Dirección de Auditoría Interna" data-informes="0" data-normativos="0" data-bi="3" data-source="Inventario (carga manual)">Dirección de Auditoría Interna</div></li>
-                        <li>
-                            <div class="node n-teal interactive" data-title="Dirección de Calidad y Planeación">Dirección de Calidad y Planeación</div>
-                            <ul>
-                                <li><div class="node n-dark interactive" data-title="Coordinación de Calidad y Planeación">Coord. Calidad y Planeación</div></li>
-                            </ul>
-                        </li>
-                        <li><div class="node n-yellow interactive" data-title="Jefatura de Comunicaciones">Jefatura de Comunicaciones</div></li>
-                        <li><div class="node n-grey interactive" data-title="Oficial de Cumplimiento" style="border-style: dashed;">Oficial de Cumplimiento</div></li>
-                        <li><div class="node n-yellow interactive" data-title="Jefatura de Defensa Judicial">Jefatura Defensa Judicial / Prev. Daño</div></li>
-                        <li><div class="node n-yellow interactive" data-title="Jefatura de Contratación" data-informes="9" data-normativos="1" data-bi="1" data-source="Inventario Excel (Hoja SP)">Jefatura de Contratación</div></li>
-                        <li><div class="node n-dark interactive" data-title="Coordinación Jurídica">Coord. Jurídica y Gobierno Corp.</div></li>
-                    </ul>
-                </li>
+            <!-- RAIZ: 1.0 GERENCIA GENERAL -->
+            <div class="branch">
+                <div class="node n-orange node-large interactive" data-title="Gerencia General" style="font-weight: 700;">1.0 Gerencia General</div>
+                <div class="connector-v" style="height: 25px;"></div>
+            </div>
 
-                <!-- 2. SUBGERENCIA DE SALUD -->
-                <li>
-                    <div class="node n-dark node-medium">Subgerencia de Salud</div>
-                    <ul>
-                        <li><div class="node n-teal interactive" data-title="Dirección de Acceso a Servicios" data-informes="12" data-normativos="0" data-bi="6" data-source="Inventario Excel (Hoja SP)">Dirección de Acceso a Servicios de Salud</div></li>
-                        <li><div class="node n-yellow interactive" data-title="Jefatura de Autorizaciones" data-informes="33" data-normativos="0" data-bi="2" data-source="Inventario Excel (Hoja SP)">Jefatura de Autorizaciones</div></li>
-                        <li><div class="node n-yellow interactive" data-title="Jefatura de Centro Regulador" data-informes="7" data-normativos="2" data-bi="4" data-source="Inventario Excel (Hoja SP)">Jefatura de Centro Regulador</div></li>
-                        <li><div class="node n-yellow interactive" data-title="Jefatura de Auditoría Concurrente" data-informes="9" data-normativos="0" data-bi="5" data-source="Inventario Excel (Hoja SP)">Jefatura de Auditoría Concurrente</div></li>
-                        <li><div class="node n-yellow interactive" data-title="Jefatura de Cuentas Médicas" data-informes="92" data-normativos="0" data-bi="1" data-source="Inventario Excel (Hoja SP)">Jefatura de Cuentas Médicas</div></li>
-                        <li><div class="node n-yellow interactive" data-title="Jefatura de Atención al Usuario" data-informes="12" data-normativos="3" data-bi="3" data-source="Inventario Excel (Hoja SP)">Jefatura de Atención al Usuario</div></li>
-                        <li><div class="node n-teal interactive" data-title="Dirección de Riesgo en Salud" data-informes="20" data-normativos="5" data-bi="19" data-source="Inventario Excel (Hoja SP)">Dirección de Riesgo en Salud</div></li>
-                        <li><div class="node n-yellow interactive" data-title="Jefatura de Adquisiciones">Jefatura de Adquisiciones</div></li>
-                        <li><div class="node n-yellow interactive" data-title="Jefatura de Apoyo a Regiones">Jefatura de Apoyo a Regiones</div></li>
-                        <li><div class="node n-dark interactive" data-title="Coord. Programas Especiales" data-informes="0" data-normativos="0" data-bi="6" data-source="Inventario (carga manual)">Coord. Prog. Especiales</div></li>
-                        <li><div class="node n-dark interactive" data-title="Coord. de Epidemiología">Coord. de Epidemiología</div></li>
-                        <li><div class="node n-dark interactive" data-title="Coord. de Salud Pública">Coord. de Salud Pública</div></li>
-                        <li><div class="node n-dark interactive" data-title="Coord. de Alto Costo" data-informes="0" data-normativos="0" data-bi="11" data-source="Inventario (carga manual)">Coord. de Alto Costo</div></li>
-                    </ul>
-                </li>
+            <!-- LOS 4 PILARES PRINCIPALES -->
+            <div class="level-split">
+                
+                <!-- ================== 1.1 STAFF GERENCIA ================== -->
+                <div class="branch">
+                    <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
+                    <div class="node n-dark node-medium interactive" data-title="Staff Gerencia">1.1 Staff Gerencia</div>
+                    <div class="connector-v" style="height: 15px;"></div>
+                    
+                    <div class="row" style="gap: 15px;">
+                        <!-- Bloque 1: Dependencias directas sueltas -->
+                        <div class="branch" style="gap: 8px;">
+                            <div class="node n-grey interactive" data-title="Oficial de Cumplimiento">Oficial Cumplimiento</div>
+                            <div class="node n-yellow interactive" data-title="Jefatura de Comunicaciones">Jefatura<br>Comunicaciones</div>
+                            <div class="node n-teal interactive" data-title="Dirección Auditoría Interna" data-bi="3">Dirección<br>Auditoría Interna</div>
+                        </div>
 
-                <!-- 3. SUBGERENCIA FINANCIERA -->
-                <li>
-                    <div class="node n-dark node-medium">Subgerencia Financiera</div>
-                    <ul>
-                        <li><div class="node n-teal interactive" data-title="Dirección de Contabilidad y Presupuesto">Dirección Contabilidad y Presupuesto</div></li>
-                        <li><div class="node n-teal interactive" data-title="Dirección de Tesorería y Cartera" data-informes="1" data-normativos="16" data-bi="3" data-source="Inventario Excel (Hoja SP)">Dirección Tesorería y Cartera</div></li>
-                    </ul>
-                </li>
+                        <!-- Bloque 2: Direcciones con hijos -->
+                        <div class="branch" style="gap: 15px;">
+                            <div class="branch">
+                                <div class="node n-teal interactive" data-title="Dirección Calidad y Planeación">Dirección Calidad<br>y Planeación</div>
+                                <div class="connector-v" style="height: 10px;"></div>
+                                <div class="sub-group">
+                                    <div class="node n-dark interactive" data-title="Coordinación Calidad y Planeación">Coord. Calidad<br>y Planeación</div>
+                                </div>
+                            </div>
 
-                <!-- 4. SUBGERENCIA ADMINISTRATIVA -->
-                <li>
-                    <div class="node n-dark node-medium">Subgerencia Administrativa</div>
-                    <ul>
-                        <li>
-                            <div class="node n-teal interactive" data-title="Dirección de Tecnología e Información" data-informes="0" data-normativos="0" data-bi="1" data-source="Inventario Excel (Hoja SP)">Dirección de Tecnología e Información</div>
-                            <ul>
-                                <li><div class="node n-dark interactive" data-title="Coord. de Software y Arquitectura">Coord. Software y Arquitectura</div></li>
-                                <li><div class="node n-dark interactive" data-title="Coord. de Soporte Tecnológico" data-informes="0" data-normativos="0" data-bi="2" data-source="Inventario Excel (Hoja SP)">Coord. Soporte Tecnológico</div></li>
-                                <li><div class="node n-dark interactive" data-title="Coord. Infraestructura y S.I." data-informes="0" data-normativos="0" data-bi="3" data-source="Inventario Excel (Hoja SP)">Coord. Infraest. y S.I.</div></li>
-                                <li><div class="node n-dark interactive" data-title="Coord. de Analítica y Ciencia del Dato" data-informes="0" data-normativos="0" data-bi="11" data-source="Inventario Excel (Hoja SP)">Coord. Analítica y Ciencia Dato</div></li>
-                            </ul>
-                        </li>
-                        <li><div class="node n-yellow interactive" data-title="Jefatura Administrativa" data-informes="0" data-normativos="0" data-bi="2" data-source="Inventario Excel (Hoja SP)">Jefatura Administrativa</div></li>
-                        <li><div class="node n-yellow interactive" data-title="Jefatura de Gestión Humana" data-informes="0" data-normativos="0" data-bi="1" data-source="Inventario (carga manual)">Jefatura de Gestión Humana</div></li>
-                        <li><div class="node n-yellow interactive" data-title="Jefatura Aseguramiento de Recursos">Jefatura Aseg. de Recursos</div></li>
-                        <li><div class="node n-yellow interactive" data-title="Jefatura Aseguramiento de Operaciones" data-informes="12" data-normativos="0" data-bi="1" data-source="Inventario Excel (Hoja SP)">Jefatura Aseg. de Operaciones</div></li>
-                    </ul>
-                </li>
-            </ul>
+                            <div class="branch">
+                                <div class="node n-teal interactive" data-title="Secretaría General" data-informes="11" data-normativos="4" data-bi="1">Secretaría General</div>
+                                <div class="connector-v" style="height: 10px;"></div>
+                                <div class="sub-group">
+                                    <div class="node n-yellow interactive" data-title="Jefatura Judicial">Jefatura Judicial</div>
+                                    <div class="node n-yellow interactive" data-title="Jefatura de Contratación" data-informes="9" data-normativos="1" data-bi="1">Jefatura<br>Contratación</div>
+                                    <div class="node n-dark interactive" data-title="Coordinación Jurídica">Coord. Jurídica</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================== 1.2 SUBGERENCIA DE SALUD ================== -->
+                <div class="branch">
+                    <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
+                    <div class="node n-dark node-medium interactive" data-title="Subgerencia de Salud">1.2 Subgerencia de Salud</div>
+                    <div class="connector-v" style="height: 15px;"></div>
+
+                    <div class="row" style="gap: 15px;">
+                        
+                        <!-- Columna Izq: Dir. Acceso a Servicios -->
+                        <div class="branch">
+                            <div class="node n-teal interactive" data-title="Dirección de Acceso a Servicios" data-informes="12" data-bi="6">Dirección Acceso<br>a Servicios</div>
+                            <div class="connector-v" style="height: 10px;"></div>
+                            <div class="sub-group">
+                                <div class="node n-yellow interactive" data-title="Jefatura de Autorizaciones" data-informes="33" data-bi="2">Jef. Autorizaciones</div>
+                                <div class="node n-yellow interactive" data-title="Centro Regulador" data-informes="7" data-normativos="2" data-bi="4">Centro Regulador</div>
+                                <div class="node n-yellow interactive" data-title="Auditoría Concurrente" data-informes="9" data-bi="5">Auditoría<br>Concurrente</div>
+                                <div class="node n-yellow interactive" data-title="Apoyo a Regiones">Apoyo a Regiones</div>
+                                <div class="node n-yellow interactive" data-title="Adquisiciones">Adquisiciones</div>
+                                <div class="node n-dark interactive" data-title="Programas Especiales" data-bi="6">Prog. Especiales</div>
+                            </div>
+                        </div>
+
+                        <!-- Columna Der: Dir. Riesgo en Salud + Jefaturas Directas -->
+                        <div class="branch" style="gap: 15px;">
+                            
+                            <!-- Riesgo en Salud -->
+                            <div class="branch">
+                                <div class="node n-teal interactive" data-title="Dirección de Riesgo en Salud" data-informes="20" data-normativos="5" data-bi="19">Dirección Riesgo<br>en Salud</div>
+                                <div class="connector-v" style="height: 10px;"></div>
+                                <div class="sub-group">
+                                    <div class="node n-dark interactive" data-title="Epidemiología">Epidemiología</div>
+                                    <div class="node n-dark interactive" data-title="Salud Pública">Salud Pública</div>
+                                    <div class="node n-dark interactive" data-title="Alto Costo" data-bi="11">Alto Costo</div>
+                                </div>
+                            </div>
+
+                            <!-- Jefaturas dependientes directamente de Subgerencia -->
+                            <div class="branch" style="gap: 8px;">
+                                <div class="node n-yellow interactive" data-title="Jefatura de Cuentas Médicas" data-informes="92" data-bi="1">Jefatura<br>Cuentas Médicas</div>
+                                <div class="node n-yellow interactive" data-title="Jefatura de Atención al Usuario" data-informes="12" data-normativos="3" data-bi="3">Jefatura<br>Atención al Usuario</div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================== 1.3 SUBGERENCIA FINANCIERA ================== -->
+                <div class="branch">
+                    <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
+                    <div class="node n-dark node-medium interactive" data-title="Subgerencia Financiera">1.3 Subgerencia<br>Financiera</div>
+                    <div class="connector-v" style="height: 15px;"></div>
+
+                    <div class="branch" style="gap: 15px;">
+                        <div class="node n-teal interactive" data-title="Dirección de Contabilidad">Dirección<br>Contabilidad</div>
+                        <div class="node n-teal interactive" data-title="Dirección de Tesorería y Cartera" data-informes="1" data-normativos="16" data-bi="3">Dirección<br>Tesorería y Cartera</div>
+                    </div>
+                </div>
+
+                <!-- ================== 1.4 SUBGERENCIA ADMINISTRATIVA ================== -->
+                <div class="branch">
+                    <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
+                    <div class="node n-dark node-medium interactive" data-title="Subgerencia Administrativa">1.4 Subgerencia<br>Administrativa</div>
+                    <div class="connector-v" style="height: 15px;"></div>
+
+                    <div class="row" style="gap: 15px;">
+                        
+                        <!-- Columna Izq: Dirección de Tecnología -->
+                        <div class="branch">
+                            <div class="node n-teal interactive" data-title="Dirección de Tecnología" data-bi="1">Dirección<br>Tecnología</div>
+                            <div class="connector-v" style="height: 10px;"></div>
+                            <div class="sub-group">
+                                <div class="node n-dark interactive" data-title="Coordinación de Software">Coord. Software</div>
+                                <div class="node n-dark interactive" data-title="Coordinación Analítica" data-bi="11">Coord. Analítica</div>
+                                <div class="node n-dark interactive" data-title="Coordinación Soporte Tecnológico" data-bi="2">Coord. Soporte<br>Tecnológico</div>
+                            </div>
+                        </div>
+
+                        <!-- Columna Der: Jefaturas Directas -->
+                        <div class="branch" style="gap: 8px;">
+                            <div class="node n-yellow interactive" data-title="Jefatura de Gestión Humana">Jefatura<br>Gestión Humana</div>
+                            <div class="node n-yellow interactive" data-title="Jefatura Administrativa" data-bi="2">Jefatura<br>Administrativa</div>
+                            <div class="node n-yellow interactive" data-title="Jefatura Aseguramiento de Recursos y Operaciones" data-informes="12" data-bi="1">Jef. Aseguramiento<br>Recursos y Op.</div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div> <!-- Cierre Level Split -->
+
         </div>
     </div>
 </div>
@@ -289,15 +383,13 @@
                 <li>Tiene <strong id="modalNormativos">0</strong> normativos.</li>
                 <li>Tiene <strong id="modalBI">0</strong> tableros de Power BI.</li>
             </ul>
-            <p class="modal-sync-note" id="modalSync">Datos cargados estáticamente.</p>
+            <p class="modal-sync-note" id="modalSync">Datos cargados estáticamente de Hoja "SP".</p>
         </div>
     </div>
 </div>
 
 <script>
-    /* =========================================================
-       1) MODAL DE INFORMACIÓN POR ÁREA
-    ========================================================= */
+    /* Lógica del Modal */
     const modal = document.getElementById("infoModal");
     document.getElementById("closeModal").onclick = () => modal.style.display = "none";
     window.addEventListener("click", e => { if (e.target === modal) modal.style.display = "none"; });
@@ -313,6 +405,40 @@
                 : "Sin registros en el inventario todavía.";
             modal.style.display = "block";
         });
+    });
+
+    /* Zoom y Pan */
+    const chart = document.getElementById("orgChart");
+    const viewport = document.getElementById("chartViewport");
+    let scale = 1;
+
+    function applyZoom() {
+        chart.style.transform = `scale(${scale})`;
+    }
+
+    document.getElementById("zoomIn").onclick = () => { scale = Math.min(scale + 0.1, 1.6); applyZoom(); };
+    document.getElementById("zoomOut").onclick = () => { scale = Math.max(scale - 0.1, 0.4); applyZoom(); };
+    document.getElementById("zoomReset").onclick = () => { scale = 1; applyZoom(); viewport.scrollTo({left:0, top:0}); };
+
+    let isDragging = false, startX, startY, scrollLeft, scrollTop;
+    viewport.addEventListener("mousedown", e => {
+        isDragging = true;
+        viewport.classList.add("dragging");
+        startX = e.pageX - viewport.offsetLeft;
+        startY = e.pageY - viewport.offsetTop;
+        scrollLeft = viewport.scrollLeft;
+        scrollTop = viewport.scrollTop;
+    });
+    ["mouseleave", "mouseup"].forEach(evt =>
+        viewport.addEventListener(evt, () => { isDragging = false; viewport.classList.remove("dragging"); })
+    );
+    viewport.addEventListener("mousemove", e => {
+        if (!isDragging) return;
+        e.preventDefault();
+        const x = e.pageX - viewport.offsetLeft;
+        const y = e.pageY - viewport.offsetTop;
+        viewport.scrollLeft = scrollLeft - (x - startX);
+        viewport.scrollTop = scrollTop - (y - startY);
     });
 </script>
 
