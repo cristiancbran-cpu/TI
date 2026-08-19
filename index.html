@@ -184,6 +184,56 @@
             height: 2px;
             background-color: var(--line-color);
         }
+        
+        /* Puntos de colores para la leyenda y el modal */
+        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+        .d-inf { background-color: #4CAF50; }
+        .d-nor { background-color: #F44336; }
+        .d-tbi { background-color: #2196F3; }
+        .d-tin { background-color: #9C27B0; }
+        .d-iin { background-color: #FF9800; }
+
+        /* ---- Modal Details List ---- */
+        .report-list {
+            max-height: 350px;
+            overflow-y: auto;
+            margin-top: 15px;
+            border-top: 1px solid var(--grey);
+            padding-top: 10px;
+            padding-right: 5px;
+        }
+        .report-list::-webkit-scrollbar { width: 6px; }
+        .report-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .report-item {
+            padding: 10px 0;
+            border-bottom: 1px dashed #cbd5e1;
+            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .report-item:last-child { border-bottom: none; }
+        .report-badge {
+            display: inline-block;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 4px;
+        }
+        .report-title { font-weight: 600; color: var(--dark-blue); margin: 4px 0; }
+        .report-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 4px;
+            color: #0284c7;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .report-link:hover { text-decoration: underline; color: #0369a1; }
+        .no-link { color: #94a3b8; font-style: italic; font-size: 11px; display: inline-block; margin-top: 4px;}
 
         /* ---- Modal ---- */
         .modal {
@@ -196,10 +246,10 @@
         }
         .modal-content {
             background-color: white;
-            margin: 10% auto;
+            margin: 5% auto;
             border-radius: 10px;
-            width: 90%;
-            max-width: 400px;
+            width: 95%;
+            max-width: 550px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             overflow: hidden;
         }
@@ -215,8 +265,6 @@
         .close { font-size: 20px; font-weight: bold; color: white; cursor: pointer; opacity: 0.8; }
         .close:hover { opacity: 1; }
         .modal-body { padding: 15px; font-size: 13px; color: #444; }
-        .modal-body ul { padding-left: 20px; margin: 0 0 8px 0; }
-        .modal-body li { margin-bottom: 8px; }
         .modal-sync-note { font-size: 11px; color: #888; margin: 0; }
     </style>
 </head>
@@ -239,7 +287,7 @@
             
             <!-- RAIZ: 1.0 GERENCIA GENERAL -->
             <div class="branch">
-                <div class="node n-orange node-large interactive" data-title="Gerencia General" style="font-weight: 700;">1.0 Gerencia General</div>
+                <div class="node n-orange node-large interactive" data-title="Gerencia General" style="font-weight: 700;">Gerencia General</div>
                 <div class="connector-v" style="height: 25px;"></div>
             </div>
 
@@ -249,37 +297,31 @@
                 <!-- ================== 1.1 STAFF GERENCIA ================== -->
                 <div class="branch">
                     <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
-                    <!-- Staff es dark-blue -->
-                    <div class="node n-dark node-medium interactive" data-title="Staff Gerencia">1.1 Staff Gerencia</div>
+                    <div class="node n-dark node-medium interactive" data-title="Staff Gerencia">Staff Gerencia</div>
                     <div class="connector-v" style="height: 15px;"></div>
                     
                     <div class="row" style="gap: 15px;">
-                        <!-- Bloque 1: Dependencias directas sueltas -->
                         <div class="branch" style="gap: 8px;">
                             <div class="node n-staff interactive" data-title="Oficial de Cumplimiento">Oficial Cumplimiento</div>
-                            <!-- Jefaturas yellow -->
                             <div class="node n-yellow interactive" data-title="Jefatura de Comunicaciones">Jefatura<br>Comunicaciones</div>
-                            <!-- Direcciones teal -->
-                            <div class="node n-teal interactive" data-title="Dirección Auditoría Interna" data-bi="3">Dirección<br>Auditoría Interna</div>
+                            <div class="node n-teal interactive" data-title="Auditoria Interna" data-bi="3">Dirección<br>Auditoría Interna</div>
                         </div>
 
-                        <!-- Bloque 2: Direcciones con hijos -->
                         <div class="branch" style="gap: 15px;">
                             <div class="branch">
                                 <div class="node n-teal interactive" data-title="Dirección Calidad y Planeación">Dirección Calidad<br>y Planeación</div>
                                 <div class="connector-v" style="height: 10px;"></div>
                                 <div class="sub-group">
-                                    <!-- Coordinaciones coord-blue -->
                                     <div class="node n-coord interactive" data-title="Coordinación Calidad y Planeación">Coord. Calidad<br>y Planeación</div>
                                 </div>
                             </div>
 
                             <div class="branch">
-                                <div class="node n-teal interactive" data-title="Secretaría General" data-informes="11" data-normativos="4" data-bi="1">Secretaría General</div>
+                                <div class="node n-teal interactive" data-title="Secretaria General" data-informes="11" data-normativos="4" data-bi="1">Secretaría General</div>
                                 <div class="connector-v" style="height: 10px;"></div>
                                 <div class="sub-group">
                                     <div class="node n-yellow interactive" data-title="Jefatura Judicial">Jefatura Judicial</div>
-                                    <div class="node n-yellow interactive" data-title="Jefatura de Contratación" data-informes="9" data-normativos="0" data-bi="1">Jefatura<br>Contratación</div>
+                                    <div class="node n-yellow interactive" data-title="Contratacion" data-informes="9" data-normativos="0" data-bi="1">Jefatura<br>Contratación</div>
                                     <div class="node n-coord interactive" data-title="Coordinación Jurídica">Coord. Jurídica</div>
                                 </div>
                             </div>
@@ -290,31 +332,27 @@
                 <!-- ================== 1.2 SUBGERENCIA DE SALUD ================== -->
                 <div class="branch">
                     <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
-                    <div class="node n-dark node-medium interactive" data-title="Subgerencia de Salud">1.2 Subgerencia de Salud</div>
+                    <div class="node n-dark node-medium interactive" data-title="Subgerencia de Salud">Subgerencia de Salud</div>
                     <div class="connector-v" style="height: 15px;"></div>
 
                     <div class="row" style="gap: 15px;">
                         
-                        <!-- Columna Izq: Dir. Acceso a Servicios -->
                         <div class="branch">
-                            <div class="node n-teal interactive" data-title="Dirección de Acceso a Servicios" data-informes="12" data-bi="6" data-tablero="4">Dirección Acceso<br>a Servicios</div>
+                            <div class="node n-teal interactive" data-title="Direccion De Accesos" data-informes="12" data-bi="6" data-tablero="4">Dirección Acceso<br>a Servicios</div>
                             <div class="connector-v" style="height: 10px;"></div>
                             <div class="sub-group">
-                                <div class="node n-yellow interactive" data-title="Jefatura de Autorizaciones" data-informes="33" data-bi="2">Jef. Autorizaciones</div>
+                                <div class="node n-yellow interactive" data-title="Autorizaciones" data-informes="33" data-bi="2">Jef. Autorizaciones</div>
                                 <div class="node n-yellow interactive" data-title="Centro Regulador" data-informes="7" data-normativos="2" data-bi="4">Centro Regulador</div>
-                                <div class="node n-yellow interactive" data-title="Auditoría Concurrente" data-informes="9" data-bi="5" data-tablero="1">Auditoría<br>Concurrente</div>
-                                <div class="node n-yellow interactive" data-title="Apoyo a Regiones">Apoyo a Regiones</div>
+                                <div class="node n-yellow interactive" data-title="Auditoria Concurrente" data-informes="9" data-bi="5" data-tablero="1">Auditoría<br>Concurrente</div>
+                                <div class="node n-yellow interactive" data-title="Jefatura de Apoyo a Regiones">Apoyo a Regiones</div>
                                 <div class="node n-yellow interactive" data-title="Adquisiciones" data-normativos="1" data-bi="4">Adquisiciones</div>
                                 <div class="node n-coord interactive" data-title="Programas Especiales" data-tablero="1">Prog. Especiales</div>
                             </div>
                         </div>
 
-                        <!-- Columna Der: Dir. Riesgo en Salud + Jefaturas Directas -->
                         <div class="branch" style="gap: 15px;">
-                            
-                            <!-- Riesgo en Salud -->
                             <div class="branch">
-                                <div class="node n-teal interactive" data-title="Dirección de Riesgo en Salud" data-informes="20" data-normativos="5" data-bi="20" data-tablero="2">Dirección Riesgo<br>en Salud</div>
+                                <div class="node n-teal interactive" data-title="Gestión Del Riesgo" data-informes="20" data-normativos="5" data-bi="20" data-tablero="2">Dirección Riesgo<br>en Salud</div>
                                 <div class="connector-v" style="height: 10px;"></div>
                                 <div class="sub-group">
                                     <div class="node n-coord interactive" data-title="Epidemiología">Epidemiología</div>
@@ -323,12 +361,10 @@
                                 </div>
                             </div>
 
-                            <!-- Jefaturas dependientes directamente de Subgerencia -->
                             <div class="branch" style="gap: 8px;">
-                                <div class="node n-yellow interactive" data-title="Jefatura de Cuentas Médicas" data-informes="92" data-bi="1">Jefatura<br>Cuentas Médicas</div>
-                                <div class="node n-yellow interactive" data-title="Jefatura de Atención al Usuario" data-informes="12" data-normativos="3" data-bi="3">Jefatura<br>Atención al Usuario</div>
+                                <div class="node n-yellow interactive" data-title="Cuentas Médicas" data-informes="92" data-bi="1">Jefatura<br>Cuentas Médicas</div>
+                                <div class="node n-yellow interactive" data-title="Atención Al Usuario" data-informes="12" data-normativos="3" data-bi="3">Jefatura<br>Atención al Usuario</div>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -336,52 +372,48 @@
                 <!-- ================== 1.3 SUBGERENCIA FINANCIERA ================== -->
                 <div class="branch">
                     <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
-                    <div class="node n-dark node-medium interactive" data-title="Subgerencia Financiera" data-normativos="1">1.3 Subgerencia<br>Financiera</div>
+                    <div class="node n-dark node-medium interactive" data-title="Subgerencia Financiera" data-normativos="1">Subgerencia<br>Financiera</div>
                     <div class="connector-v" style="height: 15px;"></div>
 
                     <div class="branch" style="gap: 15px;">
-                        <div class="node n-teal interactive" data-title="Dirección de Contabilidad">Dirección<br>Contabilidad</div>
-                        <div class="node n-teal interactive" data-title="Dirección de Tesorería y Cartera" data-informes="1" data-normativos="16" data-bi="3">Dirección<br>Tesorería y Cartera</div>
+                        <div class="node n-teal interactive" data-title="Contabilidad">Dirección<br>Contabilidad</div>
+                        <div class="node n-teal interactive" data-title="Tesoreria Y Cartera" data-informes="1" data-normativos="16" data-bi="3">Dirección<br>Tesorería y Cartera</div>
                     </div>
                 </div>
 
                 <!-- ================== 1.4 SUBGERENCIA ADMINISTRATIVA ================== -->
                 <div class="branch">
                     <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
-                    <div class="node n-dark node-medium interactive" data-title="Subgerencia Administrativa">1.4 Subgerencia<br>Administrativa</div>
+                    <div class="node n-dark node-medium interactive" data-title="Administrativa">Subgerencia<br>Administrativa</div>
                     <div class="connector-v" style="height: 15px;"></div>
 
                     <div class="row" style="gap: 15px;">
-                        
-                        <!-- Columna Izq: Dirección de Tecnología -->
                         <div class="branch">
-                            <div class="node n-teal interactive" data-title="Dirección de Tecnología" data-bi="1">Dirección<br>Tecnología</div>
+                            <div class="node n-teal interactive" data-title="Direccion De Tecnologia" data-bi="1">Dirección<br>Tecnología</div>
                             <div class="connector-v" style="height: 10px;"></div>
                             <div class="sub-group">
                                 <div class="node n-coord interactive" data-title="Coordinación de Software">Coord. Software</div>
-                                <div class="node n-coord interactive" data-title="Coordinación Analítica" data-bi="11" data-tablero="9">Coord. Analítica</div>
-                                <div class="node n-coord interactive" data-title="Coordinación Soporte Tecnológico" data-bi="2" data-tablero="2">Coord. Soporte<br>Tecnológico</div>
+                                <div class="node n-coord interactive" data-title="Infraestructura" data-bi="3">Coord. Infraestructura</div>
+                                <div class="node n-coord interactive" data-title="Analitica Y Ciencia Del Dato" data-bi="11" data-tablero="9">Coord. Analítica</div>
+                                <div class="node n-coord interactive" data-title="Soporte Tecnologico" data-bi="2" data-tablero="2">Coord. Soporte<br>Tecnológico</div>
                             </div>
                         </div>
 
-                        <!-- Columna Der: Jefaturas Directas -->
                         <div class="branch" style="gap: 8px;">
                             <div class="node n-yellow interactive" data-title="Jefatura de Gestión Humana">Jefatura<br>Gestión Humana</div>
-                            <div class="node n-yellow interactive" data-title="Jefatura Administrativa" data-bi="2">Jefatura<br>Administrativa</div>
-                            <!-- 'Aseguramiento' from excel -> 12 informes, 1 BI -->
-                            <div class="node n-yellow interactive" data-title="Jefatura Aseguramiento de Recursos y Operaciones" data-informes="12" data-bi="1">Jef. Aseguramiento<br>Recursos y Op.</div>
+                            <div class="node n-yellow interactive" data-title="Administrativa" data-bi="2">Jefatura<br>Administrativa</div>
+                            <div class="node n-yellow interactive" data-title="Aseguramiento" data-informes="12" data-bi="1">Jef. Aseguramiento<br>Recursos y Op.</div>
                         </div>
 
                     </div>
                 </div>
 
-            </div> <!-- Cierre Level Split -->
+            </div> 
 
         </div>
     </div>
 </div>
 
-<!-- Modal Dinámico -->
 <div id="infoModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -389,35 +421,87 @@
             <span class="close" id="closeModal">&times;</span>
         </div>
         <div class="modal-body">
-            <p><strong>Actividades y reportes del área:</strong></p>
-            <ul>
-                <li>Tiene <strong id="modalInformes">0</strong> Informes de Conexiones.</li>
-                <li>Tiene <strong id="modalNormativos">0</strong> Informes de Normatividad.</li>
-                <li>Tiene <strong id="modalBI">0</strong> Tableros de Power BI.</li>
-                <li>Tiene <strong id="modalTableros">0</strong> Tableros Internos.</li>
-            </ul>
-            <p class="modal-sync-note" id="modalSync">Datos cargados por la Coordinación de Analitica.</p>
+            <div style="display: flex; gap: 15px; font-size: 12px; flex-wrap: wrap; background: #f8f9fa; padding: 10px; border-radius: 6px; border: 1px solid var(--grey);">
+                <div><span class="dot d-inf"></span> Conexiones: <strong id="modalInformes">0</strong></div>
+                <div><span class="dot d-nor"></span> Normativos: <strong id="modalNormativos">0</strong></div>
+                <div><span class="dot d-tbi"></span> Power BI: <strong id="modalBI">0</strong></div>
+                <div><span class="dot d-tin"></span> Tableros Internos: <strong id="modalTableros">0</strong></div>
+                <div><span class="dot d-iin"></span> Inf. Internos: <strong id="modalInternos">0</strong></div>
+            </div>
+            
+            <div class="report-list" id="modalReportList">
+                <!-- Se inyecta con JS -->
+            </div>
+            
+            <p class="modal-sync-note" id="modalSync" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">Datos extraídos de INVENTARIO_TABLEROS.</p>
         </div>
     </div>
 </div>
 
 <script>
-    /* Lógica del Modal */
+    // Inyectar el JSON
+    const reportesPorArea = {"Aseguramiento": [{"actividad": "Informe Conexiones", "reporte": "ASEG - Afiliados Nuevos (MS)", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "ASEG - Afiliados por municipio lgbtiq", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "ASEG - Usuarios preaprobados", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "ASEG - Datos contactos afiliados", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "ASEG - Detalle de cargos de facturas", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "ASEG - Detalle de cargos de facturas JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "ASEG - Usuarios fallecidos", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "ASEG - IPS Atenci\u00f3n poblaci\u00f3n", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "ASEG - Novedades de afiliados (NS)", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "ASEG - Novedades Digitaci\u00f3n", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "ASEG - Portabilidades", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "ASEG - Traslados de afiliados (S1)", "enlace": "#"}, {"actividad": "Tableros BI", "reporte": "TABLERO ASEGURAMIENTO SAVIA SALUD", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiYjgxOGQxNDUtYTE3NC00NmUyLTk0OTItYjZlNjNmMzMxZDk3IiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Normativo", "reporte": "Resoluci\u00f3n 2381 DE 2021 - Incapacidades", "enlace": "#"}, {"actividad": "Normativo", "reporte": "Resoluci\u00f3n 1379 de 2015 - Carta de derechos y desempe\u00f1o", "enlace": "#"}], "Auditoria Concurrente": [{"actividad": "Informe Conexiones", "reporte": "AUC - Auditoria desescalamiento", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AUC - Eventos adversos en hospitalizaci\u00f3n", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AUC - Gestoras regionales", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AUC - hospitalizados activos diarios por IPS", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AUC - Inoportunidad en hospitalizaci\u00f3n", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AUC - Objeciones en hospitalizaci\u00f3n", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AUC - Reporte a gesti\u00f3n del riesgo", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AUC - Sabana auditor\u00eda", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AUC - Sabana auditor\u00eda procesos", "enlace": "#"}, {"actividad": "Tableros BI", "reporte": "AUDITORIA AMBULATORIA", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiNzk4ZmIyN2UtZjdkYy00YTA1LTk3NDEtZDQxNjc1ZGI2NzNlIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tablero Interno", "reporte": "AUDITORIA AMBULATORIA", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiNzk4ZmIyN2UtZjdkYy00YTA1LTk3NDEtZDQxNjc1ZGI2NzNlIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "AUDITORIA CONCURRENTE", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiNzMwOTdlMDMtNDMxMy00NDFiLWFmNTctOTc1MDM2ZmFlNjgxIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "CONCURRENCIA_ESTRATEGIA_DESESCALAMIENTO", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiOWU4MjcxNDYtNDE1My00NDFjLWFiYzUtNmNjZDYzOTMyYmIzIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "INDICADORES_AUDITORIA_CONCURRENTE", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiNWU4YzJmYjUtYWU4ZC00YTkwLWI4MzUtYzJkYmE1MjMzNjZmIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "REINGRESOS HOSPITALARIOS1", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Indicadores Hospitalizaci\u00f3n", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Informe de desescalamiento", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Informe de autorizaciones ambulatorias", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Informe egresos hospitalizaci\u00f3n", "enlace": "#"}], "Atenci\u00f3n Al Usuario": [{"actividad": "Informe Conexiones", "reporte": "AUS - Informe gestion PQRSD diario", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AUS - Informe gestion PQRD prestadores", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AUS - Reporte GT005", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AUS - Reporte GT006", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AUS - Manifestaciones PQRSD", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AUS - Informe PQRDSF vs Autorizaciones", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AUS - CasosPQRD_Historicos", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AUS - Informe Medicamentos Plan SNS", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AUS - Gestion PQRD Red Prestadora", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AUS - Seguimiento procesos EPS", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AUS - Seguimiento casos y servicios", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AUS - Seguimiento servicios cerrados y resueltos", "enlace": "#"}, {"actividad": "Tableros BI", "reporte": "EXTRACCIONES_BD_MADRE", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiNDZiMTQzN2MtNTAzYi00MTNjLTgxNzktYWRjZWU2NTk5ZGNmIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Normativo", "reporte": "Circular Externa 17 y 18 DE 2020 - Archivo GT005 Inventario de peticiones, Quejas, Reclamos y Denuncias radicadas", "enlace": "#"}, {"actividad": "Normativo", "reporte": "Circular Externa 17 y 18 DE 2020 - Archivo GT006 Respuesta de peticiones, Quejas, Reclamos y Denuncias radicadas", "enlace": "#"}, {"actividad": "Normativo", "reporte": "Indicadores plan de trabajo", "enlace": "#"}, {"actividad": "Tableros BI", "reporte": "PQRS", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiZDg5YzY5YWYtMzZlMi00ZGM5LWE4YjQtZTc5NGVhZTI0NmM2IiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "Tablero_productividad_AUS", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiYTFlNjA1ODYtYTM4Yi00Yjg2LWJjZDMtNDdkYjEyM2ViZDMyIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Informe Interno", "reporte": "Reaperturas de casos Atenci\u00f3n al usuario", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Bases de datos estrategia regional PQRD", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Divisi\u00f3n de carpetas de actas de capacitaci\u00f3n y asociaciones de usuario", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Posibles cierres", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Tablero estructura (Indicadores supersalud de gesti\u00f3n y cierre)", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Expresiones", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Seguimiento diario", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Actualizaci\u00f3n de las bases de datos para visita Procuradur\u00eda PGN", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Conteo de cierres regionales", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Base de datos confirmaci\u00f3n de citas", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Indicadores AU_IND_07, 08,09", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Plan de Mejora SNS - Cohorte C\u00e1ncer y LGBTIQ+", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Circular Externa 2023151000000010-5)", "enlace": "#"}, {"actividad": "Normativo", "reporte": "Circular Externa 17 y 18 DE 2020 - Archivo GT005 Inventario de peticiones, Quejas, Reclamos y Denuncias radicadas", "enlace": "#"}, {"actividad": "Normativo", "reporte": "Circular Externa 17 y 18 DE 2020 - Archivo GT006 Respuesta de peticiones, Quejas, Reclamos y Denuncias radicadas", "enlace": "#"}, {"actividad": "Normativo", "reporte": "Resoluci\u00f3n 2063 DE 2017 - Pol\u00edticas de participaci\u00f3n social- Programaci\u00f3n", "enlace": "#"}, {"actividad": "Normativo", "reporte": "Resoluci\u00f3n 2063 DE 2017 - Pol\u00edticas de participaci\u00f3n social- Seguimiento", "enlace": "#"}, {"actividad": "Normativo", "reporte": "Circular Externa 008 de 2018 y Circular Externa 006 de 2020 - Archivo GT003 Rendici\u00f3n de cuentas", "enlace": "#"}, {"actividad": "Normativo", "reporte": "Circular Externa 002 DE 2020 - Archivo GT004 Alianza o asociaci\u00f3n de usuarios", "enlace": "#"}], "Centro Regulador": [{"actividad": "Informe Conexiones", "reporte": "REF - Censo diario", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "REF - Pluripatol\u00f3gicos IPSU", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "REF - Informe de ayudas diagnosticas", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "REF - Gesti\u00f3n Teleasistencia", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "REF - Informe regulaciones", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "REF - Regulaciones mensuales", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "REF - Gesti\u00f3n por afiliado", "enlace": "#"}, {"actividad": "Tableros BI", "reporte": "16_REGULACIONES DIA", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiYjFiOGQ4NGQtZTkwZS00M2U2LTkyNDItMmVlOTUyNmY2YjUzIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "AMBULANCIAS - CRUE", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiZDFkZWFkNzgtYWFlNy00OGUzLWJkNDctYTI5Y2JlODA1YjYxIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "BI_INDICADORES_CRUE", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiYzI0YTcyMDItMjM3NC00NDFiLTkzMmMtOTZiNDgwMWQxZDcwIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Normativo", "reporte": "Gestion teleasistencia", "enlace": "#"}, {"actividad": "Normativo", "reporte": "Indicadores contractuales", "enlace": "#"}, {"actividad": "Tableros BI", "reporte": "PE_MUERTE_DIGNA", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiNWZiZTVlMjYtOWY3OC00Y2Y1LWE2ZWUtYWQyMThlYjViOWZlIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Informe Interno", "reporte": "Indicadores GAUD\u00cd ", "enlace": "#"}], "Autorizaciones": [{"actividad": "Informe Conexiones", "reporte": "AU - Informe atenciones prestadas en salas", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AU - AUT Acumuladas Diario", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AU - AUT Anuladas mensuales", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AU - AUT Anuladas Semanales", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AU - Auditoria autorizaciones acumulado", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AU - AUT Diarias", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AU - AUT Mensuales", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AU - AUT Semanales", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AU - Autorizaci\u00f3n de servicios", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AU - Autorizaci\u00f3n de servicios por IPS", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AUT - Autorizaciones Dia (Fecha Hora Crea)", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AU -  Facturaci\u00f3n radicada mensual", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AU -  Facturaci\u00f3n radicada mensual JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AU - Informe usuarios inactivos", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AUT - Autorizaciones Mes (Fecha Hora Crea)", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AU - MOVIMIENTOS", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AU - AUT Proximas a Vencer", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AUT - Autorizaciones Semana (Fecha Hora Crea)", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AU - Informe autorizaciones sin prestaci\u00f3n", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AU - Informe solicitudes", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AU - AUT vencidas", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AU - CIR_PT029", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AU - CUPS Aprob autom\u00e1tica", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AU -  Reporte atenciones odontol\u00f3gicas AC", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AU -  Reporte atenciones odontol\u00f3gicas AC JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AU -  Reporte atenciones odontol\u00f3gicas AP", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AU -  Reporte atenciones odontol\u00f3gicas AP JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AU -  Reporte atenciones odontol\u00f3gicas AT", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AU -  Reporte atenciones odontol\u00f3gicas AT JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AU - Servicios autorizados", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AU - Seguimiento de oxigeno", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AU - Solicitudes diarias", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "AU - Solicitudes gestionadas diarias", "enlace": "#"}, {"actividad": "Tableros BI", "reporte": "AUTORIZACIONES", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiYTY4ZjExMDAtNzA1MS00MWZjLWE5ZmItYTFiZmI4ZjU2ZmU1IiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "PRODUCTIVIDAD_MOVIMIENTOS", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiNzMxYjFjNWYtZmVlMi00ZTMwLTk0NTQtMDA4Y2ViM2U4YTRlIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Informe Interno", "reporte": "Ficha t\u00e9cnica de Indicadores Contractuales - Resoluci\u00f3n 256 de 2016", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Informe Cliente Oculto", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Informe duplicados autorizaciones", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Solicitudes pendientes", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Informe errores", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Distribuci\u00f3n Solicitudes pendientes", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Indicadores Autorizaciones", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Indicador Tr\u00e1mite Interno", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Indicador Marcaci\u00f3n Prestaci\u00f3n", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Informe autorizaciones salud oral ", "enlace": "#"}], "Cuentas M\u00e9dicas": [{"actividad": "Informe Conexiones", "reporte": "1-Cuentas Medicas Trimestre I 2021", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "5-Cuentas Medicas Trimestre I 2022", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "9-Cuentas Medicas Trimestre I 2023", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "13-Cuentas Medicas Trimestre I 2024", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "17-Cuentas Medicas Trimestre I 2025", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "21-Cuentas Medicas Trimestre I 2026", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "17-Cuentas Medicas Trimestre I 2025 JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "21-Cuentas Medicas Trimestre I 2026 JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "2-Cuentas Medicas Trimestre II 2021", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "6-Cuentas Medicas Trimestre II 2022", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "10-Cuentas Medicas Trimestre II 2023", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "14-Cuentas Medicas Trimestre II 2024", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "18-Cuentas Medicas Trimestre II 2025", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "22-Cuentas Medicas Trimestre II 2026", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "18-Cuentas Medicas Trimestre II 2025 JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "22-Cuentas Medicas Trimestre II 2026 JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "3-Cuentas Medicas Trimestre III 2021", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "7-Cuentas Medicas Trimestre III 2022", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "11-Cuentas Medicas Trimestre III 2023", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "15-Cuentas Medicas Trimestre III 2024", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "19-Cuentas Medicas Trimestre III 2025", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "23-Cuentas Medicas Trimestre III 2026", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "19-Cuentas Medicas Trimestre III 2025 JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "23-Cuentas Medicas Trimestre III 2026 JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "4-Cuentas Medicas Trimestre IV 2021", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "8-Cuentas Medicas Trimestre IV 2022", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "12-Cuentas Medicas Trimestre IV 2023", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "16-Cuentas Medicas Trimestre IV 2024", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "20-Cuentas Medicas Trimestre IV 2025", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "20-Cuentas Medicas Trimestre IV 2025 JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Auditoria", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Auditoria JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Auditoria - Anuladas JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Descuento Capita", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Descuento Capita JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Devoluciones mensual", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Devoluciones mensual JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Facturas Conciliadas", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Facturas Devueltas", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Facturas Devueltas (Conciliaciones)", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Seguimiento de Radicaci\u00f3n", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Facturas Devueltas JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Circular 030", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Circular 030 JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Facturas Conciliadas JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Facturas Devueltas (Conciliaciones) JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Informe Facturas NO PBS", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Seguimiento de Radicaci\u00f3n JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - General Detalles", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - General Detalles JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - General Facturas", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - General Facturas (Conciliaciones)", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - General Facturas (Conciliaciones) Tesorer\u00eda", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - General Facturas JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - General Facturas - Recobros", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - General Facturas (Conciliaciones) JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - General Facturas (Conciliaciones) Tesorer\u00eda JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - General Facturas - Recobros JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Glosas mensuales", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Glosas mensuales JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Glosas cuarta semana", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Glosas cuarta semana JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Glosas primer semana", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Glosas primer semana JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Glosas segunda semana", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Glosas segunda semana JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Glosas tercera semana", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Glosas tercera semana JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Liquidadas acumulado mensual", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Liquidacion contrato", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Liquidacion contrato JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Liquidadas acumulado mensual JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Motivos Glosa", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Motivos Glosa (Conciliaciones)", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Motivos Glosa (Conciliaciones) JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Motivos Glosa JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Motivos Glosa (PO)", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Motivos Glosa (PO) JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Pendientes de radicacion", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Pendientes de radicacion JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Respuesta Detalles", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Respuesta Detalles (Conciliaciones)", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Respuesta Detalles (Conciliaciones) Tesorer\u00eda", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Respuesta Detalles JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Respuesta glosa mensual", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Respuesta Detalles (Conciliaciones) JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Respuesta Detalles (Conciliaciones) Tesorer\u00eda JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Respuesta glosa IPS pendientes", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Respuesta glosa mensual JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - Respuesta glosa IPS pendientes JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - \u00daltimo estado factura", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CM - \u00daltimo estado factura JSON", "enlace": "#"}, {"actividad": "Tableros BI", "reporte": "PRODUCTIVIDAD_CUENTAS_MEDICAS", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiZGIwMmYzNjItZDI0MS00OGQ2LWE2ZjEtMTllNzEyMjk0YmRjIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Normativo", "reporte": "De acuerdo con lo establecido en la Circular Externa\u00a02025151000000007-5 de 2025, se eliminan los informes anteriores (FT021, FT022\u00a0, FT023)\u00a0 y se adoptan los informes\u00a0FT038, FT039 y FT040", "enlace": "#"}], "Contratacion": [{"actividad": "Informe Conexiones", "reporte": "CNT - Caratulas Juridica", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CNT - Caratulas de contratos", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CNT - Contrato hist\u00f3rico\tEXT", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CNT - Maestra de paquetes", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CNT - Maestra de tecnolog\u00edas", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CNT - MA Insumos", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CNT - MA Medicamentos", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CNT - Municipios por contrato", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "CNT - Contratos Vigentes", "enlace": "#"}, {"actividad": "Tableros BI", "reporte": "RED_CONTRATADA", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiOWJkZTFkNTgtMzMxYy00YTgxLWIyMmUtNDNhZGM0ZjU0N2IzIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Informe Interno", "reporte": "Procuraduria - Contrataci\u00f3n", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "CONTRATOS PROXIMOS A VENCER", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Sistema de Habilitaci\u00f3n Contrataci\u00f3n", "enlace": "#"}], "Tesoreria Y Cartera": [{"actividad": "Informe Conexiones", "reporte": "FINA - Contratos vigentes y no vigentes", "enlace": "#"}, {"actividad": "Tableros BI", "reporte": "FINANCIERA", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiODIyMDM3ODQtZWZjOC00OTFhLThjYjYtODdhZjFkYzIxOWM5IiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Normativo", "reporte": "Resoluci\u00f3n 3110 de 2018 - Giro Directo Anticipado Contributivo", "enlace": "#"}, {"actividad": "Normativo", "reporte": "Resoluci\u00f3n 1345 de 2020 - Anexo 4", "enlace": "#"}, {"actividad": "Normativo", "reporte": "Circular financiera 030 de 2013 - Pagos por giro directo", "enlace": "#"}, {"actividad": "Normativo", "reporte": "Circular Externa 016 de 2016", "enlace": "#"}, {"actividad": "Normativo", "reporte": "FT001 Catalogo Informaci\u00f3n Financiera", "enlace": "#"}, {"actividad": "Normativo", "reporte": "FT003 Cuentas por Cobrar - Deudores", "enlace": "#"}, {"actividad": "Normativo", "reporte": "FT004 Cuentas por Pagar - Acreedores", "enlace": "#"}, {"actividad": "Normativo", "reporte": "FT005 Relaci\u00f3n Causaci\u00f3n de Costos, Gastos y Pagos Realizados", "enlace": "#"}, {"actividad": "Normativo", "reporte": "FT006 Bancos y Carteras Colectivas", "enlace": "#"}, {"actividad": "Normativo", "reporte": "FT007 Control de Inversiones Inscritas en el Mercado de Valores de Colombia", "enlace": "#"}, {"actividad": "Normativo", "reporte": "FT008 Inversiones - Otros T\u00edtulos", "enlace": "#"}, {"actividad": "Normativo", "reporte": "FT011 Condiciones Financieras", "enlace": "#"}, {"actividad": "Normativo", "reporte": "FT017 Detalle facturas pagadas en el mes de reporte", "enlace": "#"}, {"actividad": "Normativo", "reporte": "FT018 Datos para el c\u00e1lculo de la posici\u00f3n de Liquidez", "enlace": "#"}, {"actividad": "Normativo", "reporte": "Circular Externa 016 DE 2016 cargue mensual de los archivos FT001 y FT011 - RAD_202034201631981", "enlace": "#"}, {"actividad": "Normativo", "reporte": "Circular Externa 2024150000000001-5 de 2024 - Archivo FT037 Pagos realizados a los PSS y proveedores de tecnolog\u00edas en salud", "enlace": "#"}, {"actividad": "Normativo", "reporte": "Circular Externa 016 DE 2016 - Archivo FT010 Activos no monetarios", "enlace": "#"}, {"actividad": "Tableros BI", "reporte": "SAVIASALUD EPS_SERVICIOS_FACTURADOS_2023_2025", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiYWJiY2JiNzgtNzIxYS00ODg4LTg2NWMtODRiNmYzN2VkMDRjIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "Tablero CM Conexiones", "enlace": "#"}, {"actividad": "Normativo", "reporte": "Circular Externa 2024150000000001-5 de 2024 - Archivo FT037 Pagos realizados a los PSS y proveedores de tecnolog\u00edas en salud", "enlace": "#"}, {"actividad": "Normativo", "reporte": "Circular Externa 016 DE 2016 - Archivo FT002 Publicaci\u00f3n estados financieros", "enlace": "#"}], "Gesti\u00f3n Del Riesgo": [{"actividad": "Informe Conexiones", "reporte": "GR - Abortos Mensual RIPS-AC", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "GR - Abortos Mensual RIPS-AH", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "GR - Abortos Mensual RIPS-AP", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "GR - Abortos Mensual RIPS-AU", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "GR - Autorizaciones semanal", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "GR - Caracterizaci\u00f3n programas y rutas", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "GR - CUPS y CIE10", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "GR - Detalle afiliados programas", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "GR - Listado de sugeridos", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "GR - Rutas y programas activos", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "GR - Reducci\u00f3n mortalidad materna AC", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "GR - Reducci\u00f3n mortalidad materna AP", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "GR - Reducci\u00f3n mortalidad materna AC JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "GR - Reducci\u00f3n mortalidad materna AP JSON", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "GR_Reingresos_Programas", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "GR - Rips Autoinmunes", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "GR - Rips Autoinmunes Json", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "GR - Informe Rips Bucal AC", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "GR - Informe Rips Bucal AP", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "GR - Gesti\u00f3n Afiliados Programas", "enlace": "#"}, {"actividad": "Tablero Interno", "reporte": "03_TASA INCIDENCIA TUMOR MALIGNO INVASIVO DE C\u00c9RVIX", "enlace": "#"}, {"actividad": "Tableros BI", "reporte": "CLINICA DE HERIDAS", "enlace": "#"}, {"actividad": "Tableros BI", "reporte": "Ficha_Caracterizacion_Poblacional - 15102025", "enlace": "#"}, {"actividad": "Tableros BI", "reporte": "Ficha_Caracterizaci\u00f3n_Poblacional - 15102025", "enlace": "#"}, {"actividad": "Tableros BI", "reporte": "Ficha_Caracterizaci\u00f3n_Poblacional - a\u00f1o2025", "enlace": "#"}, {"actividad": "Tablero Interno", "reporte": "Ficha_Caracterizaci\u00f3n_Poblacional - copia_12092025", "enlace": "#"}, {"actividad": "Tableros BI", "reporte": "GR_Ficha de Caracterizacion", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiYmI0YjM4ZmMtYzhkOS00YWJmLTgzYzAtOTY4N2MzNzgyZWVmIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "GR_Modelo_Sem\u00e1ntico_A\u00f1o_2025", "enlace": "#"}, {"actividad": "Normativo", "reporte": "Reporte Cuenta Alto Costo -Gaucher \u2013 Esclerosis: 15 de febrero 2026", "enlace": "#"}, {"actividad": "Normativo", "reporte": "Reporte Cuenta Alto Costo -Resoluci\u00f3n 123/2015: Hemofilia: Abril 2026", "enlace": "#"}, {"actividad": "Normativo", "reporte": "Reporte Cuenta Alto Costo -Resoluci\u00f3n 273/2019: VIH: 15 Abril --- posiblemente trimestral borrador de resoluci\u00f3n", "enlace": "#"}, {"actividad": "Normativo", "reporte": "Reporte Cuenta Alto Costo -Resoluci\u00f3n 2463/20214: ERC-HTA-DM --- 30 agosto 2026", "enlace": "#"}, {"actividad": "Normativo", "reporte": "Reporte Cuenta Alto Costo -Resoluci\u00f3n 1393/2015: Artritis--- 30 sept", "enlace": "#"}, {"actividad": "Tableros BI", "reporte": "GR_Modelo_Sem\u00e1ntico_Tablas Oct_2025", "enlace": "#"}, {"actividad": "Tableros BI", "reporte": "INDICADORES COHORTES ALTO COSTO", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiMTMyYjRjNWUtZWE1OC00YmIyLWFmYWQtNGZlY2Y4NjUwOGY1IiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "Indicadores_Salud_Oral", "enlace": "#"}, {"actividad": "Tableros BI", "reporte": "INDICE_COP", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiNzg3ZWRmZTMtNzIyNS00NjI2LWJlNWYtYjQzODljMGIzYzY1IiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "MATERNO_PERINATAL", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiNzk1NDIwMzEtZTA1Ni00ZDNhLTkyYTAtZmQ1ZGRkMjM4ZTNkIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "Perfil Epidemiologico", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiNGIyOWIzMDgtNTRkZi00ZTY1LWIwYmQtOTkxMWFjN2ZlY2RmIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "RIAS_VISUAL", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiMGQ3OWJkZmMtNDQwYy00ZTNkLThlNmEtNDIxYjg0NGFhZmEzIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "TABLERO CA_MAMA", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiNGY0YjJiMzktZmQ4OS00MzBkLTg5ZjQtNGRhNmYwMmNjNzkyIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "TABLERO VIH", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiZDEzOWRmYmUtNmVjYi00NzUwLTllOWUtZWFjOWZiYWY5YmVlIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "TABLERO_PEDT-2023", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiMjJjNTE3NDgtY2MzYy00ODkzLTgzN2YtNTQwNTM2MTZiNjJkIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "TABLERO_PEDT-2024", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiN2I1OGQxNWEtZjM3Mi00MWIxLTk0MjktYmQzOTMwNmZjNThiIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "TABLERO_PEDT-2025", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiYzk1M2FiNjktZTcyNi00ZTdmLTg4MmYtYmRiMDQ0Y2UxZjMyIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "TABLERO_PEDT-2026", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiOTYwY2VjYWMtMGZhMi00NGM2LThjMDEtMDNlNGU4NTRkOTIyIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "TABLERO_SIVIGILA_EXTERNO", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiMGVkYzdiMzktODliNS00ZGQ4LWEyYmQtYjc5NzBmZjk2ZDNmIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}], "Direccion De Accesos": [{"actividad": "Informe Conexiones", "reporte": "MP - Informe de direccionamientos", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "MP - Informe de direccionamientos fecha max", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "MP - Entregas Efectivas", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "MP - Juntas de Profesionales", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "MP - Informe negaciones", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "MP - Informe de prescripciones", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "MP - Presupuestos M\u00e1ximos", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "MP - Productividad detalle", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "MP - Informe de suministros facturados", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "MP - Informe de Suministros Sin Facturaci\u00f3n", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "MP - Transporte", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "MP - Informe SuperSalud Transporte", "enlace": "#"}, {"actividad": "Tableros BI", "reporte": "Medicamentos", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiNDgyMmY4ZmMtMDVhMS00MTI2LTg5ZjktMzI3YTdhN2YyMjdhIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "Seguimiento_OPL", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiMzcwNDViODEtZmUwNC00MDEyLWIwNjItZTg5OGJlNWQxMjNkIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tablero Interno", "reporte": "Tablero Ambulancias", "enlace": "#"}, {"actividad": "Tableros BI", "reporte": "Tablero Auditor\u00edas Medicamentos", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiYmE2NzYxZGYtYjg3MS00MzA4LThjYjMtMWQzM2NiZWZjNDQ0IiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tablero Interno", "reporte": "Tablero PGP domiciliaria", "enlace": "#"}, {"actividad": "Tablero Interno", "reporte": "Tablero PGP oxigeno", "enlace": "#"}, {"actividad": "Tablero Interno", "reporte": "Tablero radicaci\u00f3n ", "enlace": "#"}, {"actividad": "Tableros BI", "reporte": "TABLERO_GERENCIAL_1552_V2_0", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiNGRmMmFjZDAtZjBkMy00ODQ2LTkwYzUtMDc1ODhkZjg1MGMyIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "Tablero_Ostomias", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiODdlMjI3MjMtMDZjMS00ZjBlLThlYjgtZTJkOTI4NGZjMTdhIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "TableroMipres - ultima__", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiYzgyNmM0NGMtZWIwYi00MzNhLWJjODEtNGZjYWExYWI4ZTZlIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Normativo", "reporte": "Resoluci\u00f3n 3539 de 2019 - Negaci\u00f3n de servicios y medicamentos RS Y RC", "enlace": "#"}, {"actividad": "Normativo", "reporte": "Resoluci\u00f3n 256 de 2016 - Indicadores de autorizaci\u00f3n", "enlace": "#"}, {"actividad": "Normativo", "reporte": "Circular Externa 008 DE 2018 - Archivo ST010 Red de proveedores de servicios de salud, insumos y medicamentos", "enlace": "#"}, {"actividad": "Normativo", "reporte": "Circular Externa 008 DE 2018 - Archivo ST011 Servicios contratados", "enlace": "#"}, {"actividad": "Normativo", "reporte": "Circular 06 de 2018 - Compras de medicamentos", "enlace": "#"}, {"actividad": "Normativo", "reporte": "Circular Externa 20211700000006-5 de 2021 - Archivo ST026 Red de servicios para garantizar el derecho a la muerte digna (Eutanasia)", "enlace": "#"}, {"actividad": "Normativo", "reporte": "Circular Externa 008 DE 2018 - Archivo ST012 Referencia y contrareferencia", "enlace": "#"}], "Secretaria General": [{"actividad": "Informe Conexiones", "reporte": "TU - Concejo de Medell\u00edn", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "TU - En_tramite_diario", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "TU - F\u00e9nix fallos y desacatos", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "TU - Normativo GT007", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "TU - Habilitacion", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "TU - Ministerio", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "TU - general proceso", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "TU - Gesti\u00f3n Salud", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "TU - Gestion digitalizacion", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "TU - Servicios", "enlace": "#"}, {"actividad": "Informe Conexiones", "reporte": "TU - Informe SAC - Plan de trabajo", "enlace": "#"}, {"actividad": "Tableros BI", "reporte": "BI_TUTELAS", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiNzgxNDk4MDEtYjFhNy00MjNjLTk1OWYtOGRiZjBjZmUyNjM4IiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Normativo", "reporte": "SIRECI", "enlace": "#"}, {"actividad": "Normativo", "reporte": "Circular 015/2026", "enlace": "#"}, {"actividad": "Normativo", "reporte": "GT 007 - SuperSalud", "enlace": "#"}, {"actividad": "Normativo", "reporte": "GT 001 - SuperSalud", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Procuraduria - Tutelas", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "SAC CONSULTIN", "enlace": "#"}], "Analitica Y Ciencia Del Dato": [{"actividad": "Tableros BI", "reporte": "ALERTAS INVIMA", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiOWE4ZDFmMzktNGZkYi00MzgyLTkyY2UtYWE1ZjJkZjFkM2QzIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "CAC_MODELO", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiOTI2NGRlM2QtMjlmYi00YjVhLWFhOTctNDhjMjU1NDgwMzI4IiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "CALENDARIO_NORMATIVO", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiMmM3YTk0NGItNDcxNi00OTc2LWI0ZTAtZjQ4NWRiZTcyZjY1IiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tablero Interno", "reporte": "CRENEO FACIAL", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiZmVmNmFkNDQtYmVhOS00MTVkLWE2N2QtMjQ3ZDUwZTY4NGYxIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tablero Interno", "reporte": "DISCAPACIDAD", "enlace": "#"}, {"actividad": "Tablero Interno", "reporte": "Discapacidad_Afiliados", "enlace": "#"}, {"actividad": "Tablero Interno", "reporte": "EAPB", "enlace": "#"}, {"actividad": "Tablero Interno", "reporte": "GANTT ENTREGABLES", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiZGE3MTg2YmUtYTVjZC00MzEyLTgzMzItNzE3YzI1ZjcyY2NmIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tablero Interno", "reporte": "GH V04", "enlace": "#"}, {"actividad": "Tablero Interno", "reporte": "INFRAESTRUCTURA - copia", "enlace": "#"}, {"actividad": "Tableros BI", "reporte": "Menu Financiera", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiOGIwOGM0MzUtMDlhNS00ZDllLWFlNzctOGZmZmQ3MjhjOGIwIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "Menu Normativo y Legal", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiYzg0OWI4YmMtMjgyOC00MmJiLWI4NWYtM2NjZTI3OGJlNjIxIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tablero Interno", "reporte": "menus", "enlace": "#"}, {"actividad": "Tableros BI", "reporte": "Menus - Auditoria y Operaciones", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiYzQ0ZTNiMmUtNjZhMC00N2JlLTlmM2MtYjJmZDA2ZjE2NTUyIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "Menus - Cuentas Medicas", "enlace": "#"}, {"actividad": "Tableros BI", "reporte": "Menus Salud", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiY2IwNmU1NGUtYWQ5OC00MGE5LThmNTktMmI3ZDQwNWIwNTQ0IiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "Menus TI", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiYWI3ODVhZjctY2VmNy00MDQxLTgzZDktM2M1YjIyZDg3YzU3IiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tablero Interno", "reporte": "PRUEBA CONECTION", "enlace": "#"}, {"actividad": "Tableros BI", "reporte": "Savia_IPS_Entrega Agosto_2025", "enlace": "#"}, {"actividad": "Tableros BI", "reporte": "Savia_IPS_Entrega Agosto_2025", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Auditoria Procuradur\u00eda 2025", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Respuesta a glosas ejecutadas en el mes ()", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "DIARI", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Informe mensual de IVE (Interrupci\u00f3n voluntaria del embarazo)", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "SINIESTRALIDAD_RCV", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Informe Hospitalizaciones Ruta NCVRM - RIPS AH", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Informe Hospitalizaciones Ruta NCVRM - RIPS Remisiones", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Informe de rips de consulta externa", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Datos RIPS (- D\u00edas estancia - Reingresos - C\u00e9dulas reingresos)", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Extracci\u00f3n de datos de pr\u00f3tesis dental total", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "PQRD_detalle_servicios_SeguimientoRed", "enlace": "#"}], "Auditoria Interna": [{"actividad": "Tablero Interno", "reporte": "Anexo 1 - Informe de PQRSD Trimestre I 2026", "enlace": "#"}, {"actividad": "Tablero Interno", "reporte": "Table de auditor\u00eda", "enlace": "#"}, {"actividad": "Tablero Interno", "reporte": "Tablero de Auditor\u00eda V2", "enlace": "#"}], "Adquisiciones": [{"actividad": "Tableros BI", "reporte": "Auditoria_Calidad_V2", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiNGExYmVhMTgtNzJlMC00YWQ2LTk0MTUtOTJiYTViMWNmNzk4IiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "Consolidaci\u00f3n", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiOWQ3M2QzMmEtZTYzNi00NWI5LWI2M2UtNTRjMjRiMzRhMDQ1IiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "EAPB", "enlace": "#"}, {"actividad": "Normativo", "reporte": "SIRECI seguimiento a la Red", "enlace": "#"}, {"actividad": "Tableros BI", "reporte": "SEGUIMIENTO_AUDITORES", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiMzZmMGFiMTYtNjE5Zi00YmZjLWJhMDAtZWQwZmYyZGMzNzE0IiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Informe Interno", "reporte": "Matriz Indicadores", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Consolidado Indicadores Tutela", "enlace": "#"}, {"actividad": "Informe Interno", "reporte": "Consolidado Financiero, Contrataci\u00f3n y SIRECI", "enlace": "#"}], "Soporte Tecnologico": [{"actividad": "Tableros BI", "reporte": "BI_MDS_Matias", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiODdjYWMzYmQtOTUxMS00MDU1LTk0ZjEtNzRmZDNkZGVjZjBmIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tablero Interno", "reporte": "BI_MDS_Matias", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiODdjYWMzYmQtOTUxMS00MDU1LTk0ZjEtNzRmZDNkZGVjZjBmIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "INTERMITENCIA_CAIDAS_CONEXIONES", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiOGY1N2UwYmEtMDhmYy00YWQ2LWE2YTItNjdiMjA0NWE3OTYzIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tablero Interno", "reporte": "MESA_AYUDA", "enlace": "#"}], "Alto Costo": [{"actividad": "Tablero Interno", "reporte": "BI_PRECURSORAS V2", "enlace": "#"}, {"actividad": "Tablero Interno", "reporte": "Borrador BI CANCER", "enlace": "#"}, {"actividad": "Tablero Interno", "reporte": "CitologiaV6_validaciones", "enlace": "#"}, {"actividad": "Tablero Interno", "reporte": "Copia Power_BI_Artritis_Tablero", "enlace": "#"}, {"actividad": "Tablero Interno", "reporte": "Cuadro de mandos sin t\u00edtulo", "enlace": "#"}, {"actividad": "Tablero Interno", "reporte": "TABLERO AUTOINMUNE", "enlace": "#"}, {"actividad": "Tablero Interno", "reporte": "TABLERO AUTOINMUNE RUTA", "enlace": "#"}, {"actividad": "Tablero Interno", "reporte": "TABLERO HEMOFILIA", "enlace": "#"}, {"actividad": "Tablero Interno", "reporte": "TABLERO ONCOLOGIA", "enlace": "#"}, {"actividad": "Tablero Interno", "reporte": "TABLERO RUTA HEMOFILIA", "enlace": "#"}, {"actividad": "Tablero Interno", "reporte": "Tablero_ERC", "enlace": "#"}, {"actividad": "Tablero Interno", "reporte": "Tablero_hEPATITIS", "enlace": "#"}, {"actividad": "Tablero Interno", "reporte": "Tablero_huerfanas", "enlace": "#"}, {"actividad": "Tablero Interno", "reporte": "Tablero_VIH", "enlace": "#"}], "Infraestructura": [{"actividad": "Tableros BI", "reporte": "DISPONIBILIDAD SD-WAN", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiNDgyNTMzNTktMTBmOS00MjE1LWJlMzQtMWEzNDg3Mzg4M2VjIiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "TAB_INFRA", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiMzJjMTgwNWQtOTg2Yy00Y2I1LThlZGItZDkwNDI0OWJjMzc2IiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "Tablero de Backups", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiNTgzNmZiMzctZDdkYi00ZWY2LWI1MzItYWFmM2ZhM2IwMzg5IiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}], "Subgerencia Financiera": [{"actividad": "Normativo", "reporte": "APPUI", "enlace": "#"}], "Administrativa": [{"actividad": "Tableros BI", "reporte": "INVENTARIO", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiNzQ0ZDVkNGUtY2FhMi00NGYwLTlmNWQtOTRkNmE5ZTY5Yzk0IiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Tableros BI", "reporte": "JEFATURA_ADMINISTRATIVA", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiZGY2MTU3OTAtZjFiMS00YWYyLThhMTYtNzcyODFmY2E1ODk3IiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}, {"actividad": "Normativo", "reporte": "Circular Externa 016 DE 2016 - Archivo FT010 Activos no monetarios", "enlace": "#"}], "Programas Especiales": [{"actividad": "Tablero Interno", "reporte": "programa de Agudos de programas especiales", "enlace": "#"}], "Direccion De Tecnologia": [{"actividad": "Tableros BI", "reporte": "TABLERO JEFATURA TI_V2", "enlace": "https://app.powerbi.com/view?r=eyJrIjoiMTk5MzVlYmYtYTdlNC00NWFlLWI5OWYtYzIxYzhhYThhMjg5IiwidCI6IjgxMWYyNjM0LWJjNTItNDc0MC1iZDc2LTNlZDBmNTc3MDI2NSIsImMiOjR9"}], "Contabilidad": [{"actividad": "Normativo", "reporte": "Circular Externa 016 DE 2016 - Archivo GT010 Composici\u00f3n patrimonial - Capital, aportes o equivalente", "enlace": "#"}]};
+
     const modal = document.getElementById("infoModal");
     document.getElementById("closeModal").onclick = () => modal.style.display = "none";
     window.addEventListener("click", e => { if (e.target === modal) modal.style.display = "none"; });
 
+    function normalizarTexto(texto) {
+        return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+    }
+
     document.querySelectorAll(".interactive").forEach(node => {
         node.addEventListener("click", () => {
-            document.getElementById("modalTitle").innerText = node.getAttribute("data-title");
-            document.getElementById("modalInformes").innerText = node.getAttribute("data-informes") || "0";
-            document.getElementById("modalNormativos").innerText = node.getAttribute("data-normativos") || "0";
-            document.getElementById("modalBI").innerText = node.getAttribute("data-bi") || "0";
-            document.getElementById("modalTableros").innerText = node.getAttribute("data-tablero") || "0";
+            const searchTitle = node.getAttribute("data-title");
+            const displayTitle = node.innerText.replace("\n", " ");
             
-            document.getElementById("modalSync").innerText = node.getAttribute("data-source")
-                ? "Fuente: " + node.getAttribute("data-source") + "."
-                : "Sin registros en el inventario todavía.";
+            document.getElementById("modalTitle").innerText = displayTitle;
+            
+            const listContainer = document.getElementById("modalReportList");
+            listContainer.innerHTML = ""; 
+            
+            // Buscar datos en el JSON
+            const areaKey = Object.keys(reportesPorArea).find(k => normalizarTexto(k) === normalizarTexto(searchTitle));
+            
+            let cInf = 0, cNor = 0, cBi = 0, cTin = 0, cIin = 0;
+            
+            if (areaKey && reportesPorArea[areaKey].length > 0) {
+                let htmlList = "";
+                reportesPorArea[areaKey].forEach(rep => {
+                    
+                    let linkHtml = rep.enlace !== "#" && rep.enlace.trim() !== "" && rep.enlace !== "nan" 
+                        ? `<a href="${rep.enlace}" class="report-link" target="_blank" rel="noopener noreferrer">Abrir Enlace ↗</a>`
+                        : `<span class="no-link">Sin enlace web disponible</span>`;
+                    
+                    let badgeColor = "var(--teal)";
+                    let act = rep.actividad;
+                    
+                    if(act.includes("Conexiones")) { badgeColor = "#4CAF50"; cInf++; }
+                    else if(act.includes("Normativo")) { badgeColor = "#F44336"; cNor++; }
+                    else if(act.includes("Tableros BI")) { badgeColor = "#2196F3"; cBi++; }
+                    else if(act.includes("Tablero Interno")) { badgeColor = "#9C27B0"; cTin++; }
+                    else if(act.includes("Informe Interno")) { badgeColor = "#FF9800"; cIin++; }
+
+                    htmlList += `
+                        <div class="report-item">
+                            <span class="report-badge" style="background-color: ${badgeColor}">${rep.actividad}</span>
+                            <div class="report-title">${rep.reporte}</div>
+                            ${linkHtml}
+                        </div>
+                    `;
+                });
+                listContainer.innerHTML = htmlList;
+            } else {
+                listContainer.innerHTML = "<p style='color: #666; font-size: 12px; font-style: italic;'>No hay detalles de reportes para mostrar en esta área.</p>";
+            }
+            
+            // Update counts directly from the JSON to be 100% accurate
+            document.getElementById("modalInformes").innerText = cInf;
+            document.getElementById("modalNormativos").innerText = cNor;
+            document.getElementById("modalBI").innerText = cBi;
+            document.getElementById("modalTableros").innerText = cTin;
+            document.getElementById("modalInternos").innerText = cIin;
+
             modal.style.display = "block";
         });
     });
@@ -427,9 +511,7 @@
     const viewport = document.getElementById("chartViewport");
     let scale = 1;
 
-    function applyZoom() {
-        chart.style.transform = `scale(${scale})`;
-    }
+    function applyZoom() { chart.style.transform = `scale(${scale})`; }
 
     document.getElementById("zoomIn").onclick = () => { scale = Math.min(scale + 0.1, 1.6); applyZoom(); };
     document.getElementById("zoomOut").onclick = () => { scale = Math.max(scale - 0.1, 0.4); applyZoom(); };
@@ -437,23 +519,17 @@
 
     let isDragging = false, startX, startY, scrollLeft, scrollTop;
     viewport.addEventListener("mousedown", e => {
-        isDragging = true;
-        viewport.classList.add("dragging");
-        startX = e.pageX - viewport.offsetLeft;
-        startY = e.pageY - viewport.offsetTop;
-        scrollLeft = viewport.scrollLeft;
-        scrollTop = viewport.scrollTop;
+        isDragging = true; viewport.classList.add("dragging");
+        startX = e.pageX - viewport.offsetLeft; startY = e.pageY - viewport.offsetTop;
+        scrollLeft = viewport.scrollLeft; scrollTop = viewport.scrollTop;
     });
     ["mouseleave", "mouseup"].forEach(evt =>
         viewport.addEventListener(evt, () => { isDragging = false; viewport.classList.remove("dragging"); })
     );
     viewport.addEventListener("mousemove", e => {
-        if (!isDragging) return;
-        e.preventDefault();
-        const x = e.pageX - viewport.offsetLeft;
-        const y = e.pageY - viewport.offsetTop;
-        viewport.scrollLeft = scrollLeft - (x - startX);
-        viewport.scrollTop = scrollTop - (y - startY);
+        if (!isDragging) return; e.preventDefault();
+        const x = e.pageX - viewport.offsetLeft; const y = e.pageY - viewport.offsetTop;
+        viewport.scrollLeft = scrollLeft - (x - startX); viewport.scrollTop = scrollTop - (y - startY);
     });
 </script>
 
