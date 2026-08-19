@@ -347,7 +347,7 @@
     </div>
 
     <!-- Indicador de carga de Excel -->
-    <div id="loading-indicator">Cargando inventario desde Excel...</div>
+    <div id="loading-indicator">Cargando inventario ...</div>
 
     <div class="zoom-controls">
         <button id="zoomIn" title="Acercar">+</button>
@@ -524,8 +524,8 @@
         </div>
         <div class="modal-body">
             <div style="display: flex; gap: 15px; font-size: 12px; flex-wrap: wrap; background: #f8f9fa; padding: 10px; border-radius: 6px; border: 1px solid var(--grey);">
-                <div><span class="dot d-inf"></span> Conexiones: <strong id="modalInformes">0</strong></div>
-                <div><span class="dot d-nor"></span> Normativos: <strong id="modalNormativos">0</strong></div>
+                <div><span class="dot d-inf"></span> Inf. Conexiones: <strong id="modalInformes">0</strong></div>
+                <div><span class="dot d-nor"></span> Inf. Normativos: <strong id="modalNormativos">0</strong></div>
                 <div><span class="dot d-tbi"></span> Power BI: <strong id="modalBI">0</strong></div>
                 <div><span class="dot d-tin"></span> Tab. Internos: <strong id="modalTableros">0</strong></div>
                 <div><span class="dot d-iin"></span> Inf. Internos: <strong id="modalInternos">0</strong></div>
@@ -686,7 +686,7 @@
                 });
                 listContainer.innerHTML = htmlList;
             } else {
-                listContainer.innerHTML = "<p style='color: #666; font-size: 12px; font-style: italic;'>No hay detalles de reportes para mostrar en esta área o no coinciden con la hoja SP del Excel.</p>";
+                listContainer.innerHTML = "<p style='color: #666; font-size: 12px; font-style: italic;'>No hay detalles de reportes para mostrar en esta área o no coinciden.</p>";
             }
             
             // Actualizar conteos del área específica en el Modal
