@@ -376,7 +376,7 @@
     </div>
 
     <!-- Indicador de carga -->
-    <div id="loading-indicator">Leyendo Excel y Normalizando datos...</div>
+    <div id="loading-indicator">Leyendo Excel en vivo...</div>
 
     <div class="zoom-controls">
         <button id="zoomIn" title="Acercar">+</button>
@@ -432,7 +432,7 @@
                     <div class="row" style="gap: 15px;">
                         <div class="branch" style="gap: 8px;">
                             <div class="node n-staff interactive" data-title="Oficial Cumplimiento">Oficial Cumplimiento</div>
-                            <div class="node n-yellow interactive" data-title="Jefatura de Comunicaciones">Jefatura<br>Comunicaciones</div>
+                            <div class="node n-yellow interactive" data-title="Comunicaciones">Jefatura<br>Comunicaciones</div>
                             <div class="node n-teal interactive" data-title="Dirección Auditoría Interna">Dirección<br>Auditoría Interna</div>
                         </div>
 
@@ -648,7 +648,7 @@
                 }
                 if (enlace === "#") {
                     for (let key in nRow) {
-                        if (key.includes("ruta") || key.includes("link") || key.includes("url") || key.includes("enlace")) {
+                        if (key.includes("ruta") || key.includes("link") || key.includes("url") || key.includes("enlace") || key.includes("acceso")) {
                             if (nRow[key] && String(nRow[key]).trim() !== '') {
                                 enlace = String(nRow[key]).trim(); break;
                             }
@@ -796,27 +796,25 @@
                         else if(act.includes("tablero interno")) { badgeColor = "#9C27B0"; cTin++; }
                         else if(act.includes("informe interno")) { badgeColor = "#FF9800"; cIin++; }
 
-                        // Lógica Condicional (Programado, Periodicidad, Fechas)
+                        // Lógica Condicional UNIVERSAL (Aplica para todo ahora)
                         let metaHtml = "";
-                        if (act.includes("conexiones") || act.includes("informe interno") || act.includes("normativo")) {
-                            let isProgramado = normalizarTexto(rep.programado) === "si";
-                            let fechaLabel = rep.fecha_generacion && rep.fecha_generacion !== "N/D" ? rep.fecha_generacion : "N/D";
-                            
-                            if (isProgramado) {
-                                let per = rep.periodicidad && rep.periodicidad !== "N/D" ? rep.periodicidad : "N/D";
-                                metaHtml = `
-                                    <div class="report-meta">
-                                        <span><strong>Programado:</strong> Sí</span>
-                                        <span><strong>Periodicidad:</strong> ${per}</span>
-                                        <span><strong>Última Generación:</strong> ${fechaLabel}</span>
-                                    </div>`;
-                            } else {
-                                metaHtml = `
-                                    <div class="report-meta">
-                                        <span><strong>Programado:</strong> No</span>
-                                        <span><strong>Última Generación:</strong> ${fechaLabel}</span>
-                                    </div>`;
-                            }
+                        let isProgramado = normalizarTexto(rep.programado) === "si";
+                        let fechaLabel = rep.fecha_generacion && rep.fecha_generacion !== "N/D" ? rep.fecha_generacion : "N/D";
+                        
+                        if (isProgramado) {
+                            let per = rep.periodicidad && rep.periodicidad !== "N/D" ? rep.periodicidad : "N/D";
+                            metaHtml = `
+                                <div class="report-meta">
+                                    <span><strong>Programado:</strong> Sí</span>
+                                    <span><strong>Periodicidad:</strong> ${per}</span>
+                                    <span><strong>Última Generación:</strong> ${fechaLabel}</span>
+                                </div>`;
+                        } else {
+                            metaHtml = `
+                                <div class="report-meta">
+                                    <span><strong>Programado:</strong> No</span>
+                                    <span><strong>Última Generación:</strong> ${fechaLabel}</span>
+                                </div>`;
                         }
 
                         htmlList += `
