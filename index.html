@@ -518,7 +518,7 @@
                 <div class="branch">
                     <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
                     <!-- Jefatura Administrativa lo reemplazo por Subgerencia Administrativa general si en Excel no está, o lo dejo en NA -->
-                    <div class="node n-dark node-medium interactive" data-title="Subgerencia Administrativa">1.4 Subgerencia<br>Administrativa</div>
+                    <div class="node n-dark node-medium interactive" data-title="Subgerencia Administrativa">Subgerencia<br>Administrativa</div>
                     <div class="connector-v" style="height: 15px;"></div>
 
                     <div class="row" style="gap: 15px;">
@@ -572,7 +572,7 @@
             </div>
             
             <p id="modalSync" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; font-size: 11px; color: #888;">
-                Datos extraídos automáticamente del archivo INVENTARIO_TABLEROS.xlsx
+                Datos extraídos automáticamente.
             </p>
         </div>
     </div>
@@ -688,7 +688,7 @@
 
         } catch (error) {
             console.error("Error:", error);
-            loading.innerText = "Error leyendo INVENTARIO_TABLEROS.xlsx (Comprueba que esté subido y se llame así)";
+            loading.innerText = "Error leyendo Inventario Coordinación Analítica y Ciencia del Dato.";
             setTimeout(() => loading.style.display = "none", 5000);
         }
     }
@@ -775,7 +775,7 @@
                     areaReports = areaReports.filter(rep => normalizarTexto(rep.actividad).includes(activeFilter));
                     document.getElementById("modalSync").innerHTML = `<b>Filtro de Leyenda Activo:</b> Se muestran únicamente los reportes del tipo seleccionado.`;
                 } else {
-                    document.getElementById("modalSync").innerHTML = `Datos extraídos automáticamente del archivo INVENTARIO_TABLEROS.xlsx`;
+                    document.getElementById("modalSync").innerHTML = `Datos extraídos automáticamente`;
                 }
                 
                 // --- ORDENAR ALFABÉTICAMENTE ---
@@ -842,7 +842,7 @@
                     listContainer.innerHTML = "<p style='color: #666; font-size: 13px; font-style: italic; margin-top: 15px;'>No hay activos que coincidan con el filtro actual en esta área.</p>";
                 }
             } else {
-                listContainer.innerHTML = "<p style='color: #666; font-size: 13px; font-style: italic; margin-top: 15px;'>No hay detalles registrados para esta área en la matriz de Excel.</p>";
+                listContainer.innerHTML = "<p style='color: #666; font-size: 13px; font-style: italic; margin-top: 15px;'>No hay detalles registrados para esta área.</p>";
             }
             
             // Actualizar Grid de Contadores
