@@ -20,7 +20,7 @@
             --orange-border: #dcae85;
             --grey: #e9ecef;
             --line-color: #8fa3ad;
-            --highlight: #ff9800;
+            --highlight: #ff9800; /* Naranja para resaltar */
         }
 
         * { box-sizing: border-box; }
@@ -107,7 +107,7 @@
             font-weight: 600;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             margin: 3px;
-            position: relative;
+            position: relative; /* Clave para que la burbuja se posicione aquí */
             z-index: 2;
             width: 135px;
             font-size: 11px;
@@ -124,6 +124,31 @@
             opacity: 0.25;
             filter: grayscale(100%);
             box-shadow: none;
+        }
+
+        /* ---- Burbujas de Conteo (Badges) ---- */
+        .node-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #e2e8f0;
+            color: #475569;
+            font-size: 11px;
+            font-weight: 800;
+            min-width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            border: 2px solid #fff;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+        .node-badge.has-data {
+            background-color: var(--highlight); /* Naranja resaltado */
+            color: #fff;
         }
 
         .node-large { width: 180px; font-size: 13px; }
@@ -162,7 +187,6 @@
 
         .connector-v { width: 2px; height: 16px; background-color: var(--line-color); z-index: 1; }
         
-        /* Línea horizontal que divide los 4 pilares */
         .level-split {
             position: relative;
             display: flex;
@@ -417,8 +441,7 @@
             
             <!-- RAIZ: 1.0 GERENCIA GENERAL -->
             <div class="branch">
-                <!-- Se ajustó a NA según excel -->
-                <div class="node n-orange node-large interactive" data-title="NA" style="font-weight: 700;">Gerencia General</div>
+                <div class="node n-orange node-large interactive" data-title="Gerencia General" style="font-weight: 700;">1.0 Gerencia General</div>
                 <div class="connector-v" style="height: 25px;"></div>
             </div>
 
@@ -443,18 +466,17 @@
                                 <div class="node n-teal interactive" data-title="Dirección Calidad y Planeación">Dirección Calidad<br>y Planeación</div>
                                 <div class="connector-v" style="height: 10px;"></div>
                                 <div class="sub-group">
-                                    <div class="node n-coord interactive" data-title="Dirección Calidad y Planeación">Coord. Calidad<br>y Planeación</div>
+                                    <div class="node n-coord interactive" data-title="Coordinación Calidad y Planeación">Coord. Calidad<br>y Planeación</div>
                                 </div>
                             </div>
 
                             <div class="branch">
-                                <!-- Ajuste exacto al Excel -->
-                                <div class="node n-teal interactive" data-title="Secretaria general">Secretaría General</div>
+                                <div class="node n-teal interactive" data-title="Secretaría General">Secretaría General</div>
                                 <div class="connector-v" style="height: 10px;"></div>
                                 <div class="sub-group">
                                     <div class="node n-yellow interactive" data-title="Jefatura Judicial">Jefatura Judicial</div>
                                     <div class="node n-yellow interactive" data-title="Jefatura Contratación">Jefatura<br>Contratación</div>
-                                    <div class="node n-coord interactive" data-title="Coord. Jurídica">Coord. Jurídica</div>
+                                    <div class="node n-coord interactive" data-title="Coordinación Jurídica">Coord. Jurídica</div>
                                 </div>
                             </div>
                         </div>
@@ -470,7 +492,6 @@
                     <div class="row" style="gap: 15px;">
                         
                         <div class="branch">
-                            <!-- Ajustes exactos al Excel de la imagen -->
                             <div class="node n-teal interactive" data-title="Dirección Acceso a Servicios">Dirección Acceso<br>a Servicios</div>
                             <div class="connector-v" style="height: 10px;"></div>
                             <div class="sub-group">
@@ -509,7 +530,7 @@
                     <div class="connector-v" style="height: 15px;"></div>
 
                     <div class="branch" style="gap: 15px;">
-                        <div class="node n-teal interactive" data-title="Dirección Contabilidad y Presupuesto">Dirección<br>Contabilidad</div>
+                        <div class="node n-teal interactive" data-title="Direccion Contabilidad y Presupuesto">Dirección<br>Contabilidad</div>
                         <div class="node n-teal interactive" data-title="Dirección Tesorería y cartera">Dirección<br>Tesorería y Cartera</div>
                     </div>
                 </div>
@@ -517,7 +538,6 @@
                 <!-- ================== 1.4 SUBGERENCIA ADMINISTRATIVA ================== -->
                 <div class="branch">
                     <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
-                    <!-- Jefatura Administrativa lo reemplazo por Subgerencia Administrativa general si en Excel no está, o lo dejo en NA -->
                     <div class="node n-dark node-medium interactive" data-title="Subgerencia Administrativa">Subgerencia<br>Administrativa</div>
                     <div class="connector-v" style="height: 15px;"></div>
 
@@ -572,7 +592,7 @@
             </div>
             
             <p id="modalSync" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; font-size: 11px; color: #888;">
-                Datos extraídos automáticamente.
+                Datos extraídos automáticamente del archivo INVENTARIO_TABLEROS.xlsx
             </p>
         </div>
     </div>
@@ -584,11 +604,52 @@
     const EXCEL_FILE_URL = "INVENTARIO_TABLEROS.xlsx?t=" + new Date().getTime();
 
     // ----------------------------------------------------
-    // FUNCIÓN 1: NORMALIZACIÓN Y LECTURA A PRUEBA DE FALLOS
+    // FUNCIÓN 1: NORMALIZACIÓN Y LECTURA
     // ----------------------------------------------------
     function normalizarTexto(texto) {
         if (!texto) return "";
         return texto.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+    }
+
+    // Función para actualizar las burbujas (Badges) de cada botón según el filtro activo
+    function updateNodeBadges(filter) {
+        document.querySelectorAll('.node.interactive').forEach(node => {
+            let badge = node.querySelector('.node-badge');
+            if (!badge) {
+                badge = document.createElement('span');
+                badge.className = 'node-badge';
+                node.appendChild(badge);
+            }
+            
+            const searchTitle = node.getAttribute("data-title");
+            const searchNorm = normalizarTexto(searchTitle);
+            
+            let matchedReports = [];
+            Object.keys(reportesPorArea).forEach(k => {
+                if (normalizarTexto(k) === searchNorm) {
+                    matchedReports = matchedReports.concat(reportesPorArea[k]);
+                }
+            });
+            
+            if (filter) {
+                matchedReports = matchedReports.filter(rep => normalizarTexto(rep.actividad).includes(filter));
+            }
+            
+            const count = matchedReports.length;
+            badge.innerText = count;
+            
+            if (count > 0) {
+                badge.classList.add('has-data');
+                node.classList.remove('dimmed');
+            } else {
+                badge.classList.remove('has-data');
+                if (filter) {
+                    node.classList.add('dimmed'); // Atenuar si hay un filtro y no tiene reportes
+                } else {
+                    node.classList.remove('dimmed');
+                }
+            }
+        });
     }
 
     async function cargarExcel() {
@@ -602,14 +663,12 @@
             const arrayBuffer = await response.arrayBuffer();
             const workbook = XLSX.read(arrayBuffer, { type: "array", cellDates: true });
 
-            // 1. Extraer enlaces de BI
             const biLinks = {};
             if (workbook.Sheets["BI"]) {
                 const dataBI = XLSX.utils.sheet_to_json(workbook.Sheets["BI"]);
                 dataBI.forEach(row => {
                     let normRow = {};
                     for(let key in row) normRow[normalizarTexto(key)] = row[key];
-                    
                     let nombre = normRow["nombre del informe"] || normRow["nombre"];
                     let url = normRow["url para insertar"] || normRow["url"] || normRow["link"];
                     if (nombre && url) biLinks[nombre.toString().trim()] = url;
@@ -624,17 +683,23 @@
 
             dataSP_raw.forEach(row => {
                 let nRow = {};
-                for (let key in row) {
-                    nRow[normalizarTexto(key)] = row[key];
-                }
-
-                let areaRaw = nRow["area"];
-                // Si el area está vacia, aún así la contamos en el resumen total
-                let area = areaRaw ? areaRaw.toString().trim() : "NA";
+                for (let key in row) { nRow[normalizarTexto(key)] = row[key]; }
                 
                 let tipo = nRow["tipo"] ? nRow["tipo"].toString().trim() : "Desconocido";
-                let nombre = nRow["nombre_informe"] || nRow["nombre"] || "Sin Nombre";
+                let tipoL = tipo.toLowerCase();
                 
+                // Sumar globales siempre
+                if (tipoL.includes("conexiones")) tInf++;
+                else if (tipoL.includes("normativo")) tNor++;
+                else if (tipoL.includes("tableros bi")) tBi++;
+                else if (tipoL.includes("tablero interno")) tTin++;
+                else if (tipoL.includes("informe interno")) tIin++;
+
+                let areaRaw = nRow["area"];
+                if (!areaRaw || areaRaw.toString().trim().toLowerCase() === "nan" || areaRaw.toString().trim().toLowerCase() === "na") return;
+                
+                let area = areaRaw.toString().trim();
+                let nombre = nRow["nombre_informe"] || nRow["nombre"] || "Sin Nombre";
                 let programado = nRow["programado"] || "No";
                 let periodicidad = nRow["periodicidad"] || "N/D";
                 let fechaGen = nRow["fecha_ultma_generacion"] || nRow["fecha_ultima_generacion"] || nRow["fecha de ultima generacion"] || "N/D";
@@ -667,14 +732,6 @@
                     periodicidad: periodicidad.toString().trim(),
                     fecha_generacion: fechaGen.toString().trim()
                 });
-
-                // Contadores Globales
-                let tipoL = tipo.toLowerCase();
-                if (tipoL.includes("conexiones")) tInf++;
-                else if (tipoL.includes("normativo")) tNor++;
-                else if (tipoL.includes("bi")) tBi++;
-                else if (tipoL.includes("tablero interno")) tTin++;
-                else if (tipoL.includes("informe interno")) tIin++;
             });
 
             document.getElementById("total-inf").innerText = tInf;
@@ -684,11 +741,14 @@
             document.getElementById("total-nor").innerText = tNor;
 
             loading.style.display = "none";
-            console.log("Excel procesado sin errores de Key.");
+            
+            // Llenar burbujas la primera vez
+            updateNodeBadges(null);
+            console.log("Excel procesado con éxito.");
 
         } catch (error) {
             console.error("Error:", error);
-            loading.innerText = "Error leyendo Inventario Coordinación Analítica y Ciencia del Dato.";
+            loading.innerText = "Error leyendo INVENTARIO_TABLEROS.xlsx";
             setTimeout(() => loading.style.display = "none", 5000);
         }
     }
@@ -707,36 +767,14 @@
                 // Quitar filtro
                 activeFilter = null;
                 document.querySelectorAll('.legend-filter').forEach(el => el.classList.remove('active-filter'));
-                document.querySelectorAll('.node.interactive').forEach(el => el.classList.remove('dimmed'));
             } else {
                 // Aplicar nuevo filtro
                 activeFilter = filterValue;
                 document.querySelectorAll('.legend-filter').forEach(el => el.classList.toggle('active-filter', el === this));
-                
-                document.querySelectorAll('.node.interactive').forEach(node => {
-                    const searchTitle = node.getAttribute("data-title");
-                    const searchNorm = normalizarTexto(searchTitle);
-                    
-                    // Sumar y buscar en TODAS las llaves que hagan match
-                    let matchedReports = [];
-                    Object.keys(reportesPorArea).forEach(k => {
-                        if (normalizarTexto(k) === searchNorm) {
-                            matchedReports = matchedReports.concat(reportesPorArea[k]);
-                        }
-                    });
-                    
-                    let tieneElReporte = false;
-                    if (matchedReports.length > 0) {
-                        tieneElReporte = matchedReports.some(rep => normalizarTexto(rep.actividad).includes(activeFilter));
-                    }
-                    
-                    if (tieneElReporte) {
-                        node.classList.remove('dimmed');
-                    } else {
-                        node.classList.add('dimmed');
-                    }
-                });
             }
+            
+            // Actualizar las burbujas en los botones del organigrama
+            updateNodeBadges(activeFilter);
         });
     });
 
@@ -758,7 +796,6 @@
             
             const searchNorm = normalizarTexto(searchTitle);
             
-            // Juntar todos los reportes de las llaves que coincidan con esta área
             let areaReports = [];
             Object.keys(reportesPorArea).forEach(k => {
                 if (normalizarTexto(k) === searchNorm) {
@@ -770,15 +807,15 @@
             
             if (areaReports.length > 0) {
                 
-                // --- APLICAR FILTRO DE LA LEYENDA ---
+                // Aplicar Filtro Global si está activo
                 if (activeFilter) {
                     areaReports = areaReports.filter(rep => normalizarTexto(rep.actividad).includes(activeFilter));
                     document.getElementById("modalSync").innerHTML = `<b>Filtro de Leyenda Activo:</b> Se muestran únicamente los reportes del tipo seleccionado.`;
                 } else {
-                    document.getElementById("modalSync").innerHTML = `Datos extraídos automáticamente`;
+                    document.getElementById("modalSync").innerHTML = `Datos extraídos automáticamente del archivo INVENTARIO_TABLEROS.xlsx`;
                 }
                 
-                // --- ORDENAR ALFABÉTICAMENTE ---
+                // Ordenar: 1. Por Tipo de Actividad 2. Por Nombre
                 let reportesOrdenados = areaReports.sort((a, b) => {
                     let typeCompare = a.actividad.toLowerCase().localeCompare(b.actividad.toLowerCase());
                     if (typeCompare !== 0) return typeCompare; 
@@ -842,10 +879,9 @@
                     listContainer.innerHTML = "<p style='color: #666; font-size: 13px; font-style: italic; margin-top: 15px;'>No hay activos que coincidan con el filtro actual en esta área.</p>";
                 }
             } else {
-                listContainer.innerHTML = "<p style='color: #666; font-size: 13px; font-style: italic; margin-top: 15px;'>No hay detalles registrados para esta área.</p>";
+                listContainer.innerHTML = "<p style='color: #666; font-size: 13px; font-style: italic; margin-top: 15px;'>No hay detalles registrados para esta área en la matriz de Excel.</p>";
             }
             
-            // Actualizar Grid de Contadores
             document.getElementById("modalInformes").innerText = cInf;
             document.getElementById("modalNormativos").innerText = cNor;
             document.getElementById("modalBI").innerText = cBi;
