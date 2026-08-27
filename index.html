@@ -434,10 +434,10 @@
 <div class="org-wrapper">
     <div class="header-logo">
         <img src="Logo.png" alt="Logo Savia Salud EPS" onerror="this.style.display='none'">
-        <h2>Inventario Dirección de Tecnología e Información</h2>
+        <h2>Inventario Coordinación de Tecnología e Información</h2>
     </div>
 
-    <div id="loading-indicator">Leyendo datos en vivo...</div>
+    <div id="loading-indicator">Leyendo Excel en vivo...</div>
 
     <div class="zoom-controls">
         <button id="zoomIn" title="Acercar">+</button>
@@ -450,7 +450,7 @@
             
             <!-- RAIZ: 1.0 GERENCIA GENERAL -->
             <div class="branch">
-                <div class="node n-orange node-large interactive" data-title="Gerencia General" style="font-weight: 700;">1.0 Gerencia General</div>
+                <div class="node n-orange node-large interactive" data-title="Gerencia General" style="font-weight: 700;">Gerencia General</div>
                 <div class="connector-v" style="height: 25px;"></div>
             </div>
 
@@ -634,14 +634,14 @@
     // Función para pintar colores según el texto de la Actividad
     function getColorByActividad(tipo) {
         let tn = normalizarTexto(tipo);
-        if(tn.includes("conexiones")) return "#4CAF50"; // Verde
-        if(tn.includes("informe interno")) return "#FF9800"; // Naranja
-        if(tn.includes("normativo")) return "#F44336"; // Rojo
-        if(tn.includes("bi")) return "#2196F3"; // Azul
-        if(tn.includes("tablero interno")) return "#9C27B0"; // Morado
-        if(tn.includes("mejora")) return "#0ea5e9"; // Azul claro (Software)
-        if(tn.includes("nuevo")) return "#8b5cf6"; // Índigo (Software)
-        return "var(--teal)"; // Default
+        if(tn.includes("conexiones")) return "#4CAF50"; 
+        if(tn.includes("informe interno")) return "#FF9800"; 
+        if(tn.includes("normativo")) return "#F44336"; 
+        if(tn.includes("bi")) return "#2196F3"; 
+        if(tn.includes("tablero interno")) return "#9C27B0"; 
+        if(tn.includes("mejora")) return "#0ea5e9"; 
+        if(tn.includes("nuevo")) return "#8b5cf6"; 
+        return "var(--teal)"; 
     }
 
     function updateNodeBadges() {
@@ -677,7 +677,7 @@
 
         try {
             const response = await fetch(EXCEL_FILE_URL);
-            if (!response.ok) throw new Error("No se pudo cargar datos.");
+            if (!response.ok) throw new Error("No se pudo cargar el archivo Excel.");
             
             const arrayBuffer = await response.arrayBuffer();
             const workbook = XLSX.read(arrayBuffer, { type: "array", cellDates: true });
@@ -756,7 +756,7 @@
 
         } catch (error) {
             console.error("Error:", error);
-            loading.innerText = "Error leyendo datos";
+            loading.innerText = "Error leyendo INVENTARIO_TABLEROS.xlsx";
             setTimeout(() => loading.style.display = "none", 5000);
         }
     }
@@ -764,7 +764,7 @@
     window.addEventListener("DOMContentLoaded", cargarExcel);
 
     // ----------------------------------------------------
-    // LÓGICA DE LOS MODALES Y LOS 2 FILTROS
+    // LÓGICA DE LOS 2 MODALES Y SINCRONIZACIÓN DE FILTROS
     // ----------------------------------------------------
     const summaryModal = document.getElementById("summaryModal");
     const detailModal = document.getElementById("detailModal");
@@ -831,33 +831,20 @@
         });
     });
 
-    // ABRE MODAL 2 (Detalles Dinámicos + FILTRO DE TIPO + FILTRO DE ESTADO)
+    // ABRE MODAL 2 (Detalles Dinámicos + FILTROS ENCADENADOS)
     function openDetailModal(areaName, subName, reports) {
         summaryModal.style.display = "none";
         document.getElementById("detailModalTitle").innerText = `${areaName} > ${subName}`;
         
-        // 1. Armar Filtro de TIPOS (Cuadrícula)
-        let typeCounts = {};
-        reports.forEach(r => {
-            let t = r.actividad;
-            typeCounts[t] = (typeCounts[t] || 0) + 1;
-        });
-
         const summaryGrid = document.getElementById("detailModalSummary");
-        summaryGrid.innerHTML = "";
-        
-        Object.keys(typeCounts).sort().forEach(t => {
-            summaryGrid.innerHTML += `
-                <div class="summary-item" data-type="${normalizarTexto(t)}">
-                    <span class="dot" style="background-color:${getColorByActividad(t)}"></span>
-                    <div class="s-text">${t}<strong>${typeCounts[t]}</strong></div>
-                </div>
-            `;
-        });
-
-        // 2. Armar Filtro de ESTADOS (Píldoras)
-        const uniqueStates = [...new Set(reports.map(r => r.estado))].sort();
         const stateFilterContainer = document.getElementById("detailStateFilterContainer");
+
+        // Preparar estados iniciales
+        let currentDetailFilter = null; // Filtro de Tipo (Cuadrícula)
+        let currentStateFilter = "Todos"; // Filtro de Estado (Píldoras)
+
+        // Extraer todos los estados únicos disponibles en esta subárea
+        const uniqueStates = [...new Set(reports.map(r => r.estado))].sort();
         
         let stateHtml = `<span class="state-filters-label">Filtrar por Estado:</span>`;
         stateHtml += `<div class="state-pill active-state" data-state="Todos">Todos</div>`;
@@ -866,27 +853,60 @@
         });
         stateFilterContainer.innerHTML = stateHtml;
 
-        // Variables de estado interno del modal
-        let currentDetailFilter = null; // Filtro por Tipo (Actividad)
-        let currentStateFilter = "Todos"; // Filtro por Estado
-        
-        function renderDetailList() {
-            const listContainer = document.getElementById("detailReportList");
-            let htmlList = "";
-            
-            let filteredReports = reports;
-            
-            // Aplicar Filtro de Tipo
-            if (currentDetailFilter) {
-                filteredReports = filteredReports.filter(r => normalizarTexto(r.actividad) === currentDetailFilter);
-            }
-            
-            // Aplicar Filtro de Estado
+        // Renderizador maestro que reconstruye tanto la grilla superior como la lista inferior
+        function renderDetailView() {
+            // 1. Filtrar los reportes según el Estado (Píldora seleccionada)
+            let stateFilteredReports = reports;
             if (currentStateFilter !== "Todos") {
-                filteredReports = filteredReports.filter(r => r.estado === currentStateFilter);
+                stateFilteredReports = reports.filter(r => r.estado === currentStateFilter);
+            }
+
+            // 2. Reconstruir dinámicamente la cuadrícula superior basada SOLO en el estado filtrado
+            let typeCounts = {};
+            stateFilteredReports.forEach(r => {
+                let t = r.actividad;
+                typeCounts[t] = (typeCounts[t] || 0) + 1;
+            });
+
+            // Si el filtro de tipo actual ya no existe en el estado seleccionado, deseleccionarlo
+            if (currentDetailFilter && !typeCounts[Object.keys(typeCounts).find(t => normalizarTexto(t) === currentDetailFilter)]) {
+                currentDetailFilter = null;
+            }
+
+            summaryGrid.innerHTML = "";
+            Object.keys(typeCounts).sort().forEach(t => {
+                let tNorm = normalizarTexto(t);
+                let isActive = (currentDetailFilter === tNorm) ? "active-filter" : "";
+                summaryGrid.innerHTML += `
+                    <div class="summary-item ${isActive}" data-type="${tNorm}">
+                        <span class="dot" style="background-color:${getColorByActividad(t)}"></span>
+                        <div class="s-text">${t}<strong>${typeCounts[t]}</strong></div>
+                    </div>
+                `;
+            });
+
+            // Reasignar clics a la nueva cuadrícula
+            summaryGrid.querySelectorAll('.summary-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    let filterType = this.getAttribute('data-type');
+                    if (currentDetailFilter === filterType) {
+                        currentDetailFilter = null; // Quita el filtro
+                    } else {
+                        currentDetailFilter = filterType; // Aplica el filtro
+                    }
+                    renderDetailView(); // Vuelve a renderizar
+                });
+            });
+
+            // 3. Renderizar la lista inferior aplicando TAMBIÉN el filtro de Tipo
+            const listContainer = document.getElementById("detailReportList");
+            let finalReports = stateFilteredReports;
+            
+            if (currentDetailFilter) {
+                finalReports = finalReports.filter(r => normalizarTexto(r.actividad) === currentDetailFilter);
             }
             
-            let sorted = filteredReports.sort((a,b) => {
+            let sorted = finalReports.sort((a,b) => {
                 let cmp = a.actividad.localeCompare(b.actividad);
                 if (cmp !== 0) return cmp;
                 return a.reporte.localeCompare(b.reporte);
@@ -897,6 +917,7 @@
                 return;
             }
 
+            let htmlList = "";
             sorted.forEach(rep => {
                 let linkHtml = `<span class="no-link">Sin enlace web</span>`;
                 if (rep.enlace && rep.enlace !== "#" && rep.enlace !== "nan" && rep.enlace.trim() !== "") {
@@ -931,34 +952,20 @@
             listContainer.innerHTML = htmlList;
         }
 
-        // Listener: Clic en filtro de Tipo (Cuadrícula)
-        summaryGrid.querySelectorAll('.summary-item').forEach(item => {
-            item.addEventListener('click', function() {
-                let filterType = this.getAttribute('data-type');
-                
-                if (currentDetailFilter === filterType) {
-                    currentDetailFilter = null;
-                    this.classList.remove('active-filter');
-                } else {
-                    currentDetailFilter = filterType;
-                    summaryGrid.querySelectorAll('.summary-item').forEach(el => el.classList.remove('active-filter'));
-                    this.classList.add('active-filter');
-                }
-                renderDetailList();
-            });
-        });
-
-        // Listener: Clic en filtro de Estado (Píldoras)
+        // Asignar los eventos de click a las píldoras de Estado (Solo se hace una vez al abrir el modal)
         stateFilterContainer.querySelectorAll('.state-pill').forEach(pill => {
             pill.addEventListener('click', function() {
                 currentStateFilter = this.getAttribute('data-state');
                 stateFilterContainer.querySelectorAll('.state-pill').forEach(el => el.classList.remove('active-state'));
                 this.classList.add('active-state');
-                renderDetailList();
+                
+                // Al cambiar el estado, se recalculan los números de arriba y la lista
+                renderDetailView(); 
             });
         });
 
-        renderDetailList();
+        // Primera carga visual
+        renderDetailView();
         detailModal.style.display = "block";
     }
 
