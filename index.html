@@ -223,7 +223,7 @@
             align-items: center;
             color: white;
         }
-        .modal-header h3 { margin: 0; font-size: 16px; font-weight: 700;}
+        .modal-header h3 { margin: 0; font-size: 16px; font-weight: 700; line-height: 1.3;}
         .close { font-size: 24px; font-weight: bold; color: white; cursor: pointer; opacity: 0.8; line-height: 1;}
         .close:hover { opacity: 1; }
         .modal-body { padding: 20px; }
@@ -269,6 +269,13 @@
         /* ---- Modal 2 (Detalles) ---- */
         #detailModal .modal-content { max-width: 750px; }
 
+        .filters-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
         .modal-summary {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
@@ -277,10 +284,8 @@
             padding: 12px;
             border-radius: 8px;
             border: 1px solid var(--grey);
-            margin-bottom: 15px;
         }
         
-        /* Modificaciones para el filtrado en la Ventana 2 */
         .summary-item { 
             display: flex; 
             align-items: flex-start; 
@@ -301,10 +306,44 @@
         .summary-item .s-text { display: flex; flex-direction: column; font-size: 11.5px; color: #555; line-height: 1.2; }
         .summary-item strong { font-size: 16px; color: var(--dark-blue); font-weight: 800; margin-top: 4px;}
 
+        /* Nuevo Filtro de Estados (Píldoras) */
+        .state-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+        .state-filters-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 600;
+            margin-right: 4px;
+        }
+        .state-pill {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            background-color: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            transition: all 0.2s;
+            text-transform: capitalize;
+        }
+        .state-pill:hover { background-color: #e2e8f0; }
+        .state-pill.active-state {
+            background-color: var(--teal);
+            color: white;
+            border-color: var(--teal);
+        }
+
         .report-list {
             max-height: 400px;
             overflow-y: auto;
             padding-right: 5px;
+            border-top: 1px solid var(--grey);
+            padding-top: 10px;
         }
         .report-list::-webkit-scrollbar { width: 6px; }
         .report-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
@@ -395,11 +434,10 @@
 <div class="org-wrapper">
     <div class="header-logo">
         <img src="Logo.png" alt="Logo Savia Salud EPS" onerror="this.style.display='none'">
-        <h2>Inventario Coordinación de Analítica y Ciencia del Dato</h2>
+        <h2>Inventario Dirección de Tecnología e Información</h2>
     </div>
 
-    <!-- Indicador de carga -->
-    <div id="loading-indicator">Leyendo Excel en vivo...</div>
+    <div id="loading-indicator">Leyendo datos en vivo...</div>
 
     <div class="zoom-controls">
         <button id="zoomIn" title="Acercar">+</button>
@@ -421,13 +459,12 @@
                 <!-- ================== 1.1 STAFF GERENCIA ================== -->
                 <div class="branch">
                     <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
-                    <div class="node n-dark node-medium interactive" data-title="Staff Gerencia">1.1 Staff Gerencia</div>
+                    <div class="node n-dark node-medium interactive" data-title="Staff Gerencia">Staff Gerencia</div>
                     <div class="connector-v" style="height: 15px;"></div>
                     
                     <div class="row" style="gap: 15px;">
                         <div class="branch" style="gap: 8px;">
                             <div class="node n-staff interactive" data-title="Oficial Cumplimiento">Oficial Cumplimiento</div>
-                            <!-- AQUI APLICADO EL CAMBIO -->
                             <div class="node n-yellow interactive" data-title="Jefatura Comunicaciones">Jefatura<br>Comunicaciones</div>
                             <div class="node n-teal interactive" data-title="Dirección Auditoría Interna">Dirección<br>Auditoría Interna</div>
                         </div>
@@ -442,13 +479,11 @@
                             </div>
 
                             <div class="branch">
-                                <!-- AQUI APLICADO EL CAMBIO -->
                                 <div class="node n-teal interactive" data-title="Secretaria general">Secretaría General</div>
                                 <div class="connector-v" style="height: 10px;"></div>
                                 <div class="sub-group">
                                     <div class="node n-yellow interactive" data-title="Jefatura Judicial">Jefatura Judicial</div>
                                     <div class="node n-yellow interactive" data-title="Jefatura Contratación">Jefatura<br>Contratación</div>
-                                    <!-- AQUI APLICADO EL CAMBIO -->
                                     <div class="node n-coord interactive" data-title="Coordinación Juridica">Coord. Jurídica</div>
                                 </div>
                             </div>
@@ -459,7 +494,7 @@
                 <!-- ================== 1.2 SUBGERENCIA DE SALUD ================== -->
                 <div class="branch">
                     <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
-                    <div class="node n-dark node-medium interactive" data-title="Subgerencia de Salud">1.2 Subgerencia de Salud</div>
+                    <div class="node n-dark node-medium interactive" data-title="Subgerencia de Salud">Subgerencia de Salud</div>
                     <div class="connector-v" style="height: 15px;"></div>
 
                     <div class="row" style="gap: 15px;">
@@ -498,7 +533,7 @@
                 <!-- ================== 1.3 SUBGERENCIA FINANCIERA ================== -->
                 <div class="branch">
                     <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
-                    <div class="node n-dark node-medium interactive" data-title="Subgerencia Financiera">1.3 Subgerencia<br>Financiera</div>
+                    <div class="node n-dark node-medium interactive" data-title="Subgerencia Financiera">Subgerencia<br>Financiera</div>
                     <div class="connector-v" style="height: 15px;"></div>
 
                     <div class="branch" style="gap: 15px;">
@@ -510,7 +545,7 @@
                 <!-- ================== 1.4 SUBGERENCIA ADMINISTRATIVA ================== -->
                 <div class="branch">
                     <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
-                    <div class="node n-dark node-medium interactive" data-title="Subgerencia Administrativa">1.4 Subgerencia<br>Administrativa</div>
+                    <div class="node n-dark node-medium interactive" data-title="Subgerencia Administrativa">Subgerencia<br>Administrativa</div>
                     <div class="connector-v" style="height: 15px;"></div>
 
                     <div class="row" style="gap: 15px;">
@@ -518,7 +553,6 @@
                             <div class="node n-teal interactive" data-title="Dirección de tecnología y seguridad informática">Dirección<br>Tecnología</div>
                             <div class="connector-v" style="height: 10px;"></div>
                             <div class="sub-group">
-                                <!-- AQUI APLICADO EL CAMBIO -->
                                 <div class="node n-coord interactive" data-title="Coordinación Software y Arquitectura">Coord. Software</div>
                                 <div class="node n-coord interactive" data-title="Coordinación de Infraestructura">Coord. Infraestructura</div>
                                 <div class="node n-coord interactive" data-title="Coordinación Analítica y ciencia del dato">Coord. Analítica</div>
@@ -553,7 +587,7 @@
                 Seleccione el área responsable / subcategoría para ver el detalle de sus activos:
             </p>
             <ul id="summaryModalList" style="list-style: none; padding: 0; margin: 0;">
-                <!-- Opciones (Coord. Analítica, Coord. Software, etc.) inyectadas vía JS -->
+                <!-- Opciones inyectadas vía JS -->
             </ul>
         </div>
     </div>
@@ -570,9 +604,16 @@
             <span class="close" id="closeDetailModal">&times;</span>
         </div>
         <div class="modal-body">
-            <p style="font-size: 12px; color: #666; margin-top: 0; margin-bottom: 10px;">Clic en una opción para filtrar:</p>
-            <!-- Cuadrícula Dinámica que se arma sola según el tipo de datos -->
-            <div class="modal-summary" id="detailModalSummary"></div>
+            
+            <!-- Contenedor de Filtros Combinados -->
+            <div class="filters-container">
+                <p style="font-size: 12px; color: #666; margin: 0;">Clic en una opción para filtrar por <b>Tipo</b>:</p>
+                <div class="modal-summary" id="detailModalSummary"></div>
+                
+                <div class="state-filters" id="detailStateFilterContainer">
+                    <!-- Los botones de estado se inyectan acá -->
+                </div>
+            </div>
             
             <div class="report-list" id="detailReportList">
                 <!-- Se inyecta la lista final aquí -->
@@ -582,7 +623,6 @@
 </div>
 
 <script>
-    // Nueva Estructura: reportesPorArea[Area][Area_Pertenece] = [ { reporte... } ]
     let reportesPorArea = {};
     const EXCEL_FILE_URL = "INVENTARIO_TABLEROS.xlsx?t=" + new Date().getTime();
 
@@ -591,7 +631,7 @@
         return texto.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ").trim();
     }
 
-    // Función para pintar colores según el texto de la Actividad (Dinámico)
+    // Función para pintar colores según el texto de la Actividad
     function getColorByActividad(tipo) {
         let tn = normalizarTexto(tipo);
         if(tn.includes("conexiones")) return "#4CAF50"; // Verde
@@ -616,7 +656,6 @@
             const searchNorm = normalizarTexto(node.getAttribute("data-title"));
             let count = 0;
             
-            // Sumar todo lo que está dentro de esa área
             Object.keys(reportesPorArea).forEach(kArea => {
                 if (normalizarTexto(kArea) === searchNorm) {
                     count += reportesPorArea[kArea].total;
@@ -638,7 +677,7 @@
 
         try {
             const response = await fetch(EXCEL_FILE_URL);
-            if (!response.ok) throw new Error("No se pudo cargar el archivo Excel.");
+            if (!response.ok) throw new Error("No se pudo cargar datos.");
             
             const arrayBuffer = await response.arrayBuffer();
             const workbook = XLSX.read(arrayBuffer, { type: "array", cellDates: true });
@@ -667,16 +706,13 @@
                 if (!areaRaw || areaRaw.toString().trim().toLowerCase() === "nan" || areaRaw.toString().trim().toLowerCase() === "na") return;
                 let area = areaRaw.toString().trim();
                 
-                // COLUMNA: area_pertenece
                 let areaPerRaw = nRow["area_pertenece"] || nRow["area pertenece"];
                 let area_per = areaPerRaw ? areaPerRaw.toString().trim() : "Gestión Propia";
                 
                 let tipo = nRow["tipo"] ? nRow["tipo"].toString().trim() : "Desconocido";
                 let nombre = nRow["nombre_informe"] || nRow["nombre"] || "Sin Nombre";
                 
-                // COLUMNA: estado
                 let estado = nRow["estado"] || "Sin Especificar";
-
                 let programado = nRow["programado"] || "No";
                 let periodicidad = nRow["periodicidad"] || "N/D";
                 let fechaGen = nRow["fecha_ultma_generacion"] || nRow["fecha_ultima_generacion"] || nRow["fecha de ultima generacion"] || "N/D";
@@ -699,7 +735,6 @@
                 }
                 if (enlace === "#" && biLinks[nombre.toString().trim()]) enlace = biLinks[nombre.toString().trim()];
 
-                // Inicializar Estructura de Diccionarios Anidados
                 if (!reportesPorArea[area]) reportesPorArea[area] = { total: 0, subareas: {} };
                 if (!reportesPorArea[area].subareas[area_per]) reportesPorArea[area].subareas[area_per] = [];
 
@@ -718,11 +753,10 @@
 
             loading.style.display = "none";
             updateNodeBadges();
-            console.log("Excel procesado. Estructura creada por Área y Subárea (area_pertenece).");
 
         } catch (error) {
             console.error("Error:", error);
-            loading.innerText = "Error leyendo INVENTARIO_TABLEROS.xlsx";
+            loading.innerText = "Error leyendo datos";
             setTimeout(() => loading.style.display = "none", 5000);
         }
     }
@@ -730,7 +764,7 @@
     window.addEventListener("DOMContentLoaded", cargarExcel);
 
     // ----------------------------------------------------
-    // LÓGICA DE LOS 2 MODALES
+    // LÓGICA DE LOS MODALES Y LOS 2 FILTROS
     // ----------------------------------------------------
     const summaryModal = document.getElementById("summaryModal");
     const detailModal = document.getElementById("detailModal");
@@ -738,7 +772,6 @@
     document.getElementById("closeSummaryModal").onclick = () => summaryModal.style.display = "none";
     document.getElementById("closeDetailModal").onclick = () => detailModal.style.display = "none";
     
-    // Botón Volver
     document.getElementById("btnBack").onclick = () => {
         detailModal.style.display = "none";
         summaryModal.style.display = "block";
@@ -749,11 +782,17 @@
         if (e.target === detailModal) detailModal.style.display = "none"; 
     });
 
-    // CLIC EN EL ORGANIGRAMA -> ABRE MODAL 1 (Subáreas)
+    // ABRE MODAL 1
     document.querySelectorAll(".interactive").forEach(node => {
         node.addEventListener("click", () => {
             const searchTitle = node.getAttribute("data-title");
-            const displayTitle = node.innerText.replace("\n", " ");
+            
+            let clone = node.cloneNode(true);
+            let badge = clone.querySelector('.node-badge');
+            let totalCount = badge ? badge.innerText : "0";
+            if (badge) badge.remove();
+            
+            const displayTitle = clone.innerText.replace(/\n/g, " ");
             const searchNorm = normalizarTexto(searchTitle);
             
             let areaData = null;
@@ -761,12 +800,12 @@
                 if (normalizarTexto(k) === searchNorm) areaData = reportesPorArea[k];
             });
 
-            document.getElementById("summaryModalTitle").innerText = displayTitle;
+            document.getElementById("summaryModalTitle").innerHTML = `${displayTitle}<br><span style="font-size:14px; font-weight:normal; opacity:0.9;">Total: ${totalCount}</span>`;
+            
             const summaryList = document.getElementById("summaryModalList");
             summaryList.innerHTML = "";
 
             if (areaData && areaData.total > 0) {
-                // Ordenar las subáreas (area_pertenece) alfabéticamente
                 let subKeys = Object.keys(areaData.subareas).sort((a,b) => a.localeCompare(b));
                 
                 subKeys.forEach(subName => {
@@ -777,7 +816,7 @@
                     li.className = "summary-option";
                     li.innerHTML = `
                         <div class="area-name">
-                            <span class="dot"></span> ${subName}
+                            <span class="dot" style="background-color: var(--teal)"></span> ${subName}
                         </div>
                         <strong class="count-badge">${count}</strong>
                     `;
@@ -792,12 +831,12 @@
         });
     });
 
-    // ABRE MODAL 2 (Detalles Dinámicos)
+    // ABRE MODAL 2 (Detalles Dinámicos + FILTRO DE TIPO + FILTRO DE ESTADO)
     function openDetailModal(areaName, subName, reports) {
-        summaryModal.style.display = "none"; // Cierra el primero
+        summaryModal.style.display = "none";
         document.getElementById("detailModalTitle").innerText = `${areaName} > ${subName}`;
         
-        // 1. Armar Cuadrícula Resumen Dinámica
+        // 1. Armar Filtro de TIPOS (Cuadrícula)
         let typeCounts = {};
         reports.forEach(r => {
             let t = r.actividad;
@@ -816,20 +855,37 @@
             `;
         });
 
-        // 2. Función interna para renderizar la lista aplicando el filtro activo
-        let currentDetailFilter = null;
+        // 2. Armar Filtro de ESTADOS (Píldoras)
+        const uniqueStates = [...new Set(reports.map(r => r.estado))].sort();
+        const stateFilterContainer = document.getElementById("detailStateFilterContainer");
+        
+        let stateHtml = `<span class="state-filters-label">Filtrar por Estado:</span>`;
+        stateHtml += `<div class="state-pill active-state" data-state="Todos">Todos</div>`;
+        uniqueStates.forEach(st => {
+            stateHtml += `<div class="state-pill" data-state="${st}">${st}</div>`;
+        });
+        stateFilterContainer.innerHTML = stateHtml;
+
+        // Variables de estado interno del modal
+        let currentDetailFilter = null; // Filtro por Tipo (Actividad)
+        let currentStateFilter = "Todos"; // Filtro por Estado
         
         function renderDetailList() {
             const listContainer = document.getElementById("detailReportList");
             let htmlList = "";
             
-            // Aplicar el filtro si existe
             let filteredReports = reports;
+            
+            // Aplicar Filtro de Tipo
             if (currentDetailFilter) {
-                filteredReports = reports.filter(r => normalizarTexto(r.actividad) === currentDetailFilter);
+                filteredReports = filteredReports.filter(r => normalizarTexto(r.actividad) === currentDetailFilter);
             }
             
-            // Ordenar Alfabéticamente (por Actividad y luego por Nombre)
+            // Aplicar Filtro de Estado
+            if (currentStateFilter !== "Todos") {
+                filteredReports = filteredReports.filter(r => r.estado === currentStateFilter);
+            }
+            
             let sorted = filteredReports.sort((a,b) => {
                 let cmp = a.actividad.localeCompare(b.actividad);
                 if (cmp !== 0) return cmp;
@@ -837,7 +893,7 @@
             });
 
             if (sorted.length === 0) {
-                listContainer.innerHTML = "<p style='color: #666; font-size: 13px; font-style: italic; margin-top: 15px;'>No hay datos para esta categoría.</p>";
+                listContainer.innerHTML = "<p style='color: #666; font-size: 13px; font-style: italic; margin-top: 15px;'>No hay resultados para la combinación de filtros seleccionada.</p>";
                 return;
             }
 
@@ -853,7 +909,6 @@
                 let isProg = normalizarTexto(rep.programado) === "si";
                 let fechaLab = rep.fecha_generacion && rep.fecha_generacion !== "N/D" ? rep.fecha_generacion : "N/D";
                 
-                // Meta Info: Ahora incluye ESTADO, Programación y Fechas (Universal)
                 let metaHtml = `<div class="report-meta">
                     <span><strong>Estado:</strong> ${rep.estado}</span>
                     <span><strong>Programado:</strong> ${isProg ? 'Sí' : 'No'}</span>
@@ -876,30 +931,34 @@
             listContainer.innerHTML = htmlList;
         }
 
-        // 3. Activar los botones de filtro (la cuadrícula superior)
+        // Listener: Clic en filtro de Tipo (Cuadrícula)
         summaryGrid.querySelectorAll('.summary-item').forEach(item => {
             item.addEventListener('click', function() {
                 let filterType = this.getAttribute('data-type');
                 
                 if (currentDetailFilter === filterType) {
-                    // Si se hace clic en el activo, se quita el filtro
                     currentDetailFilter = null;
                     this.classList.remove('active-filter');
                 } else {
-                    // Si se hace clic en otro, se activa ese filtro
                     currentDetailFilter = filterType;
                     summaryGrid.querySelectorAll('.summary-item').forEach(el => el.classList.remove('active-filter'));
                     this.classList.add('active-filter');
                 }
-                
-                // Volver a renderizar la lista inferior con el filtro aplicado
                 renderDetailList();
             });
         });
 
-        // Primer render de la lista sin filtro
+        // Listener: Clic en filtro de Estado (Píldoras)
+        stateFilterContainer.querySelectorAll('.state-pill').forEach(pill => {
+            pill.addEventListener('click', function() {
+                currentStateFilter = this.getAttribute('data-state');
+                stateFilterContainer.querySelectorAll('.state-pill').forEach(el => el.classList.remove('active-state'));
+                this.classList.add('active-state');
+                renderDetailList();
+            });
+        });
+
         renderDetailList();
-        
         detailModal.style.display = "block";
     }
 
