@@ -306,7 +306,7 @@
         .summary-item .s-text { display: flex; flex-direction: column; font-size: 11.5px; color: #555; line-height: 1.2; }
         .summary-item strong { font-size: 16px; color: var(--dark-blue); font-weight: 800; margin-top: 4px;}
 
-        /* Nuevo Filtro de Estados (Píldoras) */
+        /* Filtro de Estados (Píldoras) */
         .state-filters {
             display: flex;
             flex-wrap: wrap;
@@ -437,7 +437,7 @@
         <h2>Inventario Dirección de Tecnología e Información</h2>
     </div>
 
-    <div id="loading-indicator">Leyendo Excel en vivo...</div>
+    <div id="loading-indicator">Leyendo Datos en vivo...</div>
 
     <div class="zoom-controls">
         <button id="zoomIn" title="Acercar">+</button>
@@ -554,7 +554,8 @@
                             <div class="connector-v" style="height: 10px;"></div>
                             <div class="sub-group">
                                 <div class="node n-coord interactive" data-title="Coordinación Software y Arquitectura">Coord. Software</div>
-                                <div class="node n-coord interactive" data-title="Coordinación de Infraestructura">Coord. Infraestructura</div>
+                                <!-- AQUI ESTÁ EL AJUSTE DEL NOMBRE -->
+                                <div class="node n-coord interactive" data-title="Coordinación de Infraestructura y seguridad">Coord. Infraestructura</div>
                                 <div class="node n-coord interactive" data-title="Coordinación Analítica y ciencia del dato">Coord. Analítica</div>
                                 <div class="node n-coord interactive" data-title="Coordinación Soporte Tecnológico">Coord. Soporte<br>Tecnológico</div>
                             </div>
@@ -605,13 +606,12 @@
         </div>
         <div class="modal-body">
             
-            <!-- Contenedor de Filtros Combinados -->
             <div class="filters-container">
                 <p style="font-size: 12px; color: #666; margin: 0;">Clic en una opción para filtrar por <b>Tipo</b>:</p>
                 <div class="modal-summary" id="detailModalSummary"></div>
                 
                 <div class="state-filters" id="detailStateFilterContainer">
-                    <!-- Los botones de estado se inyectan acá (Si corresponde) -->
+                    <!-- Los botones de estado se inyectan acá dinámicamente -->
                 </div>
             </div>
             
@@ -631,7 +631,6 @@
         return texto.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ").trim();
     }
 
-    // Función para pintar colores según el texto de la Actividad
     function getColorByActividad(tipo) {
         let tn = normalizarTexto(tipo);
         if(tn.includes("conexiones")) return "#4CAF50"; 
@@ -756,7 +755,7 @@
 
         } catch (error) {
             console.error("Error:", error);
-            loading.innerText = "Error leyendo INVENTARIO_TABLEROS.xlsx";
+            loading.innerText = "Error leyendo datos";
             setTimeout(() => loading.style.display = "none", 5000);
         }
     }
@@ -831,7 +830,7 @@
         });
     });
 
-    // ABRE MODAL 2 (Detalles Dinámicos + FILTROS ENCADENADOS)
+    // ABRE MODAL 2 (Detalles Dinámicos + FILTROS INTELIGENTES)
     function openDetailModal(areaName, subName, reports) {
         summaryModal.style.display = "none";
         document.getElementById("detailModalTitle").innerText = `${areaName} > ${subName}`;
@@ -839,14 +838,13 @@
         const summaryGrid = document.getElementById("detailModalSummary");
         const stateFilterContainer = document.getElementById("detailStateFilterContainer");
 
-        // Condición para ocultar el estado si es Analítica (según tu requerimiento anterior)
-        let isAnalitica = normalizarTexto(subName).includes("analitica");
+        // Condición para mostrar los Estados SOLAMENTE si es Software (según el cambio solicitado)
+        let isSoftware = normalizarTexto(subName).includes("software");
 
-        // Preparar estados iniciales
         let currentDetailFilter = null; // Filtro de Tipo (Cuadrícula)
         let currentStateFilter = "Todos"; // Filtro de Estado (Píldoras)
 
-        if (isAnalitica) {
+        if (!isSoftware) {
             stateFilterContainer.style.display = "none";
             stateFilterContainer.innerHTML = "";
         } else {
@@ -860,11 +858,12 @@
             stateFilterContainer.innerHTML = stateHtml;
         }
 
-        // Renderizador maestro que reconstruye la grilla superior y la lista inferior
+        // Función que renderiza la tabla de arriba y la lista de abajo en tiempo real
         function renderDetailView() {
+            
             // 1. Filtrar primero por Estado (Píldora)
             let stateFilteredReports = reports;
-            if (!isAnalitica && currentStateFilter !== "Todos") {
+            if (isSoftware && currentStateFilter !== "Todos") {
                 stateFilteredReports = reports.filter(r => r.estado === currentStateFilter);
             }
 
@@ -875,7 +874,7 @@
                 typeCounts[t] = (typeCounts[t] || 0) + 1;
             });
 
-            // Si el filtro de TIPO seleccionado ya no existe (porque el filtro de Estado lo eliminó), se quita.
+            // Si el filtro de tipo seleccionado ya no existe, se deselecciona solo
             if (currentDetailFilter && !typeCounts[Object.keys(typeCounts).find(t => normalizarTexto(t) === currentDetailFilter)]) {
                 currentDetailFilter = null;
             }
@@ -897,11 +896,11 @@
                 item.addEventListener('click', function() {
                     let filterType = this.getAttribute('data-type');
                     if (currentDetailFilter === filterType) {
-                        currentDetailFilter = null; // Quita filtro
+                        currentDetailFilter = null; 
                     } else {
-                        currentDetailFilter = filterType; // Aplica filtro
+                        currentDetailFilter = filterType; 
                     }
-                    renderDetailView(); // Refresca todo
+                    renderDetailView(); 
                 });
             });
 
@@ -937,7 +936,9 @@
                 let isProg = normalizarTexto(rep.programado) === "si";
                 let fechaLab = rep.fecha_generacion && rep.fecha_generacion !== "N/D" ? rep.fecha_generacion : "N/D";
                 
-                let estadoItem = isAnalitica ? "" : `<span><strong>Estado:</strong> ${rep.estado}</span>`;
+                // El estado solo se muestra si es Software
+                let estadoItem = !isSoftware ? "" : `<span><strong>Estado:</strong> ${rep.estado}</span>`;
+                
                 let metaHtml = `<div class="report-meta">
                     ${estadoItem}
                     <span><strong>Programado:</strong> ${isProg ? 'Sí' : 'No'}</span>
@@ -960,8 +961,8 @@
             listContainer.innerHTML = htmlList;
         }
 
-        // Asignar clics a las Píldoras de Estado (Solo al inicializar Modal)
-        if (!isAnalitica) {
+        // Asignar clics a las Píldoras de Estado (Solo al inicializar el Modal si es Software)
+        if (isSoftware) {
             stateFilterContainer.querySelectorAll('.state-pill').forEach(pill => {
                 pill.addEventListener('click', function() {
                     currentStateFilter = this.getAttribute('data-state');
