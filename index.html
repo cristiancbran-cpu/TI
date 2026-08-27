@@ -79,7 +79,7 @@
         /* ---- Área con scroll / pan ---- */
         .chart-viewport {
             width: 100%;
-            height: 78vh;
+            height: 85vh;
             min-height: 550px;
             overflow: auto;
             cursor: grab;
@@ -115,14 +115,7 @@
             align-items: center;
             justify-content: center;
             min-height: 40px;
-            transition: transform 0.15s, box-shadow 0.15s, opacity 0.3s, filter 0.3s;
-        }
-
-        /* Nodos atenuados para el FILTRO */
-        .node.dimmed {
-            opacity: 0.25;
-            filter: grayscale(100%);
-            box-shadow: none;
+            transition: transform 0.15s, box-shadow 0.15s;
         }
 
         /* ---- Burbujas de Conteo (Badges) ---- */
@@ -176,7 +169,7 @@
         }
 
         .interactive { cursor: pointer; }
-        .interactive:hover:not(.dimmed) {
+        .interactive:hover {
             transform: translateY(-2px) scale(1.04);
             box-shadow: 0 6px 12px rgba(0,0,0,0.15); 
             filter: brightness(0.95);
@@ -201,71 +194,6 @@
             height: 2px;
             background-color: var(--line-color);
         }
-        
-        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0;}
-        .d-inf { background-color: #4CAF50; }
-        .d-nor { background-color: #F44336; }
-        .d-tbi { background-color: #2196F3; }
-        .d-tin { background-color: #9C27B0; }
-        .d-iin { background-color: #FF9800; }
-
-        /* ---- Leyenda Flotante (Derecha) ---- */
-        .legend-box {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            background-color: white;
-            border: 1px solid var(--grey);
-            border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
-            z-index: 100;
-            font-size: 13px;
-            min-width: 220px;
-        }
-        .legend-box h4 {
-            margin: 0 0 12px 0;
-            color: var(--dark-blue);
-            font-size: 14px;
-            border-bottom: 2px solid var(--grey);
-            padding-bottom: 6px;
-            text-align: center;
-        }
-        .legend-box ul { list-style: none; padding: 0; margin: 0; }
-        
-        /* Filtros Interactivos Principales */
-        .legend-filter {
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 15px;
-            color: #444;
-            cursor: pointer;
-            padding: 4px 8px;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-            border: 1px solid transparent;
-        }
-        .legend-filter:hover { background-color: #f1f5f9; }
-        .legend-filter.active-filter {
-            background-color: #e0f2fe;
-            border: 1px solid #7dd3fc;
-        }
-        .legend-filter:last-child { margin-bottom: 0; }
-        .legend-label { display: flex; align-items: center; gap: 8px; font-weight: 500; }
-        
-        /* Estilo general para los badges de números */
-        .count-badge {
-            background-color: #f0f2f5;
-            padding: 2px 8px;
-            border-radius: 12px;
-            color: var(--dark-blue);
-            font-size: 12px;
-            font-weight: bold;
-            min-width: 30px;
-            text-align: center;
-        }
 
         /* ---- Modales Estilos Base ---- */
         .modal {
@@ -285,7 +213,6 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            transition: all 0.3s;
         }
         .modal-header {
             background-color: var(--teal);
@@ -301,34 +228,60 @@
         .modal-body { padding: 20px; }
         
         /* ---- Modal 1 (Resumen) ---- */
-        #summaryModal .modal-content { max-width: 450px; }
+        #summaryModal .modal-content { max-width: 500px; }
         
         .summary-option {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px 15px;
+            padding: 14px 18px;
             background: #f8f9fa;
             border: 1px solid var(--grey);
             border-radius: 8px;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             cursor: pointer;
             transition: all 0.2s;
-            color: #333;
+            color: var(--dark-blue);
         }
-        .summary-option:hover:not(.disabled) {
-            background: #e2e8f0;
-            border-color: #cbd5e1;
+        .summary-option:hover {
+            background: #e0f2fe;
+            border-color: #7dd3fc;
             transform: translateX(4px);
         }
-        .summary-option.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            background: #fdfdfd;
+        .summary-option .area-name {
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .summary-option .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; background-color: var(--teal);}
+        .summary-option .count-badge {
+            background-color: var(--dark-blue);
+            padding: 3px 10px;
+            border-radius: 12px;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
         }
 
         /* ---- Modal 2 (Detalles) ---- */
-        #detailModal .modal-content { max-width: 700px; }
+        #detailModal .modal-content { max-width: 750px; }
+
+        .modal-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 10px;
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--grey);
+            margin-bottom: 15px;
+        }
+        .summary-item { display: flex; align-items: flex-start; gap: 8px; }
+        .summary-item .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-top:2px; flex-shrink:0;}
+        .summary-item .s-text { display: flex; flex-direction: column; font-size: 11.5px; color: #555; line-height: 1.2; }
+        .summary-item strong { font-size: 16px; color: var(--dark-blue); font-weight: 800; margin-top: 4px;}
 
         .report-list {
             max-height: 400px;
@@ -388,21 +341,6 @@
         .report-meta span { display: inline-flex; align-items: center; }
         .report-meta strong { margin-right: 5px; color: #1e293b; }
 
-        /* Indicador de carga */
-        #loading-indicator {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: bold;
-            z-index: 999;
-            display: none;
-        }
-        
         .btn-back {
             background: rgba(255,255,255,0.2);
             border: 1px solid rgba(255,255,255,0.4);
@@ -417,6 +355,21 @@
         }
         .btn-back:hover { background: rgba(255,255,255,0.3); }
         .header-left { display: flex; align-items: center; }
+
+        /* Indicador de carga */
+        #loading-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            z-index: 999;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -427,6 +380,7 @@
         <h2>Inventario Coordinación de Analítica y Ciencia del Dato</h2>
     </div>
 
+    <!-- Indicador de carga -->
     <div id="loading-indicator">Leyendo Excel en vivo...</div>
 
     <div class="zoom-controls">
@@ -435,48 +389,22 @@
         <button id="zoomReset" title="Restablecer">⟳</button>
     </div>
 
-    <!-- Leyenda de Totales -->
-    <div class="legend-box">
-        <h4>Resumen (Clic para filtrar)</h4>
-        <ul id="legend-list">
-            <li class="legend-filter" data-filter="conexiones">
-                <div class="legend-label"><span class="dot d-inf"></span> Inf. Conexiones</div>
-                <strong class="count-badge" id="total-inf">0</strong>
-            </li>
-            <li class="legend-filter" data-filter="informe interno">
-                <div class="legend-label"><span class="dot d-iin"></span> Inf. Internos</div>
-                <strong class="count-badge" id="total-iin">0</strong>
-            </li>
-            <li class="legend-filter" data-filter="bi">
-                <div class="legend-label"><span class="dot d-tbi"></span> Tableros BI</div>
-                <strong class="count-badge" id="total-tbi">0</strong>
-            </li>
-            <li class="legend-filter" data-filter="tablero interno">
-                <div class="legend-label"><span class="dot d-tin"></span> Tableros Internos</div>
-                <strong class="count-badge" id="total-tin">0</strong>
-            </li>
-            <li class="legend-filter" data-filter="normativo">
-                <div class="legend-label"><span class="dot d-nor"></span> Inf. Normativos</div>
-                <strong class="count-badge" id="total-nor">0</strong>
-            </li>
-        </ul>
-    </div>
-
     <div class="chart-viewport" id="chartViewport">
         <div class="org-chart" id="orgChart">
             
             <!-- RAIZ: 1.0 GERENCIA GENERAL -->
             <div class="branch">
-                <div class="node n-orange node-large interactive" data-title="Gerencia General" style="font-weight: 700;">1.0 Gerencia General</div>
+                <div class="node n-orange node-large interactive" data-title="Gerencia General" style="font-weight: 700;">Gerencia General</div>
                 <div class="connector-v" style="height: 25px;"></div>
             </div>
 
             <!-- LOS 4 PILARES PRINCIPALES -->
             <div class="level-split">
+                
                 <!-- ================== 1.1 STAFF GERENCIA ================== -->
                 <div class="branch">
                     <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
-                    <div class="node n-dark node-medium interactive" data-title="Staff Gerencia">1.1 Staff Gerencia</div>
+                    <div class="node n-dark node-medium interactive" data-title="Staff Gerencia">Staff Gerencia</div>
                     <div class="connector-v" style="height: 15px;"></div>
                     
                     <div class="row" style="gap: 15px;">
@@ -491,7 +419,7 @@
                                 <div class="node n-teal interactive" data-title="Dirección Calidad y Planeación">Dirección Calidad<br>y Planeación</div>
                                 <div class="connector-v" style="height: 10px;"></div>
                                 <div class="sub-group">
-                                    <div class="node n-coord interactive" data-title="Coordinación Calidad y Planeación">Coord. Calidad<br>y Planeación</div>
+                                    <div class="node n-coord interactive" data-title="Dirección Calidad y Planeación">Coord. Calidad<br>y Planeación</div>
                                 </div>
                             </div>
 
@@ -511,7 +439,7 @@
                 <!-- ================== 1.2 SUBGERENCIA DE SALUD ================== -->
                 <div class="branch">
                     <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
-                    <div class="node n-dark node-medium interactive" data-title="Subgerencia de Salud">1.2 Subgerencia de Salud</div>
+                    <div class="node n-dark node-medium interactive" data-title="Subgerencia de Salud">Subgerencia de Salud</div>
                     <div class="connector-v" style="height: 15px;"></div>
 
                     <div class="row" style="gap: 15px;">
@@ -550,7 +478,7 @@
                 <!-- ================== 1.3 SUBGERENCIA FINANCIERA ================== -->
                 <div class="branch">
                     <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
-                    <div class="node n-dark node-medium interactive" data-title="Subgerencia Financiera">1.3 Subgerencia<br>Financiera</div>
+                    <div class="node n-dark node-medium interactive" data-title="Subgerencia Financiera">Subgerencia<br>Financiera</div>
                     <div class="connector-v" style="height: 15px;"></div>
 
                     <div class="branch" style="gap: 15px;">
@@ -562,7 +490,7 @@
                 <!-- ================== 1.4 SUBGERENCIA ADMINISTRATIVA ================== -->
                 <div class="branch">
                     <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
-                    <div class="node n-dark node-medium interactive" data-title="Subgerencia Administrativa">1.4 Subgerencia<br>Administrativa</div>
+                    <div class="node n-dark node-medium interactive" data-title="Subgerencia Administrativa">Subgerencia<br>Administrativa</div>
                     <div class="connector-v" style="height: 15px;"></div>
 
                     <div class="row" style="gap: 15px;">
@@ -582,17 +510,15 @@
                             <div class="node n-yellow interactive" data-title="Jefatura Administrativa">Jefatura<br>Administrativa</div>
                             <div class="node n-yellow interactive" data-title="Jefatura Aseguramiento">Jef. Aseguramiento<br>Recursos y Op.</div>
                         </div>
-
                     </div>
                 </div>
 
             </div> 
-
         </div>
     </div>
 </div>
 
-<!-- ================= MODAL 1: RESUMEN DEL ÁREA ================= -->
+<!-- ================= MODAL 1: RESUMEN DEL ÁREA (Distribución por área_pertenece) ================= -->
 <div id="summaryModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -601,19 +527,16 @@
         </div>
         <div class="modal-body">
             <p style="font-size: 13px; color: #666; margin-top: 0; margin-bottom: 15px;">
-                Seleccione una categoría para ver los activos correspondientes:
+                Seleccione el área responsable / subcategoría para ver el detalle de sus activos:
             </p>
             <ul id="summaryModalList" style="list-style: none; padding: 0; margin: 0;">
-                <!-- Opciones inyectadas vía JS -->
+                <!-- Opciones (Coord. Analítica, Coord. Software, etc.) inyectadas vía JS -->
             </ul>
-            <p style="margin-top: 15px; text-align: center; border-top: 1px solid #eee; padding-top: 10px; font-size: 11px; color: #999;">
-                Datos extraídos automáticamente de INVENTARIO_TABLEROS.xlsx
-            </p>
         </div>
     </div>
 </div>
 
-<!-- ================= MODAL 2: DETALLES DE REPORTES ================= -->
+<!-- ================= MODAL 2: DETALLES DE REPORTES DINÁMICOS ================= -->
 <div id="detailModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -624,6 +547,9 @@
             <span class="close" id="closeDetailModal">&times;</span>
         </div>
         <div class="modal-body">
+            <!-- Cuadrícula Dinámica que se arma sola según el tipo de datos -->
+            <div class="modal-summary" id="detailModalSummary"></div>
+            
             <div class="report-list" id="detailReportList">
                 <!-- Se inyecta la lista final aquí -->
             </div>
@@ -632,17 +558,29 @@
 </div>
 
 <script>
+    // Nueva Estructura: reportesPorArea[Area][Area_Pertenece] = [ { reporte... } ]
     let reportesPorArea = {};
     const EXCEL_FILE_URL = "INVENTARIO_TABLEROS.xlsx?t=" + new Date().getTime();
 
-    // Normaliza el texto quitando acentos y espacios múltiples
     function normalizarTexto(texto) {
         if (!texto) return "";
         return texto.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ").trim();
     }
 
-    // Actualiza burbujas en los nodos del organigrama
-    function updateNodeBadges(filter) {
+    // Función para pintar colores según el texto de la Actividad (Dinámico)
+    function getColorByActividad(tipo) {
+        let tn = normalizarTexto(tipo);
+        if(tn.includes("conexiones")) return "#4CAF50"; // Verde
+        if(tn.includes("informe interno")) return "#FF9800"; // Naranja
+        if(tn.includes("normativo")) return "#F44336"; // Rojo
+        if(tn.includes("bi")) return "#2196F3"; // Azul
+        if(tn.includes("tablero interno")) return "#9C27B0"; // Morado
+        if(tn.includes("mejora")) return "#0ea5e9"; // Azul claro (Software)
+        if(tn.includes("nuevo")) return "#8b5cf6"; // Índigo (Software)
+        return "var(--teal)"; // Default
+    }
+
+    function updateNodeBadges() {
         document.querySelectorAll('.node.interactive').forEach(node => {
             let badge = node.querySelector('.node-badge');
             if (!badge) {
@@ -651,30 +589,21 @@
                 node.appendChild(badge);
             }
             
-            const searchTitle = node.getAttribute("data-title");
-            const searchNorm = normalizarTexto(searchTitle);
+            const searchNorm = normalizarTexto(node.getAttribute("data-title"));
+            let count = 0;
             
-            let matchedReports = [];
-            Object.keys(reportesPorArea).forEach(k => {
-                if (normalizarTexto(k) === searchNorm) {
-                    matchedReports = matchedReports.concat(reportesPorArea[k]);
+            // Sumar todo lo que está dentro de esa área
+            Object.keys(reportesPorArea).forEach(kArea => {
+                if (normalizarTexto(kArea) === searchNorm) {
+                    count += reportesPorArea[kArea].total;
                 }
             });
             
-            if (filter) {
-                matchedReports = matchedReports.filter(rep => normalizarTexto(rep.actividad).includes(filter));
-            }
-            
-            const count = matchedReports.length;
             badge.innerText = count;
-            
             if (count > 0) {
                 badge.classList.add('has-data');
-                node.classList.remove('dimmed');
             } else {
                 badge.classList.remove('has-data');
-                if (filter) node.classList.add('dimmed');
-                else node.classList.remove('dimmed');
             }
         });
     }
@@ -705,27 +634,25 @@
             if (!workbook.Sheets["SP"]) throw new Error("La hoja 'SP' no existe.");
             
             const dataSP_raw = XLSX.utils.sheet_to_json(workbook.Sheets["SP"], { raw: false, dateNF: "yyyy-mm-dd" });
-            
-            let tInf = 0, tNor = 0, tBi = 0, tTin = 0, tIin = 0;
 
             dataSP_raw.forEach(row => {
                 let nRow = {};
                 for (let key in row) { nRow[normalizarTexto(key)] = row[key]; }
                 
-                let tipo = nRow["tipo"] ? nRow["tipo"].toString().trim() : "Desconocido";
-                let tipoL = tipo.toLowerCase();
-                
-                if (tipoL.includes("conexiones")) tInf++;
-                else if (tipoL.includes("normativo")) tNor++;
-                else if (tipoL.includes("bi")) tBi++;
-                else if (tipoL.includes("tablero interno")) tTin++;
-                else if (tipoL.includes("informe interno")) tIin++;
-
                 let areaRaw = nRow["area"];
                 if (!areaRaw || areaRaw.toString().trim().toLowerCase() === "nan" || areaRaw.toString().trim().toLowerCase() === "na") return;
-                
                 let area = areaRaw.toString().trim();
+                
+                // NUEVA COLUMNA: area_pertenece
+                let areaPerRaw = nRow["area_pertenece"] || nRow["area pertenece"];
+                let area_per = areaPerRaw ? areaPerRaw.toString().trim() : "Gestión Propia";
+                
+                let tipo = nRow["tipo"] ? nRow["tipo"].toString().trim() : "Desconocido";
                 let nombre = nRow["nombre_informe"] || nRow["nombre"] || "Sin Nombre";
+                
+                // NUEVA COLUMNA: estado
+                let estado = nRow["estado"] || "Sin Especificar";
+
                 let programado = nRow["programado"] || "No";
                 let periodicidad = nRow["periodicidad"] || "N/D";
                 let fechaGen = nRow["fecha_ultma_generacion"] || nRow["fecha_ultima_generacion"] || nRow["fecha de ultima generacion"] || "N/D";
@@ -748,26 +675,26 @@
                 }
                 if (enlace === "#" && biLinks[nombre.toString().trim()]) enlace = biLinks[nombre.toString().trim()];
 
-                if (!reportesPorArea[area]) reportesPorArea[area] = [];
+                // Inicializar Estructura de Diccionarios Anidados
+                if (!reportesPorArea[area]) reportesPorArea[area] = { total: 0, subareas: {} };
+                if (!reportesPorArea[area].subareas[area_per]) reportesPorArea[area].subareas[area_per] = [];
 
-                reportesPorArea[area].push({
+                reportesPorArea[area].subareas[area_per].push({
                     actividad: tipo,
                     reporte: nombre.toString().trim(),
                     enlace: enlace,
+                    estado: estado.toString().trim(),
                     programado: programado.toString().trim(),
                     periodicidad: periodicidad.toString().trim(),
                     fecha_generacion: fechaGen.toString().trim()
                 });
+                
+                reportesPorArea[area].total++;
             });
 
-            document.getElementById("total-inf").innerText = tInf;
-            document.getElementById("total-iin").innerText = tIin;
-            document.getElementById("total-tbi").innerText = tBi;
-            document.getElementById("total-tin").innerText = tTin;
-            document.getElementById("total-nor").innerText = tNor;
-
             loading.style.display = "none";
-            updateNodeBadges(null);
+            updateNodeBadges();
+            console.log("Excel procesado. Estructura creada por Área y Subárea (area_pertenece).");
 
         } catch (error) {
             console.error("Error:", error);
@@ -777,22 +704,6 @@
     }
 
     window.addEventListener("DOMContentLoaded", cargarExcel);
-
-    // Filtros de leyenda
-    let activeFilter = null;
-    document.querySelectorAll('.legend-filter').forEach(item => {
-        item.addEventListener('click', function() {
-            const filterValue = this.getAttribute('data-filter');
-            if (activeFilter === filterValue) {
-                activeFilter = null;
-                document.querySelectorAll('.legend-filter').forEach(el => el.classList.remove('active-filter'));
-            } else {
-                activeFilter = filterValue;
-                document.querySelectorAll('.legend-filter').forEach(el => el.classList.toggle('active-filter', el === this));
-            }
-            updateNodeBadges(activeFilter);
-        });
-    });
 
     // ----------------------------------------------------
     // LÓGICA DE LOS 2 MODALES
@@ -814,127 +725,108 @@
         if (e.target === detailModal) detailModal.style.display = "none"; 
     });
 
-    // Al hacer clic en un nodo del organigrama (Abre Modal 1)
+    // CLIC EN EL ORGANIGRAMA -> ABRE MODAL 1 (Subáreas)
     document.querySelectorAll(".interactive").forEach(node => {
         node.addEventListener("click", () => {
             const searchTitle = node.getAttribute("data-title");
             const displayTitle = node.innerText.replace("\n", " ");
-            document.getElementById("summaryModalTitle").innerText = displayTitle;
-            
             const searchNorm = normalizarTexto(searchTitle);
-            let areaReports = [];
+            
+            let areaData = null;
             Object.keys(reportesPorArea).forEach(k => {
-                if (normalizarTexto(k) === searchNorm) {
-                    areaReports = areaReports.concat(reportesPorArea[k]);
-                }
+                if (normalizarTexto(k) === searchNorm) areaData = reportesPorArea[k];
             });
 
-            // Si hay un filtro activo en la pantalla principal, forzamos abrir el Detalle directamente
-            if (activeFilter) {
-                openDetailModal(displayTitle, activeFilter, areaReports);
-                return;
-            }
-
-            // Preparar contadores para el Modal 1
-            const typeConfig = [
-                { key: "conexiones", label: "Inf. Conexiones", dotClass: "d-inf", count: 0 },
-                { key: "informe interno", label: "Inf. Internos", dotClass: "d-iin", count: 0 },
-                { key: "bi", label: "Tableros BI", dotClass: "d-tbi", count: 0 },
-                { key: "tablero interno", label: "Tableros Internos", dotClass: "d-tin", count: 0 },
-                { key: "normativo", label: "Inf. Normativos", dotClass: "d-nor", count: 0 }
-            ];
-
-            areaReports.forEach(rep => {
-                let act = normalizarTexto(rep.actividad);
-                if(act.includes("conexiones")) typeConfig[0].count++;
-                else if(act.includes("informe interno")) typeConfig[1].count++;
-                else if(act.includes("bi")) typeConfig[2].count++;
-                else if(act.includes("tablero interno")) typeConfig[3].count++;
-                else if(act.includes("normativo")) typeConfig[4].count++;
-            });
-
+            document.getElementById("summaryModalTitle").innerText = displayTitle;
             const summaryList = document.getElementById("summaryModalList");
             summaryList.innerHTML = "";
 
-            typeConfig.forEach(item => {
-                const li = document.createElement("li");
-                li.className = `summary-option ${item.count === 0 ? 'disabled' : ''}`;
-                li.innerHTML = `
-                    <div class="legend-label"><span class="dot ${item.dotClass}"></span> ${item.label}</div>
-                    <strong class="count-badge">${item.count}</strong>
-                `;
+            if (areaData && areaData.total > 0) {
+                // Ordenar las subáreas (area_pertenece) alfabéticamente
+                let subKeys = Object.keys(areaData.subareas).sort((a,b) => a.localeCompare(b));
                 
-                if (item.count > 0) {
-                    li.onclick = () => openDetailModal(displayTitle, item.key, areaReports);
-                }
-                summaryList.appendChild(li);
-            });
+                subKeys.forEach(subName => {
+                    let reports = areaData.subareas[subName];
+                    let count = reports.length;
+                    
+                    const li = document.createElement("li");
+                    li.className = "summary-option";
+                    li.innerHTML = `
+                        <div class="area-name">
+                            <span class="dot"></span> ${subName}
+                        </div>
+                        <strong class="count-badge">${count}</strong>
+                    `;
+                    li.onclick = () => openDetailModal(displayTitle, subName, reports);
+                    summaryList.appendChild(li);
+                });
+            } else {
+                summaryList.innerHTML = "<p style='padding:15px; color:#666; font-size:13px; font-style:italic;'>No hay registros asignados a esta área.</p>";
+            }
 
             summaryModal.style.display = "block";
         });
     });
 
-    // Función para abrir el Modal 2 (Detalles)
-    function openDetailModal(areaName, filterKey, allAreaReports) {
-        summaryModal.style.display = "none";
+    // ABRE MODAL 2 (Detalles Dinámicos)
+    function openDetailModal(areaName, subName, reports) {
+        summaryModal.style.display = "none"; // Cierra el primero
+        document.getElementById("detailModalTitle").innerText = `${areaName} > ${subName}`;
         
-        let headerLabel = "";
-        if(filterKey === "conexiones") headerLabel = "Inf. Conexiones";
-        else if(filterKey === "informe interno") headerLabel = "Inf. Internos";
-        else if(filterKey === "bi") headerLabel = "Tableros BI";
-        else if(filterKey === "tablero interno") headerLabel = "Tableros Internos";
-        else if(filterKey === "normativo") headerLabel = "Inf. Normativos";
+        // 1. Armar Cuadrícula Resumen Dinámica
+        let typeCounts = {};
+        reports.forEach(r => {
+            let t = r.actividad;
+            typeCounts[t] = (typeCounts[t] || 0) + 1;
+        });
+
+        const summaryGrid = document.getElementById("detailModalSummary");
+        summaryGrid.innerHTML = "";
         
-        document.getElementById("detailModalTitle").innerText = `${areaName} - ${headerLabel}`;
+        Object.keys(typeCounts).sort().forEach(t => {
+            summaryGrid.innerHTML += `
+                <div class="summary-item">
+                    <span class="dot" style="background-color:${getColorByActividad(t)}"></span>
+                    <div class="s-text">${t}<strong>${typeCounts[t]}</strong></div>
+                </div>
+            `;
+        });
+
+        // 2. Armar Lista de Detalles
         const listContainer = document.getElementById("detailReportList");
-        
-        // Filtrar solo los del tipo seleccionado
-        let filteredReports = allAreaReports.filter(rep => normalizarTexto(rep.actividad).includes(filterKey));
-        
-        // Ordenar Alfabéticamente por nombre
-        filteredReports.sort((a, b) => a.reporte.toLowerCase().localeCompare(b.reporte.toLowerCase()));
-        
         let htmlList = "";
-        filteredReports.forEach(rep => {
+        
+        // Ordenar: Primero por Tipo de Actividad, luego por Nombre
+        let sorted = reports.sort((a,b) => {
+            let cmp = a.actividad.localeCompare(b.actividad);
+            if (cmp !== 0) return cmp;
+            return a.reporte.localeCompare(b.reporte);
+        });
+
+        sorted.forEach(rep => {
             let linkHtml = `<span class="no-link">Sin enlace web</span>`;
             if (rep.enlace && rep.enlace !== "#" && rep.enlace !== "nan" && rep.enlace.trim() !== "") {
                 let href = rep.enlace.trim();
                 if (!href.toLowerCase().startsWith("http")) href = "https://" + href;
                 linkHtml = `<a href="${href}" class="btn-enlace" target="_blank" rel="noopener noreferrer">Abrir ↗</a>`;
             }
-            
-            let badgeColor = "var(--teal)";
-            let act = normalizarTexto(rep.actividad);
-            if(act.includes("conexiones")) badgeColor = "#4CAF50";
-            else if(act.includes("normativo")) badgeColor = "#F44336";
-            else if(act.includes("bi")) badgeColor = "#2196F3";
-            else if(act.includes("tablero interno")) badgeColor = "#9C27B0";
-            else if(act.includes("informe interno")) badgeColor = "#FF9800";
 
-            let isProgramado = normalizarTexto(rep.programado) === "si";
-            let fechaLabel = rep.fecha_generacion && rep.fecha_generacion !== "N/D" ? rep.fecha_generacion : "N/D";
-            let metaHtml = "";
+            let badgeColor = getColorByActividad(rep.actividad);
+            let isProg = normalizarTexto(rep.programado) === "si";
+            let fechaLab = rep.fecha_generacion && rep.fecha_generacion !== "N/D" ? rep.fecha_generacion : "N/D";
             
-            if (isProgramado) {
-                let per = rep.periodicidad && rep.periodicidad !== "N/D" ? rep.periodicidad : "N/D";
-                metaHtml = `
-                    <div class="report-meta">
-                        <span><strong>Programado:</strong> Sí</span>
-                        <span><strong>Periodicidad:</strong> ${per}</span>
-                        <span><strong>Última Generación:</strong> ${fechaLabel}</span>
-                    </div>`;
-            } else {
-                metaHtml = `
-                    <div class="report-meta">
-                        <span><strong>Programado:</strong> No</span>
-                        <span><strong>Última Generación:</strong> ${fechaLabel}</span>
-                    </div>`;
-            }
+            // Meta Info: Ahora incluye ESTADO, Programación y Fechas (Universal)
+            let metaHtml = `<div class="report-meta">
+                <span><strong>Estado:</strong> ${rep.estado}</span>
+                <span><strong>Programado:</strong> ${isProg ? 'Sí' : 'No'}</span>
+                ${isProg ? `<span><strong>Periodicidad:</strong> ${rep.periodicidad}</span>` : ''}
+                <span><strong>Última Generación:</strong> ${fechaLab}</span>
+            </div>`;
 
             htmlList += `
                 <div class="report-item">
                     <div class="report-header">
-                        <span class="report-badge" style="background-color: ${badgeColor}">${rep.actividad}</span>
+                        <span class="report-badge" style="background-color:${badgeColor}">${rep.actividad}</span>
                         ${linkHtml}
                     </div>
                     <div class="report-title">${rep.reporte}</div>
