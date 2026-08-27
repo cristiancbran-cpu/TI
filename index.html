@@ -434,7 +434,7 @@
 <div class="org-wrapper">
     <div class="header-logo">
         <img src="Logo.png" alt="Logo Savia Salud EPS" onerror="this.style.display='none'">
-        <h2>Inventario Dirección de Tecnología e Información</h2>
+        <h2>Inventario Coordinación de Analítica y Ciencia del Dato</h2>
     </div>
 
     <div id="loading-indicator">Leyendo Excel en vivo...</div>
@@ -450,7 +450,7 @@
             
             <!-- RAIZ: 1.0 GERENCIA GENERAL -->
             <div class="branch">
-                <div class="node n-orange node-large interactive" data-title="Gerencia General" style="font-weight: 700;">Gerencia General</div>
+                <div class="node n-orange node-large interactive" data-title="Gerencia General" style="font-weight: 700;">1.0 Gerencia General</div>
                 <div class="connector-v" style="height: 25px;"></div>
             </div>
 
@@ -459,7 +459,7 @@
                 <!-- ================== 1.1 STAFF GERENCIA ================== -->
                 <div class="branch">
                     <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
-                    <div class="node n-dark node-medium interactive" data-title="Staff Gerencia">Staff Gerencia</div>
+                    <div class="node n-dark node-medium interactive" data-title="Staff Gerencia">1.1 Staff Gerencia</div>
                     <div class="connector-v" style="height: 15px;"></div>
                     
                     <div class="row" style="gap: 15px;">
@@ -494,7 +494,7 @@
                 <!-- ================== 1.2 SUBGERENCIA DE SALUD ================== -->
                 <div class="branch">
                     <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
-                    <div class="node n-dark node-medium interactive" data-title="Subgerencia de Salud">Subgerencia de Salud</div>
+                    <div class="node n-dark node-medium interactive" data-title="Subgerencia de Salud">1.2 Subgerencia de Salud</div>
                     <div class="connector-v" style="height: 15px;"></div>
 
                     <div class="row" style="gap: 15px;">
@@ -533,7 +533,7 @@
                 <!-- ================== 1.3 SUBGERENCIA FINANCIERA ================== -->
                 <div class="branch">
                     <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
-                    <div class="node n-dark node-medium interactive" data-title="Subgerencia Financiera">Subgerencia<br>Financiera</div>
+                    <div class="node n-dark node-medium interactive" data-title="Subgerencia Financiera">1.3 Subgerencia<br>Financiera</div>
                     <div class="connector-v" style="height: 15px;"></div>
 
                     <div class="branch" style="gap: 15px;">
@@ -545,7 +545,7 @@
                 <!-- ================== 1.4 SUBGERENCIA ADMINISTRATIVA ================== -->
                 <div class="branch">
                     <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
-                    <div class="node n-dark node-medium interactive" data-title="Subgerencia Administrativa">Subgerencia<br>Administrativa</div>
+                    <div class="node n-dark node-medium interactive" data-title="Subgerencia Administrativa">1.4 Subgerencia<br>Administrativa</div>
                     <div class="connector-v" style="height: 15px;"></div>
 
                     <div class="row" style="gap: 15px;">
@@ -611,7 +611,7 @@
                 <div class="modal-summary" id="detailModalSummary"></div>
                 
                 <div class="state-filters" id="detailStateFilterContainer">
-                    <!-- Los botones de estado se inyectan acá -->
+                    <!-- Los botones de estado se inyectan acá (Si corresponde) -->
                 </div>
             </div>
             
@@ -764,7 +764,7 @@
     window.addEventListener("DOMContentLoaded", cargarExcel);
 
     // ----------------------------------------------------
-    // LÓGICA DE LOS 2 MODALES Y SINCRONIZACIÓN DE FILTROS
+    // LÓGICA DE LOS MODALES
     // ----------------------------------------------------
     const summaryModal = document.getElementById("summaryModal");
     const detailModal = document.getElementById("detailModal");
@@ -839,36 +839,43 @@
         const summaryGrid = document.getElementById("detailModalSummary");
         const stateFilterContainer = document.getElementById("detailStateFilterContainer");
 
+        // Condición para ocultar el estado si es Analítica (según tu requerimiento anterior)
+        let isAnalitica = normalizarTexto(subName).includes("analitica");
+
         // Preparar estados iniciales
         let currentDetailFilter = null; // Filtro de Tipo (Cuadrícula)
         let currentStateFilter = "Todos"; // Filtro de Estado (Píldoras)
 
-        // Extraer todos los estados únicos disponibles en esta subárea
-        const uniqueStates = [...new Set(reports.map(r => r.estado))].sort();
-        
-        let stateHtml = `<span class="state-filters-label">Filtrar por Estado:</span>`;
-        stateHtml += `<div class="state-pill active-state" data-state="Todos">Todos</div>`;
-        uniqueStates.forEach(st => {
-            stateHtml += `<div class="state-pill" data-state="${st}">${st}</div>`;
-        });
-        stateFilterContainer.innerHTML = stateHtml;
+        if (isAnalitica) {
+            stateFilterContainer.style.display = "none";
+            stateFilterContainer.innerHTML = "";
+        } else {
+            stateFilterContainer.style.display = "flex";
+            const uniqueStates = [...new Set(reports.map(r => r.estado))].sort();
+            let stateHtml = `<span class="state-filters-label">Filtrar por Estado:</span>`;
+            stateHtml += `<div class="state-pill active-state" data-state="Todos">Todos</div>`;
+            uniqueStates.forEach(st => {
+                stateHtml += `<div class="state-pill" data-state="${st}">${st}</div>`;
+            });
+            stateFilterContainer.innerHTML = stateHtml;
+        }
 
-        // Renderizador maestro que reconstruye tanto la grilla superior como la lista inferior
+        // Renderizador maestro que reconstruye la grilla superior y la lista inferior
         function renderDetailView() {
-            // 1. Filtrar los reportes según el Estado (Píldora seleccionada)
+            // 1. Filtrar primero por Estado (Píldora)
             let stateFilteredReports = reports;
-            if (currentStateFilter !== "Todos") {
+            if (!isAnalitica && currentStateFilter !== "Todos") {
                 stateFilteredReports = reports.filter(r => r.estado === currentStateFilter);
             }
 
-            // 2. Reconstruir dinámicamente la cuadrícula superior basada SOLO en el estado filtrado
+            // 2. Reconstruir la cuadrícula basada en lo que quedó del filtro de estado
             let typeCounts = {};
             stateFilteredReports.forEach(r => {
                 let t = r.actividad;
                 typeCounts[t] = (typeCounts[t] || 0) + 1;
             });
 
-            // Si el filtro de tipo actual ya no existe en el estado seleccionado, deseleccionarlo
+            // Si el filtro de TIPO seleccionado ya no existe (porque el filtro de Estado lo eliminó), se quita.
             if (currentDetailFilter && !typeCounts[Object.keys(typeCounts).find(t => normalizarTexto(t) === currentDetailFilter)]) {
                 currentDetailFilter = null;
             }
@@ -885,20 +892,20 @@
                 `;
             });
 
-            // Reasignar clics a la nueva cuadrícula
+            // Reasignar clics a la nueva cuadrícula (Tipos)
             summaryGrid.querySelectorAll('.summary-item').forEach(item => {
                 item.addEventListener('click', function() {
                     let filterType = this.getAttribute('data-type');
                     if (currentDetailFilter === filterType) {
-                        currentDetailFilter = null; // Quita el filtro
+                        currentDetailFilter = null; // Quita filtro
                     } else {
-                        currentDetailFilter = filterType; // Aplica el filtro
+                        currentDetailFilter = filterType; // Aplica filtro
                     }
-                    renderDetailView(); // Vuelve a renderizar
+                    renderDetailView(); // Refresca todo
                 });
             });
 
-            // 3. Renderizar la lista inferior aplicando TAMBIÉN el filtro de Tipo
+            // 3. Renderizar Lista Inferior (Aplicando Ambos Filtros)
             const listContainer = document.getElementById("detailReportList");
             let finalReports = stateFilteredReports;
             
@@ -930,8 +937,9 @@
                 let isProg = normalizarTexto(rep.programado) === "si";
                 let fechaLab = rep.fecha_generacion && rep.fecha_generacion !== "N/D" ? rep.fecha_generacion : "N/D";
                 
+                let estadoItem = isAnalitica ? "" : `<span><strong>Estado:</strong> ${rep.estado}</span>`;
                 let metaHtml = `<div class="report-meta">
-                    <span><strong>Estado:</strong> ${rep.estado}</span>
+                    ${estadoItem}
                     <span><strong>Programado:</strong> ${isProg ? 'Sí' : 'No'}</span>
                     ${isProg ? `<span><strong>Periodicidad:</strong> ${rep.periodicidad}</span>` : ''}
                     <span><strong>Última Generación:</strong> ${fechaLab}</span>
@@ -952,17 +960,17 @@
             listContainer.innerHTML = htmlList;
         }
 
-        // Asignar los eventos de click a las píldoras de Estado (Solo se hace una vez al abrir el modal)
-        stateFilterContainer.querySelectorAll('.state-pill').forEach(pill => {
-            pill.addEventListener('click', function() {
-                currentStateFilter = this.getAttribute('data-state');
-                stateFilterContainer.querySelectorAll('.state-pill').forEach(el => el.classList.remove('active-state'));
-                this.classList.add('active-state');
-                
-                // Al cambiar el estado, se recalculan los números de arriba y la lista
-                renderDetailView(); 
+        // Asignar clics a las Píldoras de Estado (Solo al inicializar Modal)
+        if (!isAnalitica) {
+            stateFilterContainer.querySelectorAll('.state-pill').forEach(pill => {
+                pill.addEventListener('click', function() {
+                    currentStateFilter = this.getAttribute('data-state');
+                    stateFilterContainer.querySelectorAll('.state-pill').forEach(el => el.classList.remove('active-state'));
+                    this.classList.add('active-state');
+                    renderDetailView(); 
+                });
             });
-        });
+        }
 
         // Primera carga visual
         renderDetailView();
