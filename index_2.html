@@ -3,17 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Organigrama Savia Salud EPS - Vertical</title>
+    <title>Organigrama Savia Salud EPS</title>
+    
+    <!-- LIBRERÍA PARA LEER EXCEL EN EL NAVEGADOR -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
     <style>
         :root {
-            --dark-blue: rgb(36, 75, 90);
-            --teal: rgb(0, 169, 143);
-            --yellow: rgb(240, 236, 115);
-            --orange: rgb(237, 199, 162);
+            /* Colores solicitados */
+            --dark-blue: rgb(36, 75, 90);      /* Staff y Subgerencias */
+            --teal: rgb(0, 169, 143);          /* Direcciones */
+            --yellow: rgb(240, 236, 115);      /* Jefaturas */
+            --orange: rgb(237, 199, 162);      /* Gerencia */
+            --coord-blue: rgb(75, 115, 130);   /* Coordinaciones */
+            
             --orange-border: #dcae85;
             --grey: #e9ecef;
             --line-color: #8fa3ad;
-            --highlight: #ff9800;
         }
 
         * { box-sizing: border-box; }
@@ -29,13 +35,12 @@
         .org-wrapper {
             position: relative;
             width: 100%;
-            max-width: 1000px;
+            max-width: 1600px;
             margin: 0 auto;
             background-color: #fff;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.06);
             overflow: hidden;
-            padding-bottom: 40px;
         }
 
         .header-logo {
@@ -47,104 +52,220 @@
         .header-logo img { height: 44px; margin-right: 14px; }
         .header-logo h2 { color: var(--dark-blue); margin: 0; font-size: 1.2rem; }
 
-        .chart-viewport {
-            width: 100%;
-            padding: 40px 20px;
-            overflow-x: auto;
-        }
-
-        /* ----- ESTRUCTURA TIPO ÁRBOL VERTICAL ----- */
-        .tree {
+        /* ---- Controles de zoom ---- */
+        .zoom-controls {
+            position: absolute;
+            top: 14px;
+            right: 14px;
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
-            padding-left: 20px;
+            gap: 6px;
+            z-index: 50;
+        }
+        .zoom-controls button {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 1px solid #d5dade;
+            background: #fff;
+            color: var(--dark-blue);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .zoom-controls button:hover { background: var(--teal); color: #fff; }
+
+        /* ---- Área con scroll / pan ---- */
+        .chart-viewport {
+            width: 100%;
+            height: 78vh;
+            min-height: 550px;
+            overflow: auto;
+            cursor: grab;
+            padding: 40px 20px;
+        }
+        .chart-viewport.dragging { cursor: grabbing; }
+
+        .org-chart {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            width: max-content;
+            margin: 0 auto;
+            transform-origin: top center;
+            transition: transform 0.12s ease-out;
+            padding-bottom: 60px;
         }
 
-        .tree ul {
-            padding-left: 40px;
-            list-style: none;
-            margin: 0;
+        /* Nodos compactos y legibles */
+        .node {
+            padding: 8px 10px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 3px;
             position: relative;
+            z-index: 2;
+            width: 135px;
+            font-size: 11px;
+            line-height: 1.3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 40px;
+            transition: transform 0.15s, box-shadow 0.15s, opacity 0.3s, filter 0.3s;
         }
 
-        /* Línea vertical principal para los hijos */
-        .tree ul::before {
-            content: "";
+        /* Nodos atenuados para el FILTRO */
+        .node.dimmed {
+            opacity: 0.25;
+            filter: grayscale(100%);
+            box-shadow: none;
+        }
+
+        /* ---- Burbujas de Conteo (Badges) ---- */
+        .node-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #e2e8f0; /* Gris muy claro cuando es 0 */
+            color: #94a3b8;            /* Texto difuminado cuando es 0 */
+            font-size: 11px;
+            font-weight: 800;
+            min-width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+        .node-badge.has-data {
+            background-color: #64748b; /* Gris pizarra oscuro cuando tiene datos */
+            color: #fff;
+        }
+
+        .node-large { width: 180px; font-size: 13px; }
+        .node-medium { width: 155px; font-size: 12px; }
+
+        /* Colores de las clases */
+        .n-orange { background-color: var(--orange); color: #333; border: 2px solid var(--orange-border); }
+        .n-dark { background-color: var(--dark-blue); color: white; border: 1px solid #1a3742; }
+        .n-teal { background-color: var(--teal); color: white; border: 1px solid #008772; }
+        .n-yellow { background-color: var(--yellow); color: #333; border: 1px solid #c9c55b; }
+        .n-coord { background-color: var(--coord-blue); color: white; border: 1px solid #365b6b; } 
+        .n-staff { background-color: var(--dark-blue); color: white; border: 1px dashed #fff; }
+
+        .branch { display: flex; flex-direction: column; align-items: center; position: relative; }
+        .row { display: flex; flex-direction: row; justify-content: center; align-items: flex-start; gap: 15px; }
+
+        .sub-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 12px;
+            border: 1px dashed var(--line-color);
+            border-radius: 8px;
+            background-color: #fdfdfd;
+            margin-top: 5px;
+        }
+
+        .interactive { cursor: pointer; }
+        .interactive:hover:not(.dimmed) {
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15); /* Solo sombra, sin borde naranja */
+            filter: brightness(0.95);
+        }
+
+        .connector-v { width: 2px; height: 16px; background-color: var(--line-color); z-index: 1; }
+        
+        .level-split {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding-top: 25px;
+            gap: 30px;
+        }
+        .level-split::before {
+            content: '';
             position: absolute;
             top: 0;
-            left: 20px;
-            bottom: 20px;
-            width: 2px;
-            background-color: var(--line-color);
-        }
-
-        .tree li {
-            position: relative;
-            margin: 15px 0;
-            padding-left: 20px;
-        }
-
-        /* Línea horizontal hacia el nodo */
-        .tree li::before {
-            content: "";
-            position: absolute;
-            top: 20px; /* Mitad de la altura del nodo aprox */
-            left: -20px;
-            width: 20px;
+            left: 10%;
+            right: 10%;
             height: 2px;
             background-color: var(--line-color);
         }
+        
+        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0;}
+        .d-inf { background-color: #4CAF50; }
+        .d-nor { background-color: #F44336; }
+        .d-tbi { background-color: #2196F3; }
+        .d-tin { background-color: #9C27B0; }
+        .d-iin { background-color: #FF9800; }
 
-        /* Ocultar la línea vertical extra al final */
-        .tree ul li:last-child::before {
-            background-color: var(--line-color);
-        }
-        .tree ul li:last-child::after {
-            content: "";
+        /* ---- Leyenda Flotante (Derecha) ---- */
+        .legend-box {
             position: absolute;
-            top: 22px;
-            left: -20px;
-            bottom: -15px;
-            width: 4px;
-            background-color: #fff; /* Oculta la línea vertical hacia abajo */
-        }
-
-        /* ----- NODOS ----- */
-        .node {
-            display: inline-flex;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 10px 16px;
+            bottom: 20px;
+            right: 20px;
+            background-color: white;
+            border: 1px solid var(--grey);
             border-radius: 8px;
-            font-weight: 600;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 15px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+            z-index: 100;
             font-size: 13px;
-            min-height: 40px;
-            min-width: 200px;
-            max-width: 320px;
-            z-index: 2;
-            position: relative;
+            min-width: 220px;
+        }
+        .legend-box h4 {
+            margin: 0 0 12px 0;
+            color: var(--dark-blue);
+            font-size: 14px;
+            border-bottom: 2px solid var(--grey);
+            padding-bottom: 6px;
+            text-align: center;
+        }
+        .legend-box ul { list-style: none; padding: 0; margin: 0; }
+        
+        /* Filtros Interactivos */
+        .legend-filter {
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            color: #444;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+        .legend-filter:hover { background-color: #f1f5f9; }
+        .legend-filter.active-filter {
+            background-color: #e0f2fe;
+            border: 1px solid #7dd3fc;
+        }
+        .legend-filter:last-child { margin-bottom: 0; }
+        
+        .legend-label { display: flex; align-items: center; gap: 8px; font-weight: 500; }
+        .legend-filter strong {
+            background-color: #f0f2f5;
+            padding: 2px 8px;
+            border-radius: 12px;
+            color: var(--dark-blue);
+            font-size: 12px;
+            min-width: 30px;
+            text-align: center;
         }
 
-        .node-large { font-size: 15px; min-width: 250px; font-weight: 700; }
-        .node-medium { font-size: 14px; min-width: 230px; }
-
-        .n-orange { background-color: var(--orange); color: #333; border: 2px dashed var(--orange-border); }
-        .n-teal { background-color: var(--teal); color: white; border: 1px solid #008772; }
-        .n-yellow { background-color: var(--yellow); color: #333; border: 1px solid #c9c55b; }
-        .n-dark { background-color: var(--dark-blue); color: white; border: 1px solid #1a3742; }
-        .n-grey { background-color: var(--grey); color: #333; border: 1px solid #ccc; }
-
-        .interactive { cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; }
-        .interactive:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            filter: brightness(0.95);
-            border: 2px solid var(--highlight);
-        }
-
-        /* ---- Modal ---- */
+        /* ---- Modal Structure ---- */
         .modal {
             display: none;
             position: fixed;
@@ -155,122 +276,291 @@
         }
         .modal-content {
             background-color: white;
-            margin: 10% auto;
+            margin: 5% auto;
             border-radius: 10px;
-            width: 90%;
-            max-width: 400px;
+            width: 95%;
+            max-width: 650px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
         .modal-header {
             background-color: var(--teal);
-            padding: 12px 15px;
+            padding: 14px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             color: white;
         }
-        .modal-header h3 { margin: 0; font-size: 15px; }
-        .close { font-size: 20px; font-weight: bold; color: white; cursor: pointer; opacity: 0.8; }
+        .modal-header h3 { margin: 0; font-size: 16px; font-weight: 700;}
+        .close { font-size: 24px; font-weight: bold; color: white; cursor: pointer; opacity: 0.8; line-height: 1;}
         .close:hover { opacity: 1; }
-        .modal-body { padding: 15px; font-size: 13px; color: #444; }
-        .modal-body ul { padding-left: 20px; margin: 0 0 8px 0; }
-        .modal-body li { margin-bottom: 8px; }
-        .modal-sync-note { font-size: 11px; color: #888; margin: 0; }
+        .modal-body { padding: 20px; }
+        
+        /* Grid de Resumen Profesional en Modal */
+        .modal-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 10px;
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--grey);
+            margin-bottom: 15px;
+        }
+        .summary-item { display: flex; align-items: center; gap: 8px; }
+        .summary-item .s-text { display: flex; flex-direction: column; font-size: 11px; color: #555; line-height: 1.2; }
+        .summary-item strong { font-size: 15px; color: var(--dark-blue); font-weight: 700; }
 
-        @media (max-width: 768px) {
-            .tree ul { padding-left: 20px; }
-            .tree ul::before { left: 10px; }
-            .tree li::before { left: -10px; width: 10px; }
-            .tree ul li:last-child::after { left: -10px; }
+        /* Lista de Detalles Modal */
+        .report-list {
+            max-height: 380px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        .report-list::-webkit-scrollbar { width: 6px; }
+        .report-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .report-item {
+            padding: 14px 0;
+            border-bottom: 1px dashed #cbd5e1;
+            font-size: 13px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .report-item:last-child { border-bottom: none; }
+        .report-header { display: flex; justify-content: space-between; width: 100%; align-items: center; }
+        .report-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            color: white;
+            text-transform: uppercase;
+        }
+        .btn-enlace {
+            background-color: #f1f5f9;
+            color: #0369a1;
+            border: 1px solid #cbd5e1;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .btn-enlace:hover { background-color: #e2e8f0; color: #0284c7; }
+        .no-link { color: #94a3b8; font-style: italic; font-size: 11px; }
+        
+        .report-title { font-weight: 700; color: var(--dark-blue); margin: 8px 0 4px 0; font-size: 14px; line-height: 1.3; }
+        
+        /* Detalles condicionales (Programado, Fechas) */
+        .report-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 11px;
+            color: #475569;
+            background: #f8fafc;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-top: 6px;
+            border: 1px solid #e2e8f0;
+            width: 100%;
+        }
+        .report-meta span { display: inline-flex; align-items: center; }
+        .report-meta strong { margin-right: 5px; color: #1e293b; }
+
+        /* Indicador de carga */
+        #loading-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            z-index: 999;
+            display: none;
         }
     </style>
 </head>
 <body>
 
 <div class="org-wrapper">
-
     <div class="header-logo">
-        <!-- Reemplaza con la ruta correcta de tu logo -->
-        <img src="Logo.png" alt="Logo Savia Salud EPS">
-        <h2>Inventario Coordinacción de Analítica y Ciencia del Dato</h2>
+        <img src="Logo.png" alt="Logo Savia Salud EPS" onerror="this.style.display='none'">
+        <h2>Inventario Coordinación de Analítica y Ciencia del Dato</h2>
     </div>
 
-    <div class="chart-viewport">
-        <div class="tree">
-            <!-- Raíz: Gerencia General -->
-            <div class="node n-orange node-large" style="margin-bottom: 10px;">Gerencia General</div>
+    <!-- Indicador de carga -->
+    <div id="loading-indicator">Leyendo Excel en vivo...</div>
+
+    <div class="zoom-controls">
+        <button id="zoomIn" title="Acercar">+</button>
+        <button id="zoomOut" title="Alejar">−</button>
+        <button id="zoomReset" title="Restablecer">⟳</button>
+    </div>
+
+    <!-- Leyenda de Totales (Filtros Activos) -->
+    <div class="legend-box">
+        <h4>Resumen (Clic para filtrar)</h4>
+        <ul id="legend-list">
+            <li class="legend-filter" data-filter="conexiones">
+                <div class="legend-label"><span class="dot d-inf"></span> Inf. Conexiones</div>
+                <strong id="total-inf">0</strong>
+            </li>
+            <li class="legend-filter" data-filter="informe interno">
+                <div class="legend-label"><span class="dot d-iin"></span> Inf. Internos</div>
+                <strong id="total-iin">0</strong>
+            </li>
+            <li class="legend-filter" data-filter="bi">
+                <div class="legend-label"><span class="dot d-tbi"></span> Tableros BI</div>
+                <strong id="total-tbi">0</strong>
+            </li>
+            <li class="legend-filter" data-filter="tablero interno">
+                <div class="legend-label"><span class="dot d-tin"></span> Tableros Internos</div>
+                <strong id="total-tin">0</strong>
+            </li>
+            <li class="legend-filter" data-filter="normativo">
+                <div class="legend-label"><span class="dot d-nor"></span> Inf. Normativos</div>
+                <strong id="total-nor">0</strong>
+            </li>
+        </ul>
+    </div>
+
+    <div class="chart-viewport" id="chartViewport">
+        <div class="org-chart" id="orgChart">
             
-            <ul>
-                <!-- 1. STAFF GERENCIA -->
-                <li>
-                    <div class="node n-dark node-medium">Staff de Gerencia</div>
-                    <ul>
-                        <li><div class="node n-dark interactive" data-title="Secretaría General" data-informes="11" data-normativos="4" data-bi="1" data-source="Inventario Excel (Hoja SP)">Secretaría General</div></li>
-                        <li><div class="node n-teal interactive" data-title="Dirección de Auditoría Interna" data-informes="0" data-normativos="0" data-bi="3" data-source="Inventario (carga manual)">Dirección de Auditoría Interna</div></li>
-                        <li>
-                            <div class="node n-teal interactive" data-title="Dirección de Calidad y Planeación">Dirección de Calidad y Planeación</div>
-                            <ul>
-                                <li><div class="node n-dark interactive" data-title="Coordinación de Calidad y Planeación">Coord. Calidad y Planeación</div></li>
-                            </ul>
-                        </li>
-                        <li><div class="node n-yellow interactive" data-title="Jefatura de Comunicaciones">Jefatura de Comunicaciones</div></li>
-                        <li><div class="node n-grey interactive" data-title="Oficial de Cumplimiento" style="border-style: dashed;">Oficial de Cumplimiento</div></li>
-                        <li><div class="node n-yellow interactive" data-title="Jefatura de Defensa Judicial">Jefatura Defensa Judicial / Prev. Daño</div></li>
-                        <li><div class="node n-yellow interactive" data-title="Jefatura de Contratación" data-informes="9" data-normativos="1" data-bi="1" data-source="Inventario Excel (Hoja SP)">Jefatura de Contratación</div></li>
-                        <li><div class="node n-dark interactive" data-title="Coordinación Jurídica">Coord. Jurídica y Gobierno Corp.</div></li>
-                    </ul>
-                </li>
+            <!-- RAIZ: 1.0 GERENCIA GENERAL -->
+            <div class="branch">
+                <div class="node n-orange node-large interactive" data-title="Gerencia General" style="font-weight: 700;">Gerencia General</div>
+                <div class="connector-v" style="height: 25px;"></div>
+            </div>
 
-                <!-- 2. SUBGERENCIA DE SALUD -->
-                <li>
-                    <div class="node n-dark node-medium">Subgerencia de Salud</div>
-                    <ul>
-                        <li><div class="node n-teal interactive" data-title="Dirección de Acceso a Servicios" data-informes="12" data-normativos="0" data-bi="6" data-source="Inventario Excel (Hoja SP)">Dirección de Acceso a Servicios de Salud</div></li>
-                        <li><div class="node n-yellow interactive" data-title="Jefatura de Autorizaciones" data-informes="33" data-normativos="0" data-bi="2" data-source="Inventario Excel (Hoja SP)">Jefatura de Autorizaciones</div></li>
-                        <li><div class="node n-yellow interactive" data-title="Jefatura de Centro Regulador" data-informes="7" data-normativos="2" data-bi="4" data-source="Inventario Excel (Hoja SP)">Jefatura de Centro Regulador</div></li>
-                        <li><div class="node n-yellow interactive" data-title="Jefatura de Auditoría Concurrente" data-informes="9" data-normativos="0" data-bi="5" data-source="Inventario Excel (Hoja SP)">Jefatura de Auditoría Concurrente</div></li>
-                        <li><div class="node n-yellow interactive" data-title="Jefatura de Cuentas Médicas" data-informes="92" data-normativos="0" data-bi="1" data-source="Inventario Excel (Hoja SP)">Jefatura de Cuentas Médicas</div></li>
-                        <li><div class="node n-yellow interactive" data-title="Jefatura de Atención al Usuario" data-informes="12" data-normativos="3" data-bi="3" data-source="Inventario Excel (Hoja SP)">Jefatura de Atención al Usuario</div></li>
-                        <li><div class="node n-teal interactive" data-title="Dirección de Riesgo en Salud" data-informes="20" data-normativos="5" data-bi="19" data-source="Inventario Excel (Hoja SP)">Dirección de Riesgo en Salud</div></li>
-                        <li><div class="node n-yellow interactive" data-title="Jefatura de Adquisiciones">Jefatura de Adquisiciones</div></li>
-                        <li><div class="node n-yellow interactive" data-title="Jefatura de Apoyo a Regiones">Jefatura de Apoyo a Regiones</div></li>
-                        <li><div class="node n-dark interactive" data-title="Coord. Programas Especiales" data-informes="0" data-normativos="0" data-bi="6" data-source="Inventario (carga manual)">Coord. Prog. Especiales</div></li>
-                        <li><div class="node n-dark interactive" data-title="Coord. de Epidemiología">Coord. de Epidemiología</div></li>
-                        <li><div class="node n-dark interactive" data-title="Coord. de Salud Pública">Coord. de Salud Pública</div></li>
-                        <li><div class="node n-dark interactive" data-title="Coord. de Alto Costo" data-informes="0" data-normativos="0" data-bi="11" data-source="Inventario (carga manual)">Coord. de Alto Costo</div></li>
-                    </ul>
-                </li>
+            <!-- LOS 4 PILARES PRINCIPALES -->
+            <div class="level-split">
+                
+                <!-- ================== 1.1 STAFF GERENCIA ================== -->
+                <div class="branch">
+                    <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
+                    <div class="node n-dark node-medium interactive" data-title="Staff Gerencia">Staff Gerencia</div>
+                    <div class="connector-v" style="height: 15px;"></div>
+                    
+                    <div class="row" style="gap: 15px;">
+                        <div class="branch" style="gap: 8px;">
+                            <div class="node n-staff interactive" data-title="Oficial Cumplimiento">Oficial Cumplimiento</div>
+                            <div class="node n-yellow interactive" data-title="Jefatura de Comunicaciones">Jefatura<br>Comunicaciones</div>
+                            <div class="node n-teal interactive" data-title="Dirección Auditoría Interna">Dirección<br>Auditoría Interna</div>
+                        </div>
 
-                <!-- 3. SUBGERENCIA FINANCIERA -->
-                <li>
-                    <div class="node n-dark node-medium">Subgerencia Financiera</div>
-                    <ul>
-                        <li><div class="node n-teal interactive" data-title="Dirección de Contabilidad y Presupuesto">Dirección Contabilidad y Presupuesto</div></li>
-                        <li><div class="node n-teal interactive" data-title="Dirección de Tesorería y Cartera" data-informes="1" data-normativos="16" data-bi="3" data-source="Inventario Excel (Hoja SP)">Dirección Tesorería y Cartera</div></li>
-                    </ul>
-                </li>
+                        <div class="branch" style="gap: 15px;">
+                            <div class="branch">
+                                <div class="node n-teal interactive" data-title="Dirección Calidad y Planeación">Dirección Calidad<br>y Planeación</div>
+                                <div class="connector-v" style="height: 10px;"></div>
+                                <div class="sub-group">
+                                    <div class="node n-coord interactive" data-title="Dirección Calidad y Planeación">Coord. Calidad<br>y Planeación</div>
+                                </div>
+                            </div>
 
-                <!-- 4. SUBGERENCIA ADMINISTRATIVA -->
-                <li>
-                    <div class="node n-dark node-medium">Subgerencia Administrativa</div>
-                    <ul>
-                        <li>
-                            <div class="node n-teal interactive" data-title="Dirección de Tecnología e Información" data-informes="0" data-normativos="0" data-bi="1" data-source="Inventario Excel (Hoja SP)">Dirección de Tecnología e Información</div>
-                            <ul>
-                                <li><div class="node n-dark interactive" data-title="Coord. de Software y Arquitectura">Coord. Software y Arquitectura</div></li>
-                                <li><div class="node n-dark interactive" data-title="Coord. de Soporte Tecnológico" data-informes="0" data-normativos="0" data-bi="2" data-source="Inventario Excel (Hoja SP)">Coord. Soporte Tecnológico</div></li>
-                                <li><div class="node n-dark interactive" data-title="Coord. Infraestructura y S.I." data-informes="0" data-normativos="0" data-bi="3" data-source="Inventario Excel (Hoja SP)">Coord. Infraest. y S.I.</div></li>
-                                <li><div class="node n-dark interactive" data-title="Coord. de Analítica y Ciencia del Dato" data-informes="0" data-normativos="0" data-bi="11" data-source="Inventario Excel (Hoja SP)">Coord. Analítica y Ciencia Dato</div></li>
-                            </ul>
-                        </li>
-                        <li><div class="node n-yellow interactive" data-title="Jefatura Administrativa" data-informes="0" data-normativos="0" data-bi="2" data-source="Inventario Excel (Hoja SP)">Jefatura Administrativa</div></li>
-                        <li><div class="node n-yellow interactive" data-title="Jefatura de Gestión Humana" data-informes="0" data-normativos="0" data-bi="1" data-source="Inventario (carga manual)">Jefatura de Gestión Humana</div></li>
-                        <li><div class="node n-yellow interactive" data-title="Jefatura Aseguramiento de Recursos">Jefatura Aseg. de Recursos</div></li>
-                        <li><div class="node n-yellow interactive" data-title="Jefatura Aseguramiento de Operaciones" data-informes="12" data-normativos="0" data-bi="1" data-source="Inventario Excel (Hoja SP)">Jefatura Aseg. de Operaciones</div></li>
-                    </ul>
-                </li>
-            </ul>
+                            <div class="branch">
+                                <div class="node n-teal interactive" data-title="Secretaría General">Secretaría General</div>
+                                <div class="connector-v" style="height: 10px;"></div>
+                                <div class="sub-group">
+                                    <div class="node n-yellow interactive" data-title="Jefatura Judicial">Jefatura Judicial</div>
+                                    <div class="node n-yellow interactive" data-title="Jefatura Contratación">Jefatura<br>Contratación</div>
+                                    <div class="node n-coord interactive" data-title="Coord. Jurídica">Coord. Jurídica</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================== 1.2 SUBGERENCIA DE SALUD ================== -->
+                <div class="branch">
+                    <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
+                    <div class="node n-dark node-medium interactive" data-title="Subgerencia de Salud">Subgerencia de Salud</div>
+                    <div class="connector-v" style="height: 15px;"></div>
+
+                    <div class="row" style="gap: 15px;">
+                        
+                        <div class="branch">
+                            <div class="node n-teal interactive" data-title="Dirección Acceso a Servicios">Dirección Acceso<br>a Servicios</div>
+                            <div class="connector-v" style="height: 10px;"></div>
+                            <div class="sub-group">
+                                <div class="node n-yellow interactive" data-title="Jefatura Autorizaciones">Jef. Autorizaciones</div>
+                                <div class="node n-yellow interactive" data-title="Jefatura Centro Regulador">Jef. Centro Regulador</div>
+                                <div class="node n-yellow interactive" data-title="Jefatura Auditoría Concurrente">Jef. Auditoría<br>Concurrente</div>
+                                <div class="node n-yellow interactive" data-title="Apoyo a Regiones">Jef. Apoyo a Regiones</div>
+                                <div class="node n-yellow interactive" data-title="Jefatura Adquisiciones">Jef. Adquisiciones</div>
+                                <div class="node n-coord interactive" data-title="Coordinación Programas Especiales">Coord. Prog. Especiales</div>
+                            </div>
+                        </div>
+
+                        <div class="branch" style="gap: 15px;">
+                            <div class="branch">
+                                <div class="node n-teal interactive" data-title="Dirección Riesgo en Salud">Dirección Riesgo<br>en Salud</div>
+                                <div class="connector-v" style="height: 10px;"></div>
+                                <div class="sub-group">
+                                    <div class="node n-coord interactive" data-title="Epidemiología">Coord. Epidemiología</div>
+                                    <div class="node n-coord interactive" data-title="Salud Pública">Coord. Salud Pública</div>
+                                    <div class="node n-coord interactive" data-title="Alto Costo">Coord. Alto Costo</div>
+                                </div>
+                            </div>
+
+                            <div class="branch" style="gap: 8px;">
+                                <div class="node n-yellow interactive" data-title="Jefatura Cuentas médicas">Jefatura<br>Cuentas Médicas</div>
+                                <div class="node n-yellow interactive" data-title="Jefatura Atención al usuario">Jefatura<br>Atención al Usuario</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================== 1.3 SUBGERENCIA FINANCIERA ================== -->
+                <div class="branch">
+                    <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
+                    <div class="node n-dark node-medium interactive" data-title="Subgerencia Financiera">Subgerencia<br>Financiera</div>
+                    <div class="connector-v" style="height: 15px;"></div>
+
+                    <div class="branch" style="gap: 15px;">
+                        <div class="node n-teal interactive" data-title="Direccion Contabilidad y Presupuesto">Dirección<br>Contabilidad</div>
+                        <div class="node n-teal interactive" data-title="Dirección Tesorería y cartera">Dirección<br>Tesorería y Cartera</div>
+                    </div>
+                </div>
+
+                <!-- ================== 1.4 SUBGERENCIA ADMINISTRATIVA ================== -->
+                <div class="branch">
+                    <div class="connector-v" style="position: absolute; top: -25px; height: 25px;"></div>
+                    <div class="node n-dark node-medium interactive" data-title="Subgerencia Administrativa">Subgerencia<br>Administrativa</div>
+                    <div class="connector-v" style="height: 15px;"></div>
+
+                    <div class="row" style="gap: 15px;">
+                        <div class="branch">
+                            <div class="node n-teal interactive" data-title="Dirección de tecnología y seguridad informática">Dirección<br>Tecnología</div>
+                            <div class="connector-v" style="height: 10px;"></div>
+                            <div class="sub-group">
+                                <div class="node n-coord interactive" data-title="Coord. Software">Coord. Software</div>
+                                <div class="node n-coord interactive" data-title="Coordinación de Infraestructura">Coord. Infraestructura</div>
+                                <div class="node n-coord interactive" data-title="Coordinación Analítica y ciencia del dato">Coord. Analítica</div>
+                                <div class="node n-coord interactive" data-title="Coordinación Soporte Tecnológico">Coord. Soporte<br>Tecnológico</div>
+                            </div>
+                        </div>
+
+                        <div class="branch" style="gap: 8px;">
+                            <div class="node n-yellow interactive" data-title="Jefatura Gestión humana">Jefatura<br>Gestión Humana</div>
+                            <div class="node n-yellow interactive" data-title="Jefatura Administrativa">Jefatura<br>Administrativa</div>
+                            <div class="node n-yellow interactive" data-title="Jefatura Aseguramiento">Jef. Aseguramiento<br>Recursos y Op.</div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div> 
+
         </div>
     </div>
 </div>
@@ -283,36 +573,326 @@
             <span class="close" id="closeModal">&times;</span>
         </div>
         <div class="modal-body">
-            <p><strong>Actividades y reportes del área:</strong></p>
-            <ul>
-                <li>Tiene <strong id="modalInformes">0</strong> informes.</li>
-                <li>Tiene <strong id="modalNormativos">0</strong> normativos.</li>
-                <li>Tiene <strong id="modalBI">0</strong> tableros de Power BI.</li>
-            </ul>
-            <p class="modal-sync-note" id="modalSync">Datos cargados estáticamente.</p>
+            
+            <!-- Resumen Profesional en Grilla -->
+            <div class="modal-summary">
+                <div class="summary-item"><span class="dot d-inf"></span><div class="s-text">Inf. Conexiones<strong id="modalInformes">0</strong></div></div>
+                <div class="summary-item"><span class="dot d-nor"></span><div class="s-text">Inf. Normativos<strong id="modalNormativos">0</strong></div></div>
+                <div class="summary-item"><span class="dot d-iin"></span><div class="s-text">Inf. Internos<strong id="modalInternos">0</strong></div></div>
+                <div class="summary-item"><span class="dot d-tbi"></span><div class="s-text">Tableros BI<strong id="modalBI">0</strong></div></div>
+                <div class="summary-item"><span class="dot d-tin"></span><div class="s-text">Tab. Internos<strong id="modalTableros">0</strong></div></div>
+            </div>
+            
+            <div class="report-list" id="modalReportList"></div>
+            
+            <p id="modalSync" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; font-size: 11px; color: #888;">
+                Datos extraídos automáticamente del archivo INVENTARIO_TABLEROS.xlsx
+            </p>
         </div>
     </div>
 </div>
 
 <script>
-    /* =========================================================
-       1) MODAL DE INFORMACIÓN POR ÁREA
-    ========================================================= */
+    let reportesPorArea = {};
+    const EXCEL_FILE_URL = "INVENTARIO_TABLEROS.xlsx?t=" + new Date().getTime();
+
+    // Normaliza el texto quitando acentos y espacios múltiples
+    function normalizarTexto(texto) {
+        if (!texto) return "";
+        return texto.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ").trim();
+    }
+
+    // Actualiza las burbujas grises/oscuras en cada nodo
+    function updateNodeBadges(filter) {
+        document.querySelectorAll('.node.interactive').forEach(node => {
+            let badge = node.querySelector('.node-badge');
+            if (!badge) {
+                badge = document.createElement('span');
+                badge.className = 'node-badge';
+                node.appendChild(badge);
+            }
+            
+            const searchTitle = node.getAttribute("data-title");
+            const searchNorm = normalizarTexto(searchTitle);
+            
+            let matchedReports = [];
+            Object.keys(reportesPorArea).forEach(k => {
+                if (normalizarTexto(k) === searchNorm) {
+                    matchedReports = matchedReports.concat(reportesPorArea[k]);
+                }
+            });
+            
+            if (filter) {
+                matchedReports = matchedReports.filter(rep => normalizarTexto(rep.actividad).includes(filter));
+            }
+            
+            const count = matchedReports.length;
+            badge.innerText = count;
+            
+            // Si hay datos es gris oscuro, si es 0 es gris claro
+            if (count > 0) {
+                badge.classList.add('has-data');
+                node.classList.remove('dimmed');
+            } else {
+                badge.classList.remove('has-data');
+                if (filter) {
+                    node.classList.add('dimmed');
+                } else {
+                    node.classList.remove('dimmed');
+                }
+            }
+        });
+    }
+
+    async function cargarExcel() {
+        const loading = document.getElementById("loading-indicator");
+        loading.style.display = "block";
+
+        try {
+            const response = await fetch(EXCEL_FILE_URL);
+            if (!response.ok) throw new Error("No se pudo cargar el archivo Excel.");
+            
+            const arrayBuffer = await response.arrayBuffer();
+            const workbook = XLSX.read(arrayBuffer, { type: "array", cellDates: true });
+
+            const biLinks = {};
+            if (workbook.Sheets["BI"]) {
+                const dataBI = XLSX.utils.sheet_to_json(workbook.Sheets["BI"]);
+                dataBI.forEach(row => {
+                    let normRow = {};
+                    for(let key in row) normRow[normalizarTexto(key)] = row[key];
+                    let nombre = normRow["nombre del informe"] || normRow["nombre"];
+                    let url = normRow["url para insertar"] || normRow["url"] || normRow["link"];
+                    if (nombre && url) biLinks[nombre.toString().trim()] = url;
+                });
+            }
+
+            if (!workbook.Sheets["SP"]) throw new Error("La hoja 'SP' no existe.");
+            
+            const dataSP_raw = XLSX.utils.sheet_to_json(workbook.Sheets["SP"], { raw: false, dateNF: "yyyy-mm-dd" });
+            
+            let tInf = 0, tNor = 0, tBi = 0, tTin = 0, tIin = 0;
+
+            dataSP_raw.forEach(row => {
+                let nRow = {};
+                for (let key in row) { nRow[normalizarTexto(key)] = row[key]; }
+                
+                let tipo = nRow["tipo"] ? nRow["tipo"].toString().trim() : "Desconocido";
+                let tipoL = tipo.toLowerCase();
+                
+                // Los contadores globales SIEMPRE suman
+                if (tipoL.includes("conexiones")) tInf++;
+                else if (tipoL.includes("normativo")) tNor++;
+                else if (tipoL.includes("bi")) tBi++;
+                else if (tipoL.includes("tablero interno")) tTin++;
+                else if (tipoL.includes("informe interno")) tIin++;
+
+                let areaRaw = nRow["area"];
+                if (!areaRaw || areaRaw.toString().trim().toLowerCase() === "nan" || areaRaw.toString().trim().toLowerCase() === "na") return;
+                
+                let area = areaRaw.toString().trim();
+                let nombre = nRow["nombre_informe"] || nRow["nombre"] || "Sin Nombre";
+                let programado = nRow["programado"] || "No";
+                let periodicidad = nRow["periodicidad"] || "N/D";
+                
+                let fechaGen = nRow["fecha_ultma_generacion"] || nRow["fecha_ultima_generacion"] || nRow["fecha de ultima generacion"] || "N/D";
+                
+                let enlace = "#";
+                for (let key in row) {
+                    let val = row[key];
+                    if (typeof val === 'string' && val.trim().toLowerCase().startsWith("http")) {
+                        enlace = val.trim(); break;
+                    }
+                }
+                if (enlace === "#") {
+                    for (let key in nRow) {
+                        if (key.includes("ruta") || key.includes("link") || key.includes("url") || key.includes("enlace")) {
+                            if (nRow[key] && String(nRow[key]).trim() !== '') {
+                                enlace = String(nRow[key]).trim(); break;
+                            }
+                        }
+                    }
+                }
+                if (enlace === "#" && biLinks[nombre.toString().trim()]) enlace = biLinks[nombre.toString().trim()];
+
+                if (!reportesPorArea[area]) reportesPorArea[area] = [];
+
+                reportesPorArea[area].push({
+                    actividad: tipo,
+                    reporte: nombre.toString().trim(),
+                    enlace: enlace,
+                    programado: programado.toString().trim(),
+                    periodicidad: periodicidad.toString().trim(),
+                    fecha_generacion: fechaGen.toString().trim()
+                });
+            });
+
+            document.getElementById("total-inf").innerText = tInf;
+            document.getElementById("total-iin").innerText = tIin;
+            document.getElementById("total-tbi").innerText = tBi;
+            document.getElementById("total-tin").innerText = tTin;
+            document.getElementById("total-nor").innerText = tNor;
+
+            loading.style.display = "none";
+            updateNodeBadges(null);
+
+        } catch (error) {
+            console.error("Error:", error);
+            loading.innerText = "Error leyendo INVENTARIO_TABLEROS.xlsx";
+            setTimeout(() => loading.style.display = "none", 5000);
+        }
+    }
+
+    window.addEventListener("DOMContentLoaded", cargarExcel);
+
+    let activeFilter = null;
+    document.querySelectorAll('.legend-filter').forEach(item => {
+        item.addEventListener('click', function() {
+            const filterValue = this.getAttribute('data-filter');
+            
+            if (activeFilter === filterValue) {
+                activeFilter = null;
+                document.querySelectorAll('.legend-filter').forEach(el => el.classList.remove('active-filter'));
+            } else {
+                activeFilter = filterValue;
+                document.querySelectorAll('.legend-filter').forEach(el => el.classList.toggle('active-filter', el === this));
+            }
+            updateNodeBadges(activeFilter);
+        });
+    });
+
     const modal = document.getElementById("infoModal");
     document.getElementById("closeModal").onclick = () => modal.style.display = "none";
     window.addEventListener("click", e => { if (e.target === modal) modal.style.display = "none"; });
 
     document.querySelectorAll(".interactive").forEach(node => {
         node.addEventListener("click", () => {
-            document.getElementById("modalTitle").innerText = node.getAttribute("data-title");
-            document.getElementById("modalInformes").innerText = node.getAttribute("data-informes") || "0";
-            document.getElementById("modalNormativos").innerText = node.getAttribute("data-normativos") || "0";
-            document.getElementById("modalBI").innerText = node.getAttribute("data-bi") || "0";
-            document.getElementById("modalSync").innerText = node.getAttribute("data-source")
-                ? "Fuente: " + node.getAttribute("data-source") + "."
-                : "Sin registros en el inventario todavía.";
+            const searchTitle = node.getAttribute("data-title");
+            const displayTitle = node.innerText.replace("\n", " ");
+            
+            document.getElementById("modalTitle").innerText = displayTitle;
+            const listContainer = document.getElementById("modalReportList");
+            listContainer.innerHTML = ""; 
+            
+            const searchNorm = normalizarTexto(searchTitle);
+            
+            let areaReports = [];
+            Object.keys(reportesPorArea).forEach(k => {
+                if (normalizarTexto(k) === searchNorm) {
+                    areaReports = areaReports.concat(reportesPorArea[k]);
+                }
+            });
+            
+            let cInf = 0, cNor = 0, cBi = 0, cTin = 0, cIin = 0;
+            
+            if (areaReports.length > 0) {
+                
+                if (activeFilter) {
+                    areaReports = areaReports.filter(rep => normalizarTexto(rep.actividad).includes(activeFilter));
+                    document.getElementById("modalSync").innerHTML = `<b>Filtro de Leyenda Activo:</b> Se muestran únicamente los reportes del tipo seleccionado.`;
+                } else {
+                    document.getElementById("modalSync").innerHTML = `Datos extraídos automáticamente del archivo INVENTARIO_TABLEROS.xlsx`;
+                }
+                
+                let reportesOrdenados = areaReports.sort((a, b) => {
+                    let typeCompare = a.actividad.toLowerCase().localeCompare(b.actividad.toLowerCase());
+                    if (typeCompare !== 0) return typeCompare; 
+                    return a.reporte.toLowerCase().localeCompare(b.reporte.toLowerCase());
+                });
+                
+                if (reportesOrdenados.length > 0) {
+                    let htmlList = "";
+                    reportesOrdenados.forEach(rep => {
+                        
+                        let linkHtml = `<span class="no-link">Sin enlace web</span>`;
+                        if (rep.enlace && rep.enlace !== "#" && rep.enlace !== "nan" && rep.enlace !== "undefined" && rep.enlace.trim() !== "") {
+                            let href = rep.enlace.trim();
+                            if (!href.toLowerCase().startsWith("http")) href = "https://" + href;
+                            linkHtml = `<a href="${href}" class="btn-enlace" target="_blank" rel="noopener noreferrer">Abrir ↗</a>`;
+                        }
+                        
+                        let badgeColor = "var(--teal)";
+                        let act = normalizarTexto(rep.actividad);
+                        
+                        if(act.includes("conexiones")) { badgeColor = "#4CAF50"; cInf++; }
+                        else if(act.includes("normativo")) { badgeColor = "#F44336"; cNor++; }
+                        else if(act.includes("bi")) { badgeColor = "#2196F3"; cBi++; }
+                        else if(act.includes("tablero interno")) { badgeColor = "#9C27B0"; cTin++; }
+                        else if(act.includes("informe interno")) { badgeColor = "#FF9800"; cIin++; }
+
+                        let metaHtml = "";
+                        let isProgramado = normalizarTexto(rep.programado) === "si";
+                        let fechaLabel = rep.fecha_generacion && rep.fecha_generacion !== "N/D" ? rep.fecha_generacion : "N/D";
+                        
+                        if (isProgramado) {
+                            let per = rep.periodicidad && rep.periodicidad !== "N/D" ? rep.periodicidad : "N/D";
+                            metaHtml = `
+                                <div class="report-meta">
+                                    <span><strong>Programado:</strong> Sí</span>
+                                    <span><strong>Periodicidad:</strong> ${per}</span>
+                                    <span><strong>Última Generación:</strong> ${fechaLabel}</span>
+                                </div>`;
+                        } else {
+                            metaHtml = `
+                                <div class="report-meta">
+                                    <span><strong>Programado:</strong> No</span>
+                                    <span><strong>Última Generación:</strong> ${fechaLabel}</span>
+                                </div>`;
+                        }
+
+                        htmlList += `
+                            <div class="report-item">
+                                <div class="report-header">
+                                    <span class="report-badge" style="background-color: ${badgeColor}">${rep.actividad}</span>
+                                    ${linkHtml}
+                                </div>
+                                <div class="report-title">${rep.reporte}</div>
+                                ${metaHtml}
+                            </div>
+                        `;
+                    });
+                    listContainer.innerHTML = htmlList;
+                } else {
+                    listContainer.innerHTML = "<p style='color: #666; font-size: 13px; font-style: italic; margin-top: 15px;'>No hay activos que coincidan con el filtro actual en esta área.</p>";
+                }
+            } else {
+                listContainer.innerHTML = "<p style='color: #666; font-size: 13px; font-style: italic; margin-top: 15px;'>No hay detalles registrados para esta área en la matriz de Excel.</p>";
+            }
+            
+            document.getElementById("modalInformes").innerText = cInf;
+            document.getElementById("modalNormativos").innerText = cNor;
+            document.getElementById("modalBI").innerText = cBi;
+            document.getElementById("modalTableros").innerText = cTin;
+            document.getElementById("modalInternos").innerText = cIin;
+
             modal.style.display = "block";
         });
+    });
+
+    /* --- ZOOM Y PAN --- */
+    const chart = document.getElementById("orgChart");
+    const viewport = document.getElementById("chartViewport");
+    let scale = 1;
+
+    function applyZoom() { chart.style.transform = `scale(${scale})`; }
+
+    document.getElementById("zoomIn").onclick = () => { scale = Math.min(scale + 0.1, 1.6); applyZoom(); };
+    document.getElementById("zoomOut").onclick = () => { scale = Math.max(scale - 0.1, 0.4); applyZoom(); };
+    document.getElementById("zoomReset").onclick = () => { scale = 1; applyZoom(); viewport.scrollTo({left:0, top:0}); };
+
+    let isDragging = false, startX, startY, scrollLeft, scrollTop;
+    viewport.addEventListener("mousedown", e => {
+        isDragging = true; viewport.classList.add("dragging");
+        startX = e.pageX - viewport.offsetLeft; startY = e.pageY - viewport.offsetTop;
+        scrollLeft = viewport.scrollLeft; scrollTop = viewport.scrollTop;
+    });
+    ["mouseleave", "mouseup"].forEach(evt =>
+        viewport.addEventListener(evt, () => { isDragging = false; viewport.classList.remove("dragging"); })
+    );
+    viewport.addEventListener("mousemove", e => {
+        if (!isDragging) return; e.preventDefault();
+        const x = e.pageX - viewport.offsetLeft; const y = e.pageY - viewport.offsetTop;
+        viewport.scrollLeft = scrollLeft - (x - startX); viewport.scrollTop = scrollTop - (y - startY);
     });
 </script>
 
